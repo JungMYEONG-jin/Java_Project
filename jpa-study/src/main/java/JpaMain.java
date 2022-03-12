@@ -21,17 +21,20 @@ public class JpaMain {
         try
         {
             Member member = new Member();
-            member.setCreatedBy("MJ");
-            member.setCreatedDate(LocalDateTime.now());
-            member.setUsername("Karan");
-
+            member.setName("hello");
             em.persist(member);
+            Member member2 = new Member();
+            member2.setName("hello2");
+            em.persist(member2);
 
             em.flush();
             em.clear();
 
-
-            tx.commit();
+            Member m1 = em.getReference(Member.class, member.getId());
+            System.out.println("m1.getClass() = " + m1.getClass());
+            System.out.println("emf.getPersistenceUnitUtil().isLoaded(m1) = " + emf.getPersistenceUnitUtil().isLoaded(m1));
+            Hibernate.initialize(m1); // 강제초기화
+            System.out.println("emf.getPersistenceUnitUtil().isLoaded(m1) = " + emf.getPersistenceUnitUtil().isLoaded(m1));
         }catch(Exception e)
         {
             tx.rollback();
