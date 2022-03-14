@@ -1,12 +1,14 @@
 package domain;
 
+import domain.embedded.Address;
+import domain.embedded.Period;
 import net.bytebuddy.asm.Advice;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Member extends BaseEntity{
+public class Member{
 
     @Id
     @GeneratedValue
@@ -16,18 +18,31 @@ public class Member extends BaseEntity{
     @Column(name = "username")
     private String username;
 
-    private String city;
+    // 기간
+    @Embedded
+    private Period workPeriod;
 
-    @ManyToOne
-    @JoinColumn(name="team_id")
-    private Team team;
+    // 주소
+    @Embedded
+    private Address homeAddress;
 
-    public Team getTeam() {
-        return team;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name="city",
+                    column=@Column(name="work_city")),
+            @AttributeOverride(name="street",
+                    column=@Column(name="work_street")),
+            @AttributeOverride(name="zipcode",
+                    column=@Column(name="work_zipcode"))
+            })
+    private Address workAddress;
+
+    public Address getWorkAddress() {
+        return workAddress;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setWorkAddress(Address workAddress) {
+        this.workAddress = workAddress;
     }
 
     public Long getId() {
@@ -46,11 +61,19 @@ public class Member extends BaseEntity{
         this.username = username;
     }
 
-    public String getCity() {
-        return city;
+    public Period getWorkPeriod() {
+        return workPeriod;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setWorkPeriod(Period workPeriod) {
+        this.workPeriod = workPeriod;
+    }
+
+    public Address getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
     }
 }

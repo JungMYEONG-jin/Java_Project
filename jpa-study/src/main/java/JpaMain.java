@@ -1,6 +1,8 @@
 import domain.Item;
 import domain.Member;
 import domain.Movie;
+import domain.embedded.Address;
+import domain.embedded.Period;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,20 +23,14 @@ public class JpaMain {
         try
         {
             Member member = new Member();
-            member.setName("hello");
+            member.setUsername("hello");
+            member.setHomeAddress(new Address("seoul", "gong", "321"));
+            member.setWorkPeriod(new Period( LocalDateTime.now(), LocalDateTime.now()));
+
             em.persist(member);
-            Member member2 = new Member();
-            member2.setName("hello2");
-            em.persist(member2);
 
-            em.flush();
-            em.clear();
 
-            Member m1 = em.getReference(Member.class, member.getId());
-            System.out.println("m1.getClass() = " + m1.getClass());
-            System.out.println("emf.getPersistenceUnitUtil().isLoaded(m1) = " + emf.getPersistenceUnitUtil().isLoaded(m1));
-            Hibernate.initialize(m1); // 강제초기화
-            System.out.println("emf.getPersistenceUnitUtil().isLoaded(m1) = " + emf.getPersistenceUnitUtil().isLoaded(m1));
+            tx.commit();
         }catch(Exception e)
         {
             tx.rollback();

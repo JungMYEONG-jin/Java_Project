@@ -12,9 +12,9 @@ public class Team extends BaseEntity{
     @GeneratedValue
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name="team_id")
-    private List<Member> members = new ArrayList<>();
+//    @OneToMany
+//    @JoinColumn(name="team_id")
+//    private List<Member> members = new ArrayList<>();
 
 
 }
