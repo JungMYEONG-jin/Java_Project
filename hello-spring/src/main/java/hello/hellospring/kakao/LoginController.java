@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class LoginController {
 
-    @RequestMapping("/")
+    @RequestMapping("/a")
     public @ResponseBody String getAuthUrl(HttpServletRequest request) throws Exception
     {
 

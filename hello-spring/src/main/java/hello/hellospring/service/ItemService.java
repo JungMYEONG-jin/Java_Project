@@ -1,5 +1,6 @@
 package hello.hellospring.service;
 
+import hello.hellospring.domain.item.Book;
 import hello.hellospring.domain.item.Item;
 import hello.hellospring.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,16 @@ public class ItemService {
     public void saveItem(Item item)
     {
         itemRepository.save(item);
+    }
+
+    @Transactional
+    public void updateItem(Long itemId, String name, int price)
+    {
+        Item findItem = itemRepository.findOne(itemId);
+        findItem.setName(name);
+        findItem.setPrice(price);
+
+
     }
 
     public List<Item> findItems ()

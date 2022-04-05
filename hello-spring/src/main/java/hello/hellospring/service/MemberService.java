@@ -18,6 +18,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     // register
+    @Transactional
     public Long join(Member member) {
         validateDuplicateMember(member);
         memberRepository.save(member);

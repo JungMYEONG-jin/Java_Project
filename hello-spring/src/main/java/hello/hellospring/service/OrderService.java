@@ -8,6 +8,7 @@ import hello.hellospring.domain.item.Item;
 import hello.hellospring.repository.ItemRepository;
 import hello.hellospring.repository.MemberRepository;
 import hello.hellospring.repository.OrderRepository;
+import hello.hellospring.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,10 +55,10 @@ public class OrderService {
         order.cancel();
     }
 
-//    public List<Order> findOrders(OrderSearch orderSearch)
-//    {
-//        return orderRepository.findAll(orderSearch);
-//    }
+    public List<Order> findOrders(OrderSearch orderSearch)
+    {
+        return orderRepository.findAllByString(orderSearch);
+    }
 
 
 }
