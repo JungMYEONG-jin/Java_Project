@@ -1,5 +1,6 @@
 package hello.hellospring.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,12 +25,14 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
+
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // cascade ORDER 만 해도 DELIVERY자동 PERSIST됨
     @JoinColumn(name = "delivery_id")
