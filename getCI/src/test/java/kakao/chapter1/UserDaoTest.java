@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 
 @SpringBootTest(classes = Runnable.class)
-@ContextConfiguration(locations = "/applicationContext.xml")
+@ContextConfiguration(locations = "/test-applicationContext.xml")
 @DirtiesContext // 테스트 메소드에서 application context 구성이나 상태를 변경한다는것을 프레임워크에 알려준다.
 public class UserDaoTest {
 
@@ -39,9 +39,7 @@ public class UserDaoTest {
     @BeforeEach
     void clear() throws SQLException {
 
-        DataSource dataSource = new SingleConnectionDataSource("jdbc:h2:tcp://localhost/~/tobey", "sa", "", true);
-
-        userDao.setDataSource(dataSource);
+        userDao = context.getBean("userDao", UserDao.class);
 //        this.userDao = context.getBean("userDao", UserDao.class);
         userDao.deleteAll();
 
