@@ -1,5 +1,6 @@
 package springbook.user.domain;
 
+
 public class User {
 
     private String id;
@@ -28,5 +29,16 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 }
