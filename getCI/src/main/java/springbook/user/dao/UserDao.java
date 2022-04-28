@@ -12,8 +12,11 @@ import java.sql.*;
 public class UserDao {
 
     private DataSource dataSource;
+    private JdbcContext jdbcContext;
 
     public void setDataSource(DataSource dataSource) {
+        this.jdbcContext = new JdbcContext();
+        this.jdbcContext.setDataSource(dataSource);
         this.dataSource = dataSource;
     }
 
@@ -46,6 +49,44 @@ public class UserDao {
         StatementStrategy strategy = new AddStatement();
         contextWithStatementStrategy(strategy);
     }
+
+    public void jdbc_add(final User user) throws SQLException
+    {
+        this.jdbcContext.workWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement("insert into users(id, name, password) values(?,?,?)");
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
+                return ps;
+            }
+        });
+
+    }
+
+
+    /**
+     * 익명 내부클래스를 사용한 클라이언트 코드
+     * @throws SQLException
+     */
+
+    public void jdbc_deleteAll() throws SQLException
+    {
+        this.jdbcContext.workWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection con) throws SQLException {
+                return con.prepareStatement("delete from users");
+            }
+        });
+    }
+
+    public void jdbc_deleteAll_v2() throws SQLException
+    {
+        this.jdbcContext.executeSql("delete from users");
+    }
+
+
 
     /**
      * Inner Anonymous class

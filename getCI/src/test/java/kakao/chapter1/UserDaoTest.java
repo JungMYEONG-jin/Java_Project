@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 
 @SpringBootTest(classes = Runnable.class)
-@ContextConfiguration(locations = "/test-applicationContext.xml")
+@ContextConfiguration(locations = "/applicationContext.xml")
 @DirtiesContext // 테스트 메소드에서 application context 구성이나 상태를 변경한다는것을 프레임워크에 알려준다.
 public class UserDaoTest {
 
@@ -129,6 +129,22 @@ public class UserDaoTest {
 
         userDao.anonymous_deleteAll(); // 익명 클래스
 
+        assertThat(userDao.getCount()).isEqualTo(0);
+    }
+
+    @Test
+    public void contextAddTest() throws SQLException, ClassNotFoundException
+    {
+        User user = new User("karena", "kome", "gkkgk12");
+        User user2 = new User("jonsu", "hamburger", "chick");
+
+        userDao.jdbc_add(user);
+        userDao.jdbc_add(user2);
+
+        assertThat(userDao.getCount()).isEqualTo(2);
+
+
+        userDao.jdbc_deleteAll();
         assertThat(userDao.getCount()).isEqualTo(0);
     }
 
