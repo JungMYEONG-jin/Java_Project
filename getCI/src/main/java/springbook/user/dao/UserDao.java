@@ -1,6 +1,7 @@
 package springbook.user.dao;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import springbook.user.dao.strategy.AddStatement;
 import springbook.user.dao.strategy.DeleteAllStatement;
 import springbook.user.dao.strategy.StatementStrategy;
 import springbook.user.domain.User;
@@ -23,19 +24,27 @@ public class UserDao {
 //    }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection con = dataSource.getConnection();
-        PreparedStatement ps = con.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
-        ps.setString(1, user.getId());
-        ps.setString(2, user.getName());
-        ps.setString(3, user.getPassword());
+        StatementStrategy strategy = new AddStatement(user);
+        contextWithStatementStrategy(strategy);
+    }
 
-        ps.executeUpdate();
+    // local class 버전
+    public void local_add(final User user) throws SQLException
+    {
+        class AddStatement implements StatementStrategy
+        {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement("insert into users(id, name, password) values(?,?,?)");
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
+                return ps;
+            }
+        }
 
-        if(ps!=null)
-            ps.close();
-        if(con!=null)
-            con.close();
-
+        StatementStrategy strategy = new AddStatement();
+        contextWithStatementStrategy(strategy);
     }
 
 
@@ -70,11 +79,11 @@ public class UserDao {
     // 예외 발생해도 자원을 반환하게
     public void deleteAll() throws SQLException {
         StatementStrategy strategy = new DeleteAllStatement();
-        deleteAllWithStatementStrategy(strategy);
+        contextWithStatementStrategy(strategy);
     }
 
 
-    public void deleteAllWithStatementStrategy(StatementStrategy strategy) throws SQLException
+    public void contextWithStatementStrategy(StatementStrategy strategy) throws SQLException
     {
         Connection connection = null;
         PreparedStatement ps = null;
