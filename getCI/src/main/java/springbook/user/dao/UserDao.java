@@ -69,13 +69,18 @@ public class UserDao {
 
     // 예외 발생해도 자원을 반환하게
     public void deleteAll() throws SQLException {
+        StatementStrategy strategy = new DeleteAllStatement();
+        deleteAllWithStatementStrategy(strategy);
+    }
+
+
+    public void deleteAllWithStatementStrategy(StatementStrategy strategy) throws SQLException
+    {
         Connection connection = null;
         PreparedStatement ps = null;
         try{
             connection = dataSource.getConnection();
 
-            // 전략패턴
-            StatementStrategy strategy = new DeleteAllStatement();
             ps = strategy.makePreparedStatement(connection);
 
             ps.executeUpdate();
@@ -104,6 +109,9 @@ public class UserDao {
             }
         }
     }
+
+
+
 
 
     public int getCount() throws SQLException {
