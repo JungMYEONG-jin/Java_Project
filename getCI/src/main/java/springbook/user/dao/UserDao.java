@@ -64,29 +64,97 @@ public class UserDao {
         return user;
     }
 
+
+    // 예외 발생해도 자원을 반환하게
     public void deleteAll() throws SQLException {
-        Connection connection = dataSource.getConnection();
+        Connection connection = null;
+        PreparedStatement ps = null;
+        try{
+            connection = dataSource.getConnection();
+            ps = connection.prepareStatement("delete from users");
+            ps.executeUpdate();
+        }catch (SQLException e)
+        {
+            throw e;
+        }finally {
+            if(ps!=null)
+            {
+                try{
+                    ps.close();
+                }catch (SQLException e)
+                {
 
-        PreparedStatement ps = connection.prepareStatement("delete from users");
-        ps.executeUpdate();
+                }
+            }
 
-        ps.close();
-        connection.close();
+            if(connection!=null)
+            {
+                try{
+                    connection.close();
+                }catch (SQLException e)
+                {
+
+                }
+            }
+        }
     }
 
+
     public int getCount() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        PreparedStatement ps = connection.prepareStatement("select count(*) from users");
 
-        ResultSet res = ps.executeQuery();
-        res.next();
-        int count = res.getInt(1);
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try{
+            connection = dataSource.getConnection();
+            ps = connection.prepareStatement("select count(*) from users");
+            rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        }catch (SQLException e)
+        {
+            throw e;
+        }finally {
+            if(rs!=null)
+            {
+                try{
+                    rs.close();
+                }catch (SQLException e)
+                {
 
-        res.close();
-        ps.close();
-        connection.close();
+                }
+            }
 
-        return count;
+            if(ps!=null)
+            {
+                try{
+                    ps.close();
+                }catch (SQLException e)
+                {
+
+                }
+            }
+
+            if(connection!=null)
+            {
+                try{
+                    connection.close();
+                }catch (SQLException e)
+                {
+
+                }
+            }
+
+        }
+
+
+
+//        Connection connection = dataSource.getConnection();
+//        PreparedStatement ps = connection.prepareStatement("select count(*) from users");
+//
+//        ResultSet res = ps.executeQuery();
+
+
     }
 
 
