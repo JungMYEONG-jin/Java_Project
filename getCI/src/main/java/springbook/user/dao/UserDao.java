@@ -47,6 +47,26 @@ public class UserDao {
         contextWithStatementStrategy(strategy);
     }
 
+    /**
+     * Inner Anonymous class
+     * @param user
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    public void anonymous_add(final User user) throws SQLException
+    {
+        contextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement("insert into users(id, name, password) values(?,?,?)");
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
+                return ps;
+            }
+        });
+    }
 
     public User findById(String id) throws ClassNotFoundException, SQLException {
         Connection con = dataSource.getConnection();
@@ -80,6 +100,16 @@ public class UserDao {
     public void deleteAll() throws SQLException {
         StatementStrategy strategy = new DeleteAllStatement();
         contextWithStatementStrategy(strategy);
+    }
+
+    public void anonymous_deleteAll() throws SQLException
+    {
+        contextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection con) throws SQLException {
+                return con.prepareStatement("delete from users");
+            }
+        });
     }
 
 

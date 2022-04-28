@@ -116,6 +116,22 @@ public class UserDaoTest {
         assertThat(userDao.getCount()).isEqualTo(2);
     }
 
+    @Test
+    public void anonymousTest() throws SQLException, ClassNotFoundException
+    {
+        User user = new User("karena", "kome", "gkkgk12");
+        User user2 = new User("jonsu", "hamburger", "chick");
+
+        userDao.local_add(user);
+        userDao.local_add(user2);
+
+        assertThat(userDao.getCount()).isEqualTo(2);
+
+        userDao.anonymous_deleteAll(); // 익명 클래스
+
+        assertThat(userDao.getCount()).isEqualTo(0);
+    }
+
     /**
      * Empty exception이 떠야 성공하는 test
      * @throws SQLException
