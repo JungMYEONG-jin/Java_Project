@@ -23,6 +23,7 @@ import springbook.user.domain.User;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 
 @SpringBootTest(classes = Runnable.class)
 @ContextConfiguration(locations = "/applicationContext.xml")
@@ -82,7 +83,7 @@ public class UserDaoTest {
 
         userDao.add(user);
 
-        User findUser = userDao.findById(user.getId());
+        User findUser = userDao.get(user.getId());
 
         //then
         assertThat(user.getId()).isEqualTo(findUser.getId());
@@ -92,74 +93,62 @@ public class UserDaoTest {
     }
 
 
-    // 모든 테스트는 실행 순서에 상관없이 독립적으로 항상 동일한 결과를 낼 수 있어야 한다!!
+
+
+
     @Test
-    public void getCountTest() throws SQLException, ClassNotFoundException {
+    public void jdbcTemplateTest() throws SQLException, ClassNotFoundException {
         User user = new User("karena", "kome", "gkkgk12");
         User user2 = new User("jonsu", "hamburger", "chick");
 
         userDao.add(user);
         userDao.add(user2);
 
-        assertThat(userDao.getCount()).isEqualTo(2);
+        int count_jdbcTemplate = userDao.getCount_jdbcTemplate();
+        int count_jdbcTemplateV2 = userDao.getCount();
+        assertThat(count_jdbcTemplate).isEqualTo(2);
+        assertThat(count_jdbcTemplateV2).isEqualTo(2);
+
+        userDao.deleteAll_jdbcTemplate_inner();
+
+        int cnt = userDao.getCount();
+        assertThat(cnt).isEqualTo(0);
     }
 
-
     @Test
-    public void getCountTestLocal() throws SQLException, ClassNotFoundException {
+    public void jdbcTemplateGetTest() throws SQLException, ClassNotFoundException {
         User user = new User("karena", "kome", "gkkgk12");
-        User user2 = new User("jonsu", "hamburger", "chick");
+        userDao.add(user);
 
-        userDao.local_add(user);
-        userDao.local_add(user2);
 
-        assertThat(userDao.getCount()).isEqualTo(2);
+        User findUser = userDao.get(user.getId());
+        assertThat(findUser.getName()).isEqualTo(user.getName());
+        assertThat(findUser.getId()).isEqualTo(user.getId());
+        assertThat(findUser.getPassword()).isEqualTo(user.getPassword());
     }
 
     @Test
-    public void anonymousTest() throws SQLException, ClassNotFoundException
-    {
-        User user = new User("karena", "kome", "gkkgk12");
-        User user2 = new User("jonsu", "hamburger", "chick");
-
-        userDao.local_add(user);
-        userDao.local_add(user2);
-
-        assertThat(userDao.getCount()).isEqualTo(2);
-
-        userDao.anonymous_deleteAll(); // 익명 클래스
-
-        assertThat(userDao.getCount()).isEqualTo(0);
-    }
-
-    @Test
-    public void contextAddTest() throws SQLException, ClassNotFoundException
-    {
-        User user = new User("karena", "kome", "gkkgk12");
-        User user2 = new User("jonsu", "hamburger", "chick");
-
-        userDao.jdbc_add(user);
-        userDao.jdbc_add(user2);
-
-        assertThat(userDao.getCount()).isEqualTo(2);
+    public void GetAllTest() throws SQLException, ClassNotFoundException {
+        User user = new User("0111", "komt", "gkkgk12");
+        userDao.add(user);
+        User user2 = new User("022", "komet", "gkkgk12");
+        userDao.add(user2);
+        User user3 = new User("01113", "pome", "gkkgk12");
+        userDao.add(user3);
 
 
-        userDao.jdbc_deleteAll();
-        assertThat(userDao.getCount()).isEqualTo(0);
-    }
+        List<User> all = userDao.getAll();
+        for (User user1 : all) {
+            System.out.println("user = " + user1.getId());
+        }
 
-    /**
-     * Empty exception이 떠야 성공하는 test
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     */
-    @Test
-    public void exceptionTest() throws SQLException, ClassNotFoundException {
-        assertThat(userDao.getCount()).isEqualTo(0);
+        assertThat(all.size()).isEqualTo(3);
 
-        Assertions.assertThrows(EmptyResultDataAccessException.class, () ->{
-            userDao.findById("hello");
-        });
+        userDao.deleteAll_jdbcTemplate_inner();
+
+        List<User> res = userDao.getAll();
+
+        assertThat(res.size()).isEqualTo(0);
     }
 
 
