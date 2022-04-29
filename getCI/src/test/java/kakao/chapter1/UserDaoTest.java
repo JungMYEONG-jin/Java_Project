@@ -1,27 +1,23 @@
 package kakao.chapter1;
 
 import static org.assertj.core.api.Assertions.*;
-import org.junit.Before;
+
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import springbook.exception.DuplicateUserIdException;
 import springbook.user.dao.UserDao;
 import springbook.user.dao.UserDaoFactory;
+import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -80,7 +76,9 @@ public class UserDaoTest {
         user.setPassword("bak");
         user.setName("p343k");
         user.setId("a333k4");
-
+        user.setLevel(Level.SILVER);
+        user.setLogin(0);
+        user.setRecommend(11);
         userDao.add(user);
 
         User findUser = userDao.get(user.getId());
@@ -92,14 +90,56 @@ public class UserDaoTest {
 
     }
 
+    /**
+     * duplicate
+     */
+    @Test
+    void dupTest()
+    {
+        User user = new User();
+        user.setPassword("bak");
+        user.setName("p343k");
+        user.setId("a333k4");
+        user.setLevel(Level.SILVER);
+        user.setLogin(0);
+        user.setRecommend(11);
+
+        userDao.add_sqlException(user);
+        User user2 = new User();
+        user2.setPassword("bak");
+        user2.setName("p343k");
+        user2.setId("a333k4");
+        user2.setLevel(Level.SILVER);
+        user2.setLogin(0);
+        user2.setRecommend(11);
+
+        Assertions.assertThrows(DuplicateUserIdException.class, ()->{userDao.add_sqlException(user2);});
+    }
+
+    @Test
+    void dupTestBySpring()
+    {
+        User user = new User();
+        user.setPassword("bak");
+        user.setName("p343k");
+        user.setId("a333k4");
+        user.setLevel(Level.SILVER);
+        user.setLogin(0);
+        user.setRecommend(11);
+
+        userDao.add(user);
+
+        Assertions.assertThrows(DataAccessException.class, ()->{userDao.add(user);});
+    }
+
 
 
 
 
     @Test
     public void jdbcTemplateTest() throws SQLException, ClassNotFoundException {
-        User user = new User("karena", "kome", "gkkgk12");
-        User user2 = new User("jonsu", "hamburger", "chick");
+        User user = new User("karena", "kome", "gkkgk12", Level.BASIC, 1, 0);
+        User user2 = new User("jonsu", "hamburger", "chick", Level.GOLD, 1, 0);
 
         userDao.add(user);
         userDao.add(user2);
@@ -117,7 +157,7 @@ public class UserDaoTest {
 
     @Test
     public void jdbcTemplateGetTest() throws SQLException, ClassNotFoundException {
-        User user = new User("karena", "kome", "gkkgk12");
+        User user = new User("karena", "kome", "gkkgk12", Level.SILVER, 2, 0);
         userDao.add(user);
 
 
@@ -129,11 +169,11 @@ public class UserDaoTest {
 
     @Test
     public void GetAllTest() throws SQLException, ClassNotFoundException {
-        User user = new User("0111", "komt", "gkkgk12");
+        User user = new User("0111", "komt", "gkkgk12", Level.GOLD, 3, 0);
         userDao.add(user);
-        User user2 = new User("022", "komet", "gkkgk12");
+        User user2 = new User("022", "komet", "gkkgk12", Level.BASIC, 1, 0);
         userDao.add(user2);
-        User user3 = new User("01113", "pome", "gkkgk12");
+        User user3 = new User("01113", "pome", "gkkgk12", Level.SILVER, 2, 0);
         userDao.add(user3);
 
 
@@ -150,6 +190,32 @@ public class UserDaoTest {
 
         assertThat(res.size()).isEqualTo(0);
     }
+
+    @Test
+    public void updateTest()
+    {
+        User user = new User("0111", "komt", "gkkgk12", Level.GOLD, 3, 0);
+        User user2 = new User("1234", "komet", "g322", Level.BASIC, 1, 10);
+        userDao.add(user);
+        userDao.add(user2);
+        user.setRecommend(33);
+        user.setLogin(33);
+        user.setLevel(Level.BASIC);
+        user.setName("mj");
+
+        userDao.update(user);
+
+        User findUser = userDao.get(user.getId());
+        assertThat(findUser.getName()).isEqualTo("mj");
+
+        // user2는 바뀌면 안됨
+
+        User findUser2 = userDao.get(user2.getId());
+        assertThat(findUser2.getName()).isEqualTo("komet");
+
+    }
+
+
 
 
 }

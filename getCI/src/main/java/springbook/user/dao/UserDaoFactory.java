@@ -14,7 +14,7 @@ public class UserDaoFactory {
     // 빈 이름은 userDao가 됨
     public UserDao userDao()
     {
-        UserDao userDao = new UserDao();
+        UserDao userDao = new UserDaoJdbc();
         userDao.setDataSource(dataSource());
         return userDao;
     }
