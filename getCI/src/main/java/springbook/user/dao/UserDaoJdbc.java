@@ -30,6 +30,7 @@ public class UserDaoJdbc implements UserDao{
             user.setLevel(Level.valueOf(rs.getInt("level")));
             user.setLogin((rs.getInt("login")));
             user.setRecommend((rs.getInt("recommend")));
+            user.setMail(rs.getString("mail"));
             return user;
         }
     };
@@ -42,8 +43,8 @@ public class UserDaoJdbc implements UserDao{
 
 
     public void add(User user) {
-            this.jdbcTemplate.update("insert into users(id, name, password, level, login, recommend) values(?,?,?,?,?,?)",
-                    user.getId(), user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLogin(), user.getRecommend());
+            this.jdbcTemplate.update("insert into users(id, name, password, level, login, recommend, mail) values(?,?,?,?,?,?,?)",
+                    user.getId(), user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLogin(), user.getRecommend(), user.getMail());
     }
 
 
@@ -60,13 +61,14 @@ public class UserDaoJdbc implements UserDao{
 //                    user.getId(), user.getName(), user.getPassword());
 
             connection = DriverManager.getConnection("jdbc:h2:tcp://localhost/~/tobey", "sa", "");
-            ps = connection.prepareStatement("insert into users(id, name, password, level, login, recommend) values(?, ?, ?, ?, ?, ?)");
+            ps = connection.prepareStatement("insert into users(id, name, password, level, login, recommend, mail) values(?, ?, ?, ?, ?, ?, ?)");
             ps.setString(1, user.getId());
             ps.setString(2, user.getName());
             ps.setString(3, user.getPassword());
             ps.setString(4, String.valueOf(user.getLevel().getValue()));
             ps.setString(5, String.valueOf(user.getLogin()));
             ps.setString(6, String.valueOf(user.getRecommend()));
+            ps.setString(7, user.getMail());
             ps.executeUpdate();
 
 
@@ -191,8 +193,8 @@ public class UserDaoJdbc implements UserDao{
 
     @Override
     public void update(User user) {
-        this.jdbcTemplate.update("update users set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?",
-                user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLogin(), user.getRecommend(), user.getId());
+        this.jdbcTemplate.update("update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, mail = ? where id = ?",
+                user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLogin(), user.getRecommend(), user.getMail(), user.getId());
 
     }
 

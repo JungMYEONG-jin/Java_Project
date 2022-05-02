@@ -11,6 +11,16 @@ public class User {
     private int login;
     private int recommend;
 
+    private String mail;
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
     public void setLevel(Level level) {
         this.level = level;
     }

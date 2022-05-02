@@ -1,6 +1,12 @@
 package springbook.user.service;
 
+import org.apache.catalina.Session;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -12,11 +18,17 @@ import springbook.user.domain.User;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Properties;
 
 public class UserService {
 
     UserDao userDao;
     private PlatformTransactionManager transactionManager;
+    private MailSender mailSender;
+
+    public void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
@@ -54,11 +66,25 @@ public class UserService {
 }
 
 
+    private void sendUpgradeEMail(User user)
+    {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getMail());
+        mailMessage.setFrom("j67310@gmail.com");
+        mailMessage.setSubject("Upgrade Level Information");
+        mailMessage.setText("Your Gradle is "+user.getLevel().name());
+        System.out.println(mailMessage.getText().toString());
+
+        this.mailSender.send(mailMessage);
+    }
+
+
 
     protected void upgradeLevel(User user) {
         user.upgradeLevel(); // user에서 하도록 처리
 //        policy.upgradeLevel(user); // 정책에서 처리
         userDao.update(user);
+        sendUpgradeEMail(user);
     }
 
     private boolean canUpgradeLevel(User user) {

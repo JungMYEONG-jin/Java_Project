@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataAccessException;
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import springbook.user.dao.UserDao;
@@ -21,6 +25,7 @@ import javax.sql.DataSource;
 import static springbook.user.service.UserService.*;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,6 +43,9 @@ public class UserServiceTest {
 
     @Autowired
     DataSource dataSource;
+
+    @Autowired
+    MailSender mailSender;
 
     private List<User> users;
 
@@ -197,11 +205,58 @@ public class UserServiceTest {
     PlatformTransactionManager transactionManager;
 
 
+    static class MockMailSender implements MailSender
+    {
+        List<String> requests = new ArrayList<>();
+
+        public List<String> getRequests() {
+            return requests;
+        }
+
+        @Override
+        public void send(SimpleMailMessage simpleMessage) throws MailException {
+            requests.add(simpleMessage.getTo()[0]);
+        }
+
+        @Override
+        public void send(SimpleMailMessage[] simpleMessages) throws MailException {
+
+        }
+    }
+
+
+    @Test
+    public void upgradeLevelsWithMail() throws Exception {
+        for (User user : users) {
+            userDao.add(user);
+        }
+
+        MockMailSender mockMailSender = new MockMailSender();
+        userService.setMailSender(mockMailSender);
+
+        userService.uprgradeLevels();
+
+        checkLevelUpgrade(users.get(0), false);
+        checkLevelUpgrade(users.get(1), true);
+        checkLevelUpgrade(users.get(2), false);
+        checkLevelUpgrade(users.get(3), true);
+        checkLevelUpgrade(users.get(4), false);
+
+        List<String> requests = mockMailSender.getRequests();
+        assertThat(requests.size()).isEqualTo(2);
+        assertThat(requests.get(0)).isEqualTo(users.get(1).getMail());
+        assertThat(requests.get(1)).isEqualTo(users.get(3).getMail());
+    }
+
+
+
+
     @Test
     void upgradeAllOrNothing() throws Exception {
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
         testUserService.setTransactionManager(this.transactionManager);
+        testUserService.setMailSender(this.mailSender);
 
         userDao.deleteAll();
         for (User user : users) {
