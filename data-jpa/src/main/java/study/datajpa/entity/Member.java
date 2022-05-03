@@ -1,14 +1,17 @@
 package study.datajpa.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+
+
+//access level protected 까지만 가능함 jpa는
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of={"id", "username", "age"})// 가급적 연관관계 필드는 넣지 말자 무한루프 걸릴 수 있음
 public class Member {
 
     @Id
@@ -18,16 +21,25 @@ public class Member {
     private String username;
     private int age;
 
-    @ManyToOne
+    // x to one은 무조건 lazy setting
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
 
-    protected Member() {
+    public Member(String username, int age, Team team) {
+        this.username = username;
+        this.age = age;
+        if(team!=null)
+            changeTeam(team);
     }
-
-
 
     public Member(String username) {
         this.username = username;
+    }
+
+    public void changeTeam(Team team)
+    {
+        this.team = team;
+        team.getMembers().add(this);
     }
 }
