@@ -25,7 +25,7 @@ var consultInfoObject = {
 	, reqKey			: reqKey 	// req_key (parameter)
 	, hwnName           : hwnName 	// hwnname (session info)
 	, hwnNo				: hwnNo 	// hwnno (session info)
-	, photo             : $("#consultantPhoto").prop("src")
+	, photo             : $("#consultantPhoto").prop("src") // id의 src 속성값
 	, state				: STATE_BEFORE_CALL	//상담 상태 코드
 	/*spass*/
 	, clientVideoWidth	: 320 // 고객 앱의 Video 넓이. 못받아올 경우 기본 값
@@ -37,7 +37,7 @@ var consultInfoObject = {
 	/*spass*/
 };
 // initialize current step
-consultInfoObject.currentStep = consultInfoObject.firstStep;
+consultInfoObject.currentStep = consultInfoObject.firstStep; // 영상통화 첫 단계는 우선 1로
 /**
  * 화면 로딩 완료시, 초기화
  */
@@ -60,7 +60,7 @@ $(document).ready(function(){
 		getIdCardImage();
 	});
 
-	$('#btn_expand_img').click(function(){
+	$('#btn_expand_img').click(function(){ //id btn_expand_img 누르면
 		if($('#idCardImg').css("width") == '300px'){
 			$('#idCardImg').css('width','500px');
 		}else{
@@ -68,7 +68,7 @@ $(document).ready(function(){
 		}
 	});
 
-	$('#btn_expand_screen').click(function(){
+	$('#btn_expand_screen').click(function(){ //id btn_expand_screen 누르면
 		if($('canvas').css("width") == '240px'){
 			$('canvas').css('width','350px');
 		}else{
@@ -76,7 +76,7 @@ $(document).ready(function(){
 		}
 	});
 	
-	$(".btn_doubt").on("click", function(e) {
+	$(".btn_doubt").on("click", function(e) { // 의심거래 등록하기
 		if($(this).attr("class").indexOf("disable") == -1){
 			var top = 0;
 			var left = window.innerHeight/2;
@@ -95,7 +95,7 @@ $(document).ready(function(){
  */
 function bindingFunctionEvents(){
 	//이전버튼 클릭이벤트
-	$('#prevStepBtn').on({
+	$('#prevStepBtn').on({ // 이전 버튼 클릭시
 		click : function(){
 			if( this.className.indexOf('focus') > 0 ){return;}
 
@@ -104,7 +104,7 @@ function bindingFunctionEvents(){
 		}
 	});
 	//다음버튼 클릭이벤트
-	$('#nextStepBtn').on({
+	$('#nextStepBtn').on({// 다음 클릭시
 		click : function(){
 			if( this.className.indexOf('focus') > 0 ){return;}
 
@@ -113,7 +113,7 @@ function bindingFunctionEvents(){
 		}
 	});
 	//영상 가리기버튼
-	$('#videoBlindBtn').on({
+	$('#videoBlindBtn').on({ // id videoBlindBtn 누르면 ui 변경
 		click : function(){changeUI('blindVideo');}
 	});
 	//상담사 마이크 음소거 버튼
@@ -152,7 +152,7 @@ function capture(video, scaleFactor){
 	}
 	var w = video.videoWidth * scaleFactor;
 	var h = video.videoHeight * scaleFactor;
-	var canvas = document.createElement('canvas');
+	var canvas = document.createElement('canvas'); //dynamic rendering possible element
 	canvas.width = w/2;
 	canvas.height = h/2;
 	
@@ -201,7 +201,7 @@ function micOnOff(isMicOnOff){
 		//on -> off
 		// video 태그 볼륨 설정 최대
 		muteControl	= false;
-		document.getElementById("video_local").volume = 1.0;
+		document.getElementById("video_local").volume = 1.0;  // volume max
 		audioTrack.enabled = true;
 		audioTrack.muted = false;
 		$muteBtn.removeClass('focus');
@@ -213,7 +213,7 @@ function micOnOff(isMicOnOff){
 		document.getElementById("video_local").volume = 0.0;
 		audioTrack.enabled = false;
 		audioTrack.muted = true;
-		$muteBtn.addClass('focus');
+		$muteBtn.addClass('focus');// set mute
 	}
 }
 
@@ -222,7 +222,7 @@ function micOnOff(isMicOnOff){
  * @param isEndConsult 상담사의 '상담종료'로 의해 상담이 종료될 때 true
  *                    그외의 예외상황으로 상담화면에서 벗어날 때  false
  */
-function forceExitConsultRoom( exitType ){
+function forceExitConsultRoom( exitType ){ // ex -> localhost
 	var backUrl = 'https://'+window.location.hostname+':8200/consult.html';
 
 	//Video tag source삭제
@@ -315,14 +315,14 @@ function changeStep( direction ){
 	//consultInfoObject.currentStep type 확인
 	if( typeof consultInfoObject.currentStep !== 'number' ){return;}
 
-	//currentStep확인
+	//currentStep확인 boundary test
 	if( direction == "prev" && consultInfoObject.currentStep == consultInfoObject.firstStep ){return;}
 
-	//currentStep확인
+	//currentStep확인 boundary test
 	if( direction == "next" && consultInfoObject.currentStep == consultInfoObject.lastStep ){return;}
 
 	//consultInfoObject.currentStep 변경
-	if( direction == 'prev' ){
+	if( direction == 'prev' ){ // 1 to 6
 		consultInfoObject.currentStep--;
 	}
 	if( direction == 'next' ){
