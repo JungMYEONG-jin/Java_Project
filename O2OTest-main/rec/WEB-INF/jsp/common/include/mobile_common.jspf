@@ -1,0 +1,12 @@
+	<meta http-equiv="Expires" content="-1" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Cache-Control" content="No-Cache" />
+
+	<link rel="stylesheet" href="<c:url value="${mobile}/css/reset.css" />" />
+	<link rel="stylesheet" href="<c:url value="${mobile}/css/common.css" />" />
+	<script src="<c:url value="${mobile}/js/jquery-2.1.1.min.js" />"></script>
+	<script src="<c:url value="${mobile}/js/common.js" />"></script>
+	<script src="<c:url value="${mobile}/js/swiper.min.js" />"></script>
+	<script src="<c:url value="${mobile}/js/shinhansys_lib.js" />"></script>
+	<script src="<c:url value="/resources/common/js/common_include.js" />"></script>
+	
