@@ -10,6 +10,7 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -138,4 +139,18 @@ class MemberRepositoryTest {
     }
 
 
+    @Test
+    void findByNames() {
+        Member aa = new Member("AA", 10);
+        Member aa1 = new Member("ABA", 20);
+
+        memberRepository.save(aa);
+        memberRepository.save(aa1);
+
+        List<Member> byNames = memberRepository.findByNames(Arrays.asList("AA", "ABA"));
+        for (Member byName : byNames) {
+            System.out.println("byName = " + byName);
+
+        }
+    }
 }
