@@ -1,0 +1,9 @@
+	<meta http-equiv="Expires" content="-1" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Cache-Control" content="No-Cache" />
+
+	<link rel="stylesheet" href="<c:url value="${pc}/css/reset.css" />" />
+	<link rel="stylesheet" href="<c:url value="${pc}/css/common.css" />" />
+	<script src="<c:url value="${pc}/js/jquery-2.1.1.min.js" />"></script>
+	<script src="<c:url value="${pc}/js/common.js" />"></script>
+	<script src="<c:url value="/public/resources/common/js/common_include.js" />"></script>

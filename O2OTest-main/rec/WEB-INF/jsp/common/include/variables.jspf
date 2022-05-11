@@ -1,0 +1,3 @@
+<c:set var="mobile" value="/resources/mobile/common" />
+<c:set var="pc" value="/resources/pc/common" />
+ 
