@@ -153,4 +153,48 @@ class MemberRepositoryTest {
 
         }
     }
+
+    @Test
+    void findListByUsername() {
+        Member aa = new Member("AA", 10);
+        Member aa1 = new Member("ABA", 20);
+
+        memberRepository.save(aa);
+        memberRepository.save(aa1);
+
+        List<Member> byNames = memberRepository.findListByUsername("AA");
+        for (Member byName : byNames) {
+            System.out.println("byName = " + byName);
+
+        }
+
+        // 결과가 없을때 단건조회는 NULL
+        // collection은 빈 컬렉션 널이 아님!!
+    }
+
+    @Test
+    void findMemberByUsername() {
+        Member aa = new Member("AA", 10);
+        Member aa1 = new Member("ABA", 20);
+
+        memberRepository.save(aa);
+        memberRepository.save(aa1);
+
+        Member byNames = memberRepository.findMemberByUsername("AA");
+        System.out.println("byNames = " + byNames);
+    }
+
+    @Test
+    void findMemberByUsernameOptionalTest() {
+        Member aa = new Member("AA", 10);
+        Member aa1 = new Member("ABA", 20);
+
+        memberRepository.save(aa);
+        memberRepository.save(aa1);
+
+        Member byNames = memberRepository.findOptionalByUsername("AA").get();
+        System.out.println("byNames = " + byNames);
+    }
+
+
 }
