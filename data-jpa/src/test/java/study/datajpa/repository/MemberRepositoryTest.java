@@ -212,24 +212,19 @@ class MemberRepositoryTest {
         memberRepository.save(new Member("mem6", 10));
 
         // spring data jpa page 0부터 시작
+        // slice는 limit를 +1 해서 보냄
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
-        Page<Member> page = memberRepository.findByAge(10, pageRequest);
+        Slice<Member> page = memberRepository.findByAge(10, pageRequest);
 
 
         List<Member> content = page.getContent();
         Assertions.assertThat(content.size()).isEqualTo(3);
-        Assertions.assertThat(page.getTotalElements()).isEqualTo(6);
+//        Assertions.assertThat(page.getSize()).isEqualTo(6);
         Assertions.assertThat(page.getNumber()).isEqualTo(0); // first page
-        Assertions.assertThat(page.getTotalPages()).isEqualTo(2); // 0 1 2
+//        Assertions.assertThat(page.getTotalPages()).isEqualTo(2); // 0 1 2
         Assertions.assertThat(page.isFirst()).isTrue();
         Assertions.assertThat(page.isLast()).isFalse();
-
-        Assertions.assertThat(page.nextPageable().next().getPageNumber()).isEqualTo(2);
-
-        for (Member member : content) {
-            System.out.println("member = " + member);
-
-        }
+    }
 
 
 

@@ -48,7 +48,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // Named Qeury
     // page에 조건
-    Page<Member> findByAge(int age, Pageable pageable);
+    Slice<Member> findByAge(int age, Pageable pageable);
 
 
 
