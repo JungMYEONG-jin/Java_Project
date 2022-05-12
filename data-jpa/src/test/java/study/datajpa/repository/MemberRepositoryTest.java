@@ -4,6 +4,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
@@ -197,4 +200,28 @@ class MemberRepositoryTest {
     }
 
 
+    @Test
+    void findByAge() {
+
+        memberRepository.save(new Member("mem1", 10));
+        memberRepository.save(new Member("mem2", 10));
+        memberRepository.save(new Member("mem3", 10));
+        memberRepository.save(new Member("mem4", 10));
+        memberRepository.save(new Member("mem5", 10));
+        memberRepository.save(new Member("mem6", 10));
+
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+        Page<Member> page = memberRepository.findByAge(10, pageRequest);
+
+
+        List<Member> content = page.getContent();
+        Assertions.assertThat(content.size()).isEqualTo(3);
+        Assertions.assertThat(page.getTotalElements()).isEqualTo(6);
+        Assertions.assertThat(page.getNumber()).isEqualTo(0); // first page
+        Assertions.assertThat(page.getTotalPages()).isEqualTo(2); // 0 1 2
+        Assertions.assertThat(page.isFirst()).isTrue();
+        Assertions.assertThat(page.isLast()).isFalse();
+
+
+    }
 }
