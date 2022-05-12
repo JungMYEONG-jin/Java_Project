@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -201,7 +202,7 @@ class MemberRepositoryTest {
 
 
     @Test
-    void findByAge() {
+    void findByAgeTest() {
 
         memberRepository.save(new Member("mem1", 10));
         memberRepository.save(new Member("mem2", 10));
@@ -210,6 +211,7 @@ class MemberRepositoryTest {
         memberRepository.save(new Member("mem5", 10));
         memberRepository.save(new Member("mem6", 10));
 
+        // spring data jpa page 0부터 시작
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
         Page<Member> page = memberRepository.findByAge(10, pageRequest);
 
@@ -222,6 +224,13 @@ class MemberRepositoryTest {
         Assertions.assertThat(page.isFirst()).isTrue();
         Assertions.assertThat(page.isLast()).isFalse();
 
+        Assertions.assertThat(page.nextPageable().next().getPageNumber()).isEqualTo(2);
 
-    }
+        for (Member member : content) {
+            System.out.println("member = " + member);
+
+        }
+
+
+
 }

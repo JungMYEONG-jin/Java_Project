@@ -46,7 +46,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     List<Member> findByUsername(String username, Sort sort);
 
+    // Named Qeury
+    // page에 조건
     Page<Member> findByAge(int age, Pageable pageable);
+
+
+
 
 
 }
