@@ -8,6 +8,7 @@ import com.shinhan.security.simpleauth.tlv.SAErrsEnum;
 import com.shinhan.security.simpleauth.util.SAHashUtil;
 import com.shinhan.security.simpleauth.util.SAHexUtil;
 import com.shinhan.security.simpleauth.util.SAUtil;
+import com.shinhan.util.DSRandomUtil;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -147,15 +148,16 @@ public class SACryptoUtil {
         byte[] tmp = new byte[64];
         byte[] salt = new byte[64];
         byte[] digest = new byte[64];
-        SecureRandom secureRandom = null;
+//        SecureRandom secureRandom = null;
         MessageDigest messageDigest = null;
-        secureRandom = new SecureRandom();
+//        secureRandom = new SecureRandom();
         try {
             messageDigest = MessageDigest.getInstance("sha-512");
         } catch (NoSuchAlgorithmException e) {
             throw new SASimpleAuthCryptoException(SAErrsEnum.ERR_NO_SUCH_ALGORITHM, SAErrorMessage.ERR_MSG_NO_SUCH_ALGORITHM, SAErrorMessage.ERR_CODE_NO_SUCH_ALGORITHM);
         }
-        messageDigest.update(secureRandom.generateSeed(64));
+//        messageDigest.update(secureRandom.generateSeed(64));
+        messageDigest.update(new DSRandomUtil().generateSeed(64));
         salt = messageDigest.digest();
         digest = messageDigest.digest(salt);
         for (int i = 0; i < 1023; i++) {
@@ -190,7 +192,8 @@ public class SACryptoUtil {
         String hexKey = null;
         try {
             gen = KeyGenerator.getInstance("AES");
-            secureRandom = SecureRandom.getInstance("SHA1PRNG");
+//            secureRandom = SecureRandom.getInstance("SHA1PRNG");
+            secureRandom = new DSRandomUtil().getmSecureRandom();
         } catch (NoSuchAlgorithmException e) {
             throw new SASimpleAuthCryptoException(SAErrsEnum.ERR_NO_SUCH_ALGORITHM, SAErrorMessage.ERR_MSG_NO_SUCH_ALGORITHM, SAErrorMessage.ERR_CODE_NO_SUCH_ALGORITHM);
         }

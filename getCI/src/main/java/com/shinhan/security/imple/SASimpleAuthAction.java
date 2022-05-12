@@ -93,6 +93,8 @@ public class SASimpleAuthAction {
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_RD_NULL, SAErrorMessage.ERR_CODE_RD_NULL);
             if (SAValidateUtils.isEmpty(objRegClientMessage.signdata))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_SIGNDATA_NULL, SAErrorMessage.ERR_CODE_SIGNDATA_NULL);
+
+
             String rd = objRegClientMessage.rd;
             SALogUtil.fine("rd :: " + rd);
             String strSessionChallenge = challenge;
@@ -130,7 +132,27 @@ public class SASimpleAuthAction {
             PublicKey publicKey = SACryptoUtil.byteToPublicKey(SAHexUtil.hexStrToByteArr(sign_plain_text_msg.pubkey));
             String deSigndata = SACryptoUtil.rsaDecrypt(objRegClientMessage.signdata, publicKey);
             SALogUtil.fine("deSigndata :: " + deSigndata);
-            System.out.println("deSigndata = " + deSigndata);
+
+            // password
+
+            HashMap<String, String> passwordInfo = SAMessageUtil.getPasswordInfo(decryptedRd);
+            boolean isNewer = false;
+            if(passwordInfo.get("isContain").equals("true"))
+                isNewer = true;
+
+            if(isNewer)
+            {
+                String clientPasswd = passwordInfo.get("clientPasswd");
+                if(SAValidateUtils.isEmpty(clientPasswd))
+                    throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
+
+                String password = SACryptoUtil.rsaDecrypt(clientPasswd, publicKey);
+
+                boolean isValidPassword = this.listener.CheckPasswordValidation(password, session);
+                if(!isValidPassword)
+                    throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_INVALID, SAErrorMessage.ERR_CODE_PASSWORD_INVALID);
+            }
+
 
             if (SAValidateUtils.isEmpty(deSigndata))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_DESIGNDATA_NULL, SAErrorMessage.ERR_CODE_DESIGNDATA_NULL);
@@ -212,6 +234,12 @@ public class SASimpleAuthAction {
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_ID_NULL, SAErrorMessage.ERR_CODE_ID_NULL);
             if (SAValidateUtils.isEmpty(objAuthInitClientMessage.appid))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_APPID_NULL, SAErrorMessage.ERR_CODE_APPID_NULL);
+            // type add
+            if(SAValidateUtils.isEmpty(objAuthInitClientMessage.type))
+                throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_TYPE_NULL, SAErrorMessage.ERR_CODE_TYPE_NULL);
+
+
+
             String strId = objAuthInitClientMessage.id;
             String strAppId = objAuthInitClientMessage.appid;
             HashMap<String, String> map = new HashMap<String, String>();
@@ -228,6 +256,8 @@ public class SASimpleAuthAction {
             String pubkey_db = reqMap.get(SAProperty.COL_NM_PUBKEY);
             String uuid_db = reqMap.get(SAProperty.COL_NM_UUID);
             String appid_db = reqMap.get(SAProperty.COL_NM_APPID);
+            // type add
+            String type_db = reqMap.get(SAProperty.COL_NM_TYPE);
 
             if (SAValidateUtils.isEmpty(id_db))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_SERVER_ID_NULL, SAErrorMessage.ERR_CODE_SERVER_ID_NULL);
@@ -237,6 +267,10 @@ public class SASimpleAuthAction {
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_SERVER_UUID_NULL, SAErrorMessage.ERR_CODE_SERVER_UUID_NULL);
             if (SAValidateUtils.isEmpty(appid_db))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_SERVER_APPID_NULL, SAErrorMessage.ERR_CODE_SERVER_APPID_NULL);
+            // type add
+            if(SAValidateUtils.isEmpty(type_db))
+                throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_SERVER_TYPE_NULL, SAErrorMessage.ERR_CODE_SERVER_TYPE_NULL);
+
             if (!strId.toUpperCase().equals(id_db.toUpperCase()) &&
                     !strId.equals(id_db))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_ID_NOT_MATCH, SAErrorMessage.ERR_CODE_ID_NOT_MATCH);
@@ -246,11 +280,29 @@ public class SASimpleAuthAction {
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_UUID_NOT_MATCH, SAErrorMessage.ERR_CODE_UUID_NOT_MATCH);
             if (!strAppId.equals(appid_db))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_APPID_NOT_MATCH, SAErrorMessage.ERR_CODE_APPID_NOT_MATCH);
+
+            // password
+            HashMap<String, String> passwordInfo = SAMessageUtil.getPasswordInfo(reqJson);
+            boolean isNewer = false;
+            if(passwordInfo.get("isContain").equals("true"))
+                isNewer = true;
+
+            if(isNewer)
+            {
+                String clientPasswd = passwordInfo.get("clientPasswd");
+                String sha256uuid = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(uuid_db));
+                String serverPasswd = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(id_db+sha256uuid+type_db));
+                if(!clientPasswd.toUpperCase().equals(serverPasswd.toUpperCase()) && !clientPasswd.equals(serverPasswd))
+                    throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NOT_MATCH, SAErrorMessage.ERR_CODE_PASSWORD_NOT_MATCH);
+            }
+
+
             String strChallenge = SACryptoUtil.getChallengeValue512();
             SAAuthInitServerMessage objAuthInitServerMessage = new SAAuthInitServerMessage();
             objAuthInitServerMessage.tag = SAHexUtil.tagToHex(SATagsEnum.TAG_INIT_AUTH);
             objAuthInitServerMessage.challenge = SACryptoUtil.rsaEncrypt(strChallenge, publicKey);
-            long currentTime = 1630642197023L;
+//            long currentTime = 1630642197023L;
+            long currentTime = System.currentTimeMillis() / 1000L;
             String strTime = String.valueOf(currentTime);
             objAuthInitServerMessage.time = SACryptoUtil.rsaEncrypt(strTime, publicKey);
             objAuthInitServerMessage.erroryn = "n";

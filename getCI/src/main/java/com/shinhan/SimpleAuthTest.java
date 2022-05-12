@@ -21,7 +21,8 @@ import org.json.simple.parser.ParseException;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 
-public class SimpleAuthTest implements SAListener {
+public class SimpleAuthTest implements SAListener
+{
 
     private final static String service_name = "SA";
     private final static String ses_nm_challenge = "sa_challenge";
@@ -376,5 +377,10 @@ public class SimpleAuthTest implements SAListener {
         }
         return result;
 
+    }
+
+    @Override
+    public boolean CheckPasswordValidation(String password, HttpSession paramHttpSession) {
+        return false;
     }
 }

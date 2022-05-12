@@ -262,4 +262,20 @@ public class SAErrorMessage {
     public static String ERR_MSG_JDBC_EXCEPTION_UNREG_S = "Exception";
 
     public static String ERR_CODE_JDBC_EXCEPTION_UNREG_S = "B2850";
+
+    public static String ERR_MSG_PASSWORD_NULL = "client password is null";
+
+    public static String ERR_CODE_PASSWORD_NULL = "P0001";
+
+    public static String ERR_MSG_PASSWORD_INVALID = "password is invalid. you must follow the password rule";
+
+    public static String ERR_CODE_PASSWORD_INVALID = "P0002";
+
+    public static String ERR_MSG_SERVER_TYPE_NULL = "server type value is null";
+
+    public static String ERR_CODE_SERVER_TYPE_NULL = "B2552";
+
+    public static String ERR_MSG_PASSWORD_NOT_MATCH = "server password is not equal to client password";
+
+    public static String ERR_CODE_PASSWORD_NOT_MATCH = "B2553";
 }

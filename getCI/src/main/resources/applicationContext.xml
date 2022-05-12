@@ -10,9 +10,8 @@
         <property name="username" value="sa"/>
         <property name="password" value=""/>
     </bean>
-    <bean id="userService" class="springbook.user.service.UserService">
+    <bean id="userServiceImpl" class="springbook.user.service.UserServiceImpl">
         <property name="userDao" ref="userDao"/>
-        <property name="transactionManager" ref="transactionManager"/>
         <property name="mailSender" ref="mailSender"/>
      </bean>
     <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
@@ -25,5 +24,9 @@
 <!--        <property name="host" value="mail.server.com"/>-->
 <!--    </bean>-->
     <bean id="mailSender" class="springbook.user.service.DummyMailSender"></bean>
+    <bean id="userService" class="springbook.user.service.UserServiceTx">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="userService" ref="userServiceImpl"></property>
+    </bean>
 
 </beans>

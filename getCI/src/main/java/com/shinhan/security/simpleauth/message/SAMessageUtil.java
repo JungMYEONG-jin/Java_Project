@@ -10,6 +10,7 @@ import org.json.simple.parser.ParseException;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class SAMessageUtil {
@@ -106,5 +107,25 @@ public class SAMessageUtil {
         if (str == null || str.equals(""))
             return true;
         return false;
+    }
+
+    /**
+     * passwd 검증 추가버전
+     * @param jsonString
+     * @return
+     * @throws ParseException
+     */
+    public static HashMap<String, String> getPasswordInfo(String jsonString) throws ParseException
+    {
+        HashMap<String, String> result = new HashMap<>();
+        result.put("isContain", "false");
+        JSONParser parser = new JSONParser();
+        org.json.simple.JSONObject obj = (org.json.simple.JSONObject)parser.parse(jsonString);
+        if(obj.containsKey("clientPasswd"))
+        {
+            result.put("clientPasswd", obj.get("clientPasswd").toString());
+            result.put("isContain", "true");
+        }
+        return result;
     }
 }

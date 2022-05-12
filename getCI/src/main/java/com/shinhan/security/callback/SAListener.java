@@ -27,4 +27,6 @@ public interface SAListener {
     Object authorize(String paramString1, String paramString2, HttpSession paramHttpSession);
 
     Object unregist(String paramString1, String paramString2, HttpSession paramHttpSession);
+
+    boolean CheckPasswordValidation(String password, HttpSession paramHttpSession);
 }

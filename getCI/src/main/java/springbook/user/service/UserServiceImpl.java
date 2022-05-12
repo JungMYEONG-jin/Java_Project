@@ -1,0 +1,81 @@
+package springbook.user.service;
+
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import springbook.user.dao.UserDao;
+import springbook.user.domain.Level;
+import springbook.user.domain.User;
+
+import java.util.List;
+
+public class UserServiceImpl implements UserService{
+
+    UserDao userDao;
+    private MailSender mailSender;
+
+    public void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
+    public static final int MIN_RECCOMEND_FOR_GOLD = 30;
+
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+
+    @Override
+    public void upgradeLevels()
+    {
+        List<User> all = userDao.getAll();
+        for (User user : all) {
+            if (canUpgradeLevel(user))
+                upgradeLevel(user);
+        }
+    }
+
+
+    private void sendUpgradeEMail(User user)
+    {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getMail());
+        mailMessage.setFrom("j67310@gmail.com");
+        mailMessage.setSubject("Upgrade Level Information");
+        mailMessage.setText("Your Gradle is "+user.getLevel().name());
+        System.out.println(mailMessage.getText().toString());
+
+        this.mailSender.send(mailMessage);
+    }
+
+
+
+    protected void upgradeLevel(User user) {
+        user.upgradeLevel(); // user에서 하도록 처리
+//        policy.upgradeLevel(user); // 정책에서 처리
+        userDao.update(user);
+        sendUpgradeEMail(user);
+    }
+
+    private boolean canUpgradeLevel(User user) {
+        Level level = user.getLevel();
+        switch (level)
+        {
+            case BASIC: return user.getLogin()>=MIN_LOGCOUNT_FOR_SILVER;
+            case SILVER: return user.getRecommend()>=MIN_RECCOMEND_FOR_GOLD;
+            case GOLD: return false;
+            default: throw new IllegalArgumentException("Unknown Level : "+level);
+        }
+    }
+
+    @Override
+    public void add(User user) {
+        if(user.getLevel()==null)
+            user.setLevel(Level.BASIC);
+        userDao.add(user);
+    }
+}

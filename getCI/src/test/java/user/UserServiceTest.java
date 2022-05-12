@@ -1,28 +1,22 @@
 package user;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.dao.DataAccessException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
-import springbook.user.service.NormalPolicy;
-import springbook.user.service.UserService;
+import springbook.user.service.UserServiceImpl;
+import springbook.user.service.UserServiceTx;
 
 import javax.sql.DataSource;
-
-import static springbook.user.service.UserService.*;
 
 
 import java.util.ArrayList;
@@ -36,7 +30,7 @@ import static org.assertj.core.api.Assertions.*;
 public class UserServiceTest {
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userServiceImpl;
 
     @Autowired
     UserDao userDao;
@@ -72,7 +66,7 @@ public class UserServiceTest {
     @Test
     void beanTest()
     {
-        assertThat(this.userService).isNotNull();
+        assertThat(this.userServiceImpl).isNotNull();
     }
 
     @Test
@@ -82,7 +76,7 @@ public class UserServiceTest {
         for(User user : users)
             userDao.add(user);
 
-        userService.uprgradeLevels();
+        userServiceImpl.upgradeLevels();
 
         users = userDao.getAll();
 
@@ -107,8 +101,8 @@ public class UserServiceTest {
         User withOutLevel = users.get(0);
         withOutLevel.setLevel(null);
 
-        userService.add(withLevelUser);
-        userService.add(withOutLevel);
+        userServiceImpl.add(withLevelUser);
+        userServiceImpl.add(withOutLevel);
 
         User levelUser = userDao.get(withLevelUser.getId());
         User withoutLevelUser = userDao.get(withOutLevel.getId());
@@ -154,7 +148,7 @@ public class UserServiceTest {
             userDao.add(user);
         }
 
-        userService.uprgradeLevels();
+        userServiceImpl.upgradeLevels();
 
         checkLevelUpgrade(users.get(0), false);
         checkLevelUpgrade(users.get(1), true);
@@ -180,7 +174,7 @@ public class UserServiceTest {
     }
 
     // test 대역
-    static class TestUserService extends UserService
+    static class TestUserService extends UserServiceImpl
     {
         private String id;
 
@@ -232,9 +226,9 @@ public class UserServiceTest {
         }
 
         MockMailSender mockMailSender = new MockMailSender();
-        userService.setMailSender(mockMailSender);
+        userServiceImpl.setMailSender(mockMailSender);
 
-        userService.uprgradeLevels();
+        userServiceImpl.upgradeLevels();
 
         checkLevelUpgrade(users.get(0), false);
         checkLevelUpgrade(users.get(1), true);
@@ -255,8 +249,12 @@ public class UserServiceTest {
     void upgradeAllOrNothing() throws Exception {
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
-        testUserService.setTransactionManager(this.transactionManager);
         testUserService.setMailSender(this.mailSender);
+
+        UserServiceTx userServiceTx = new UserServiceTx();
+        userServiceTx.setTransactionManager(transactionManager);
+        userServiceTx.setUserService(testUserService);
+
 
         userDao.deleteAll();
         for (User user : users) {
@@ -264,7 +262,7 @@ public class UserServiceTest {
         }
 
         try{
-            testUserService.uprgradeLevels();
+            userServiceTx.upgradeLevels();
             fail("TestUserServiceException expected");
         }catch (TestUserServiceException e) {
 
