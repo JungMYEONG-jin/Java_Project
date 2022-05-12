@@ -213,15 +213,27 @@ class MemberRepositoryTest {
 
         // spring data jpa page 0부터 시작
         // slice는 limit를 +1 해서 보냄
+        // total count는 모든 데이터 읽기 때문에 느림
+        // 가급적 사용 자제
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
-        Slice<Member> page = memberRepository.findByAge(10, pageRequest);
+
+        // enetity는 외부로 보내면 큰일남
+        // dto로 보내자
+        Page<Member> page = memberRepository.findByAge(10, pageRequest);
+
+        Page<MemberDto> result = page.map(m -> new MemberDto(m.getId(), m.getUsername(),null));
+
+        List<MemberDto> memberDtos = result.getContent();
+        for (MemberDto memberDto : memberDtos) {
+            System.out.println("memberDto = " + memberDto);
+        }
 
 
         List<Member> content = page.getContent();
         Assertions.assertThat(content.size()).isEqualTo(3);
-//        Assertions.assertThat(page.getSize()).isEqualTo(6);
+        Assertions.assertThat(page.getTotalElements()).isEqualTo(6);
         Assertions.assertThat(page.getNumber()).isEqualTo(0); // first page
-//        Assertions.assertThat(page.getTotalPages()).isEqualTo(2); // 0 1 2
+        Assertions.assertThat(page.getTotalPages()).isEqualTo(2); // 0 1 2
         Assertions.assertThat(page.isFirst()).isTrue();
         Assertions.assertThat(page.isLast()).isFalse();
     }
