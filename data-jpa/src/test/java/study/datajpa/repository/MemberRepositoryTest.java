@@ -14,6 +14,8 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +33,8 @@ class MemberRepositoryTest {
     @Autowired
     TeamRepository teamRepository;
 
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     void testMember()
@@ -238,6 +242,26 @@ class MemberRepositoryTest {
         Assertions.assertThat(page.isLast()).isFalse();
     }
 
+
+    @Test
+    void bulkAgePlus() {
+        memberRepository.save(new Member("mem1", 10));
+        memberRepository.save(new Member("mem2", 20));
+        memberRepository.save(new Member("mem3", 19));
+        memberRepository.save(new Member("mem4", 21));
+        memberRepository.save(new Member("mem5", 40));
+
+        int resultCnt = memberRepository.bulkAgePlus(20);
+//        em.flush();
+//        em.clear();
+
+        List<Member> result = memberRepository.findByUsername("mem5");
+        Member member = result.get(0);
+        System.out.println("member = " + member); // 따라서 영속성 제거 하지 않으면 40살로 나옴. 영속성 제거 필수!
+
+
+        Assertions.assertThat(resultCnt).isEqualTo(3);
+    }
 
 
 }
