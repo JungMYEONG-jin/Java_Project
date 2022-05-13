@@ -1,7 +1,9 @@
 package com.shinhan;
 
+import com.shinhan.security.callback.SAPasswordListener;
 import com.shinhan.security.imple.SAProperty;
 import com.shinhan.security.imple.SASimpleAuthAction;
+import com.shinhan.security.imple.SASimpleAuthTask;
 import com.shinhan.security.simpleauth.SAConst;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthException;
 import com.shinhan.security.simpleauth.message.SAMessageUtil;
@@ -109,6 +111,35 @@ class SimpleAuthTestTest {
         String client = "{\"tag\":\"3E12\",\"id\":\"11C948F98C8D41F42DBB89A25B4B99F43330CAE7CA68CEC621505F0B88F3057F\",\"appid\":\"TEST_ALIAS\",\"type\":\"3\"}";
         String unregist = new SimpleAuthTest().unregist("3E21", client, session);
         System.out.println("unregist = " + unregist);
+    }
+
+    @Test
+    void setListener()
+    {
+        SASimpleAuthTask.setCheckListener(new SAPasswordListener() {
+            @Override
+            public boolean CheckPasswordValidation(String password) {
+                return false;
+            }
+        });
+    }
+    // processinit 할때 한번만 set 선언해주면 될듯
+
+
+
+
+    @Test
+    void listenerTest()
+    {
+        SASimpleAuthTask.isListenerNULL();
+    }
+
+    @Test
+    void
+
+    listenerTest2()
+    {
+        SASimpleAuthTask.isListenerNULL();
     }
 
 
