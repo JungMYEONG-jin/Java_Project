@@ -55,9 +55,9 @@ public class SAErrorMessage {
 
     public static String ERR_CODE_TIME_NULL = "B2512";
 
-    public static String ERR_MSG_TYPE_INVAILD = "client type is invalid";
+    public static String ERR_MSG_TYPE_INVALID = "client type is invalid";
 
-    public static String ERR_CODE_TYPE_INVAILD = "B2513";
+    public static String ERR_CODE_TYPE_INVALID = "B2513";
 
     public static String ERR_MSG_SIGN_VARIFICATION = "";
 
@@ -270,10 +270,6 @@ public class SAErrorMessage {
     public static String ERR_MSG_PASSWORD_INVALID = "password is invalid. you must follow the password rule";
 
     public static String ERR_CODE_PASSWORD_INVALID = "P0002";
-
-    public static String ERR_MSG_SERVER_TYPE_NULL = "server type value is null";
-
-    public static String ERR_CODE_SERVER_TYPE_NULL = "B2552";
 
     public static String ERR_MSG_PASSWORD_NOT_MATCH = "server password is not equal to client password";
 
