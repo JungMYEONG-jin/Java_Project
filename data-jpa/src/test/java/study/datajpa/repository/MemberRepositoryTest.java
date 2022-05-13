@@ -365,4 +365,10 @@ class MemberRepositoryTest {
 
         em.flush();
     }
+
+    @Test
+    void callCustom()
+    {
+        List<Member> memberCustom = memberRepository.findMemberCustom();
+    }
 }

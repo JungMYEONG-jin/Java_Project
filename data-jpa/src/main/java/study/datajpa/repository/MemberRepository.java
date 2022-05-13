@@ -14,7 +14,9 @@ import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+// interface 상속받고 메소드는 사실 저걸 구현한 impl거를 실행ㅎ라는거
+
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom {
 
     List<Member> findByUsername(String username);
 
