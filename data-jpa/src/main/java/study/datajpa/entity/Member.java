@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of={"id", "username", "age"})// 가급적 연관관계 필드는 넣지 말자 무한루프 걸릴 수 있음
-public class Member {
+public class Member extends BaseEntity{
 
     @Id
     @GeneratedValue

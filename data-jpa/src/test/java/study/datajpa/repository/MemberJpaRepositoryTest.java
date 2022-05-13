@@ -123,4 +123,5 @@ class MemberJpaRepositoryTest {
         int resultCnt = memberJpaRepository.bulkAgePlus(20);
         Assertions.assertThat(resultCnt).isEqualTo(3);
     }
+
 }
