@@ -1,21 +1,16 @@
 package com.shinhan;
 
-import com.shinhan.security.callback.SAPasswordListener;
+import com.shinhan.security.callback.PasswordListener;
 import com.shinhan.security.imple.SAProperty;
-import com.shinhan.security.imple.SASimpleAuthAction;
 import com.shinhan.security.imple.SASimpleAuthTask;
 import com.shinhan.security.simpleauth.SAConst;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthException;
-import com.shinhan.security.simpleauth.message.SAMessageUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 
 import javax.servlet.http.HttpSession;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = Runnable.class)
 class SimpleAuthTestTest {
@@ -65,7 +60,7 @@ class SimpleAuthTestTest {
 
 //        HttpSession session = new MockHttpSession();
 //        session.setAttribute(SAConst.TAG_CUSNO, CUSNO);
-        String serverResult = new SimpleAuthTest().registInit("3E01", reqJson, session);
+        String serverResult = new SimpleAuthTask().registInit("3E01", reqJson, session);
     }
 
     @Test
@@ -77,7 +72,7 @@ class SimpleAuthTestTest {
 //        HttpSession session = new MockHttpSession();
 //        session.setAttribute(SAConst.TAG_CUSNO, CUSNO);
 //        session.setAttribute("sa_challenge", strChallenge);
-        String serverResult = new SimpleAuthTest().regist("3E02", result, session);
+        String serverResult = new SimpleAuthTask().regist("3E02", result, session);
         System.out.println("serverResult = " + serverResult);
     }
 
@@ -89,7 +84,7 @@ class SimpleAuthTestTest {
         // ID값 reg에서 나온값으로 변경해줘야함!
         String client = "{\"appversion\":\"1.0\",\"model\":\"Samsung_SM-N976N\",\"ostype\":\"A\",\"osversion\":\"11\",\"saversion\":\"1.0.4\",\"type\":\"3\",\"appid\":\"TEST_ALIAS\",\"id\":\"11C948F98C8D41F42DBB89A25B4B99F43330CAE7CA68CEC621505F0B88F3057F\",\"tag\":\"3E11\",\"uuid\":\"6D8809FDD43FBDCAE4104D24C9D14FD320AFFAFEF20056D2EDCF69F4D6DF0BF52FED3A6DDAE96ECF8BB2ADA3005BA2072D94DC0478990974B7E0356FE7E3E8C1383A702204A995255CCB74C2593E8C390484B1A4FA24EA69E7EDC147A4773B2A74292485AE5C9627E840E0B96B9837F0D67B0C8B1E0F9B25C8C357604A38599C870AD6AAE7808790A94A0DAC1E4290B71D5D3EC4335AA1A1C101B7E8AB2CE018AC99403D7C65F22D4A1879859069EA0F6B8FB0390B13C1680A7D1C620556B0B49C6F1081A8831145B9FFE5977674D5E681A850850845646551295394E3B75440E6D3CB5F04567FE5D81A194F397526953102EB4DE0A8DE902FA494F0742891ED\"}";
 
-        String serverResult = new SimpleAuthTest().authorizeInit("3E11", client, session);
+        String serverResult = new SimpleAuthTask().authorizeInit("3E11", client, session);
         System.out.println("serverResult = " + serverResult);
 
         String server_result = "{\"erroryn\":\"n\",\"appid\":\"TEST_ALIAS\",\"cusno\":\"0987654321\",\"tag\":\"3E02\",\"id\":\"11C948F98C8D41F42DBB89A25B4B99F43330CAE7CA68CEC621505F0B88F3057F\",\"type\":\"2\",\"uuid\":\"uuid\",\"status\":\"1\"}";
@@ -100,7 +95,7 @@ class SimpleAuthTestTest {
     {
        // String serverResult = "{\"erroryn\":\"n\",\"challenge\":\"3B2A2FBAE336D1ABC96AFBD2FFB03E3A5975F79910BE1BAD8341FEC830CB3BA0749289D019EAD918D22AAA9087B0A2BE0ABEFAEFC8478CA63ED7E2BEA78A3B07EC48A776F1461332E0522BB1CFA1F17B406850742F8B6A1E46C3AE6BCEB2A3A10C1426C8A14F8D4E44E45A17F1A24D72BCA68720E20FF38FB3DCA024E5E987A61D1777F9E29E9F16C2C9D118677407FF8570F77753E060800ED96E58F9D3FE4C2EA782FE801932C38EABF5469F4CB70FEA94D775C609668C927781A6ACA60E097344DFC07801347F23066D7411D9525276ACE2FE8173D74A47A5F91BF1865D240C2F046809560E88E2B097070AD3F317B61A0CE9D025DB8F865EF152CE19AB7F\",\"tag\":\"3E11\",\"time\":\"25F64F5A767037B388BD6EF9A2474E32DD1835B3066FDB8998A15D4EE60DDAF132A2C63652CCD209EA137E82752E51B67BFEADFB7730FE1B379F9A9D71BDB298EA4E8AB2782DD906C1E00E09DDE334250CA20B5029D89DBEC5A13AED51C5FFD53ED79D2DB940B4C01E39FCB0CD11F0048F96F9B8C1A9C2F3508A3C183B3FEA6404C5C8FFCA3037C95E725725EC89A1F5116F06942942E3D1F6C3F55C6CD23857F2C982543FB7AD69EFE99BCDCD1D96B0D938D39FFDD233284342571A0DFEB6D0D223C91330D1D8C8043DA7EBFA85EC2DA31E07514BEFE51E4C7D6ED79D55355C47821230C18822B07F97211CB9F1AE2B9CC9E9CEB2A76AAE073FCA7974E1744C\"}\n";
         String client = "{\"tag\":\"3E12\",\"signdata\":\"041F6CFE9E482968CE2C706E9AAFA0C58A70BED92C6886DFB60DD2FB2F61A392FC7B47641D017FB80CB6D92D89CC352AB4A8BD77AAC474993374E15F5E16A9A829AA41690CF7CD9D30490CA8B3D4FB61C97AE327AA5794F3AC3848AC7A71A7BFB16467DC8A51E1574260D5A8B88B31D995C660560742A3CF1970B51A8A539D92ACAB5DAEF10929661C1FEDBBB44E3CDFEB4E0D9F0324A86CC72F81C946C183521D6BEF9F16AD135E8262193B44EC1713F5FAAB96D2CD2B41FA98F94A1CDF5E8118EAF645B9DEA8EB4A55BDE0019F52F385B1CCA0B1BBD996765ECCA5DD939684D29A7C7578664F5CD6A404005A45AE71D381169DBE736E922C1C78703F86CD68\",\"ad\":\"AF065436E9FF050CEA3E7A595605B0260BC68AF6AF83D577DB97D005A50A74A6EC836DC5967DA4F6F57CD3248E0368688AEFF656793BF4F6A95281EDD91639C4110BFC9A90695564E3E50A8A1F378E7CFA91C200FFE4766A29ECB795DA1854D8D571C317B6854E36A958A15598EE7D4534C961922D84CF71CB673289F89DBBED1206CB4E93EC8DB164C0EC24BE96BBA3EC07C9A44C02BA30DAF29B6063BAD5C1B2466C8E9209B4A10497D2D4F34A2F3E3A7988B823F0D3FE6A39ED8FF67DB05591073D18C13A72B8B5B1DF5971F968B68BECF74EFFD43C4FA9E0B33EA2E6E627AF4A5BC67FEBB9A532539337A77E211815C6A3C2EC577807C8D59D181A6ABBECFE00E471AE53960DC904F0FB453FA03AA589CF1C5DBAA62E74708F123EF23A1B\"}";
-        String serverAuthResult = new SimpleAuthTest().authorize("3E12", client, session);
+        String serverAuthResult = new SimpleAuthTask().authorize("3E12", client, session);
         System.out.println("serverAuthResult = " + serverAuthResult);
 
     }
@@ -109,14 +104,14 @@ class SimpleAuthTestTest {
     void unreg_test()
     {
         String client = "{\"tag\":\"3E12\",\"id\":\"11C948F98C8D41F42DBB89A25B4B99F43330CAE7CA68CEC621505F0B88F3057F\",\"appid\":\"TEST_ALIAS\",\"type\":\"3\"}";
-        String unregist = new SimpleAuthTest().unregist("3E21", client, session);
+        String unregist = new SimpleAuthTask().unregist("3E21", client, session);
         System.out.println("unregist = " + unregist);
     }
 
     @Test
     void setListener()
     {
-        SASimpleAuthTask.setCheckListener(new SAPasswordListener() {
+        SASimpleAuthTask.setCheckListener(new PasswordListener() {
             @Override
             public boolean CheckPasswordValidation(String password, String authType) {
                 return false;

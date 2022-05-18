@@ -1,10 +1,8 @@
 package com.shinhan;
 
 import com.shinhan.security.callback.SAListener;
-import com.shinhan.security.callback.SAPasswordListener;
 import com.shinhan.security.imple.SAProperty;
 import com.shinhan.security.imple.SASimpleAuthAction;
-import com.shinhan.security.imple.SASimpleAuthTask;
 import com.shinhan.security.simpleauth.SAConst;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthMessageException;
@@ -23,7 +21,7 @@ import org.json.simple.parser.ParseException;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 
-public class SimpleAuthTest implements SAListener
+public class SimpleAuthTask implements SAListener
 {
 
     private final static String service_name = "SA";
@@ -379,11 +377,13 @@ public class SimpleAuthTest implements SAListener
         }
         return result;
 
+
     }
 
     @Override
-    public boolean CheckPasswordValidation(String password, String authType,HttpSession paramHttpSession) {
-
+    public boolean CheckPasswordValidation(String password, String authType, HttpSession paramHttpSession) {
         return false;
     }
+
+
 }

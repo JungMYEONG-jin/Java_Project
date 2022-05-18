@@ -32,9 +32,9 @@ import java.util.HashMap;
 public class SASimpleAuthTask {
     private static String _SASimpleAuthTask_ = "_SASimpleAuthTask_ :: ";
 
-    private static SAPasswordListener saPasswordListener = null;
+    private static PasswordListener saPasswordListener = null;
 
-    public static void setCheckListener(SAPasswordListener saPasswordListener) {
+    public static void setPasswordListener(PasswordListener saPasswordListener) {
         SASimpleAuthTask.saPasswordListener = saPasswordListener;
     }
 
