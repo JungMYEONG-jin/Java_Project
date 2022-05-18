@@ -29,4 +29,21 @@
         <property name="userService" ref="userServiceImpl"></property>
     </bean>
 
+<!--    target-->
+    <bean id="userServiceImpl2" class="springbook.user.service.UserServiceImpl">
+        <property name="userDao" ref="userDao"/>
+        <property name="mailSender" ref="mailSender"/>
+    </bean>
+
+    <bean id="message" class="springbook.bean.MessageFactoryBean">
+        <property name="text" value="Factory Bean"/>
+    </bean>
+
+    <bean id="userService" class="springbook.user.service.TxProxyFactoryBean">
+        <property name="target" ref="userServiceImpl"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="pattern" value="upgradeLevels"/>
+        <property name="serviceInterface" value="springbook.user.service.UserService"/>
+    </bean>
+
 </beans>

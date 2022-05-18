@@ -1,8 +1,10 @@
 package com.shinhan;
 
 import com.shinhan.security.callback.SAListener;
+import com.shinhan.security.callback.SAPasswordListener;
 import com.shinhan.security.imple.SAProperty;
 import com.shinhan.security.imple.SASimpleAuthAction;
+import com.shinhan.security.imple.SASimpleAuthTask;
 import com.shinhan.security.simpleauth.SAConst;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthMessageException;
@@ -381,6 +383,7 @@ public class SimpleAuthTest implements SAListener
 
     @Override
     public boolean CheckPasswordValidation(String password, HttpSession paramHttpSession) {
+
         return false;
     }
 }
