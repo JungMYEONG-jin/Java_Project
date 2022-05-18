@@ -136,22 +136,39 @@ public class SASimpleAuthTask {
 
             if(saPasswordListener!=null)
             {
+
                 HashMap<String, String> passwordInfo = SAMessageUtil.getPasswordInfo(decryptedRd);
                 boolean isNewer = false;
-                if(passwordInfo.get("isContain").equals("true"))
-                    isNewer = true;
+                if(passwordInfo!=null) {
+                    try {
+                        String isContain = passwordInfo.get("isContain");
 
-                if(isNewer)
+                        if (isContain != null && isContain.equals("true")) {
+                            isNewer = true;
+                        }
+
+                    } catch (Exception e) {
+                        isNewer = false;
+                    }
+
+                    SALogUtil.fine("isNewer: " + isNewer);
+
+                    if (isNewer) {
+                        String clientPasswd = passwordInfo.get("clientPasswd");
+                        if (isEmpty(clientPasswd)) {
+                            throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
+                        }
+
+                        SALogUtil.fine("Password: " + clientPasswd);
+
+                        boolean isValidPassword = saPasswordListener.CheckPasswordValidation(clientPasswd, sign_plain_text_msg.type);
+                        if (!isValidPassword) {
+                            throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_INVALID, SAErrorMessage.ERR_CODE_PASSWORD_INVALID);
+                        }
+                    }
+                }else
                 {
-                    String clientPasswd = passwordInfo.get("clientPasswd");
-                    if(isEmpty(clientPasswd))
-                        throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
-                    SALogUtil.fine("Encrypted Password: "+clientPasswd);
-                    String password = SACryptoUtil.rsaDecrypt(clientPasswd, publicKey);
-                    SALogUtil.fine("Decrypted Password: "+password);
-                    boolean isValidPassword = saPasswordListener.CheckPasswordValidation(password);
-                    if(!isValidPassword)
-                        throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_INVALID, SAErrorMessage.ERR_CODE_PASSWORD_INVALID);
+                    SALogUtil.fine("passwordInfo is null");
                 }
 
             }
@@ -279,26 +296,67 @@ public class SASimpleAuthTask {
             {
                 HashMap<String, String> passwordInfo = SAMessageUtil.getPasswordInfo(reqJson);
                 boolean isNewer = false;
-                if(passwordInfo.get("isContain").equals("true"))
-                    isNewer = true;
 
-                if(isNewer)
+                if(passwordInfo!=null)
                 {
-                    String clientPasswd = passwordInfo.get("clientPasswd");
-                    if(isEmpty(clientPasswd))
-                        throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
-                    SALogUtil.fine("Client Sha(id+Sha(uuid)+type): "+clientPasswd);
-                    SALogUtil.fine("ClientId: "+objAuthInitClientMessage.id);
-                    SALogUtil.fine("ClientType: "+objAuthInitClientMessage.type);
-                    SALogUtil.fine("ClientUUID: "+objAuthInitClientMessage.uuid);
-                    SALogUtil.fine("DB Id: "+id_db);
-                    SALogUtil.fine("DB Type: "+type_db);
-                    SALogUtil.fine("DB UUID: "+uuid_db);
-                    String sha256uuid = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(uuid_db));
-                    String serverPasswd = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(id_db+sha256uuid+type_db));
-                    SALogUtil.fine("Server Sha(id+Sha(uuid)+type): "+serverPasswd);
-                    if(!clientPasswd.toUpperCase().equals(serverPasswd.toUpperCase()) && !clientPasswd.equals(serverPasswd))
-                        throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NOT_MATCH, SAErrorMessage.ERR_CODE_PASSWORD_NOT_MATCH);
+                    try {
+                        String isContain = passwordInfo.get("isContain");
+
+                        if (isContain != null && isContain.equals("true")) {
+                            isNewer = true;
+                        }
+                    }catch (Exception e)
+                    {
+                        isNewer = false;
+                    }
+
+                    SALogUtil.fine("isNewer: "+isNewer);
+
+                    /**
+                     * fingerprint 1
+                     * pin 2
+                     * pattern 3
+                     * face_id 4
+                     * auto 5
+                     */
+                    if(isNewer && (type_db.equals("1") || type_db.equals("4")))
+                    {
+                        String clientPasswd = passwordInfo.get("clientPasswd");
+                        SALogUtil.fine("RSA(Client Sha(id+Sha(uuid)+type)): "+clientPasswd);
+                        if(isEmpty(clientPasswd))
+                        {
+                            throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
+                        }
+                        String rawClientPasswd = SACryptoUtil.rsaDecrypt(clientPasswd, publicKey);
+
+                        SALogUtil.fine("Client Sha(id+Sha(uuid)+type): "+rawClientPasswd);
+                        SALogUtil.fine("ClientId: "+objAuthInitClientMessage.id);
+                        SALogUtil.fine("ClientType: "+objAuthInitClientMessage.type);
+                        SALogUtil.fine("ClientUUID: "+objAuthInitClientMessage.uuid);
+
+
+                        String sid = id_db.toUpperCase();
+                        String stype = type_db.toUpperCase();
+                        String suuid = uuid_db.toUpperCase();
+
+                        SALogUtil.fine("DB Id: "+sid);
+                        SALogUtil.fine("DB Type: "+stype);
+                        SALogUtil.fine("DB UUID: "+suuid);
+
+                        String sha256uuid = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(suuid)).toUpperCase();
+                        SALogUtil.fine("DB SHA UUID: "+sha256uuid);
+                        String serverPasswd = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(sid+sha256uuid+stype));
+                        SALogUtil.fine("Server Sha(id+Sha(uuid)+type): "+serverPasswd);
+
+                        if(!rawClientPasswd.toUpperCase().equals(serverPasswd.toUpperCase()) && !rawClientPasswd.equals(serverPasswd))
+                        {
+                            throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NOT_MATCH, SAErrorMessage.ERR_CODE_PASSWORD_NOT_MATCH);
+                        }
+                    }
+
+                }else
+                {
+                    SALogUtil.fine("passwordInfo is null");
                 }
 
             }

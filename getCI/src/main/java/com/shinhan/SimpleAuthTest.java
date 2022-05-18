@@ -382,7 +382,7 @@ public class SimpleAuthTest implements SAListener
     }
 
     @Override
-    public boolean CheckPasswordValidation(String password, HttpSession paramHttpSession) {
+    public boolean CheckPasswordValidation(String password, String authType,HttpSession paramHttpSession) {
 
         return false;
     }

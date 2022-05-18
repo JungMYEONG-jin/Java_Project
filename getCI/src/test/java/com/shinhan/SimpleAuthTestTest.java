@@ -118,7 +118,7 @@ class SimpleAuthTestTest {
     {
         SASimpleAuthTask.setCheckListener(new SAPasswordListener() {
             @Override
-            public boolean CheckPasswordValidation(String password) {
+            public boolean CheckPasswordValidation(String password, String authType) {
                 return false;
             }
         });
