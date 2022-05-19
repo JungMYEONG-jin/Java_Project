@@ -1,7 +1,6 @@
 package sol.com.shinhan.filter;
 
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.util.encoders.Base64Encoder;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
