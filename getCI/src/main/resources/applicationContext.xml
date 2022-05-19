@@ -2,10 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:tx="http://www.springframework.org/schema/tx"
         xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/aop
-        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 <!--    <bean id="connectionMaker" class="springbook.user.dao.DConnectionMaker"/>-->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver"/>
@@ -62,18 +65,38 @@
         <property name="mailSender" ref="mailSender"/>
     </bean>
 
-    <bean id="transactionAdvice" class="springbook.user.service.TransactionAdvice">
-        <property name="transactionManager" ref="transactionManager"/>
-    </bean>
+<!--    <bean id="transactionAdvice" class="springbook.user.service.TransactionAdvice">-->
+<!--        <property name="transactionManager" ref="transactionManager"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="transactionAdvice" class="org.springframework.transaction.interceptor.TransactionInterceptor">-->
+<!--        <property name="transactionManager" ref="transactionManager"/>-->
+<!--        <property name="transactionAttributes">-->
+<!--            <props>-->
+<!--                <prop key="get*">PROPAGATION_REQUIRED, readOnly, timeout_30</prop>-->
+<!--                <prop key="upgrade*">PROPAGATION_REQUIRES_NEW, ISOLATION_SERIALIZABLE</prop>-->
+<!--                <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--            </props>-->
+<!--        </property>-->
+<!--    </bean>-->
 
 <!--    upgrade로 시작하는걸 매핑시켜줄거다라는뜻-->
 <!--    <bean id = "transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">-->
 <!--        <property name="mappedName" value="upgrade*"/>-->
 <!--    </bean>-->
-<!--<bean id ="transactionPointcut" class="springbook.user.service.NameMatchClassMethodPointcut">-->
-<!--    <property name="mapped" value="ServiceImpl"/>-->
-<!--    <property name="mappedName" value="upgrade*"/>-->
-<!--</bean>-->
+<bean id ="transactionPointcut" class="springbook.user.service.NameMatchClassMethodPointcut">
+    <property name="mapped" value="ServiceImpl"/>
+    <property name="mappedName" value="upgrade*"/>
+</bean>
+
+    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="get*" propagation="REQUIRED" read-only="true" timeout="30"/>
+            <tx:method name="upgrade*" propagation="REQUIRES_NEW" isolation="SERIALIZABLE"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
 
     <aop:config>
         <aop:pointcut id="transactionPointcut" expression="execution(* *..*ServiceImpl.upgrade*(..))"/>
