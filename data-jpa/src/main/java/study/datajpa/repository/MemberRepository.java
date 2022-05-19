@@ -16,7 +16,7 @@ import java.util.Optional;
 
 // interface 상속받고 메소드는 사실 저걸 구현한 impl거를 실행ㅎ라는거
 
-public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom, JpaSpecificationExecutor<Member> {
 
     List<Member> findByUsername(String username);
 
@@ -80,4 +80,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<Member> findLockByUsername(String username);
+
+
 }

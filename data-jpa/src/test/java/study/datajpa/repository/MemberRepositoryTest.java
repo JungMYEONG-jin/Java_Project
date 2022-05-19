@@ -8,10 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
+import study.datajpa.entity.MemberSpec;
 import study.datajpa.entity.Team;
 
 import javax.persistence.EntityManager;
@@ -370,5 +372,24 @@ class MemberRepositoryTest {
     void callCustom()
     {
         List<Member> memberCustom = memberRepository.findMemberCustom();
+    }
+
+    @Test
+    void specBasic() throws Exception{
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+
+        em.persist(m1);
+        em.persist(m2);
+        em.flush();
+        em.clear();
+
+        Specification<Member> spec = MemberSpec.username("m1").and(MemberSpec.teamName("teamA"));
+        List<Member> result = memberRepository.findAll(spec);
+
+        Assertions.assertThat(result.size()).isEqualTo(1);
     }
 }
