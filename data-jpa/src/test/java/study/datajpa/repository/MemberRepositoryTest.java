@@ -392,4 +392,71 @@ class MemberRepositoryTest {
 
         Assertions.assertThat(result.size()).isEqualTo(1);
     }
+
+    @Test
+    void projections()
+    {
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+
+        em.persist(m1);
+        em.persist(m2);
+        em.flush();
+        em.clear();
+
+        List<NestedClosedProjections> result = memberRepository.findProjectionsByUsername("m1", NestedClosedProjections.class);
+
+        for (NestedClosedProjections nestedClosedProjections : result) {
+            System.out.println("nestedClosedProjections = " + nestedClosedProjections.getUsername());
+            System.out.println("nestedClosedProjections = " + nestedClosedProjections.getTeam().getName());
+        }
+    }
+
+    @Test
+    void nativeTest()
+    {
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+
+        em.persist(m1);
+        em.persist(m2);
+        em.flush();
+        em.clear();
+
+
+        Member findMember = memberRepository.findByNativeQuery("m1");
+        System.out.println("findMember = " + findMember);
+
+
+    }
+
+    @Test
+    void nativeProjectionsTest()
+    {
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+
+        em.persist(m1);
+        em.persist(m2);
+        em.flush();
+        em.clear();
+
+        Page<MemberProjection> result = memberRepository.findByNativeProjections(PageRequest.of(10, 10));
+        List<MemberProjection> content = result.getContent();
+        for (MemberProjection memberProjection : content) {
+            System.out.println("memberProjection = " + memberProjection.getTeamname());
+            System.out.println("memberProjection = " + memberProjection.getUsername());
+        }
+
+
+    }
 }

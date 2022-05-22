@@ -35,7 +35,7 @@ public class QueryByExampleTest {
         Team team = new Team("teamA");
         m1.setTeam(team);
 
-        ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("age");
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("age"); // age 속성을 무시한다.
 
         Example<Member> example = Example.of(m1, matcher);
 
