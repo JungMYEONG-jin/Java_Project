@@ -10,18 +10,21 @@ import springbook.exception.DuplicateUserIdException;
 import springbook.exception.ErrorCode;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
+import springbook.user.sqlservice.SqlService;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
+import java.util.Map;
 
 public class UserDaoJdbc implements UserDao{
 
     private JdbcTemplate jdbcTemplate;
-    private String sqlAdd;
 
-    public void setSqlAdd(String sqlAdd) {
-        this.sqlAdd = sqlAdd;
+    private SqlService sqlService;
+
+    public void setSqlService(SqlService sqlService) {
+        this.sqlService = sqlService;
     }
 
     private RowMapper<User> userRowMapper = new RowMapper<User>() {
@@ -47,7 +50,7 @@ public class UserDaoJdbc implements UserDao{
 
 
     public void add(User user) {
-            this.jdbcTemplate.update(this.sqlAdd,
+            this.jdbcTemplate.update(this.sqlService.getSql("userAdd"),
                     user.getId(), user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLogin(), user.getRecommend(), user.getMail());
     }
 
@@ -145,7 +148,7 @@ public class UserDaoJdbc implements UserDao{
 
     public void deleteAll()
     {
-        this.jdbcTemplate.update("delete from users");
+        this.jdbcTemplate.update(this.sqlService.getSql("userDeleteAll"));
     }
 
 
@@ -169,7 +172,7 @@ public class UserDaoJdbc implements UserDao{
     public int getCount()
     {
         // queryForInt is deprecated
-        return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+        return this.jdbcTemplate.queryForObject(this.sqlService.getSql("userGetCount"), Integer.class);
     }
 
 
@@ -186,7 +189,7 @@ public class UserDaoJdbc implements UserDao{
 
     public User get(String id)
     {
-        return this.jdbcTemplate.queryForObject("select * from users where id = ?", new Object[]{id},
+        return this.jdbcTemplate.queryForObject(this.sqlService.getSql("userGet"), new Object[]{id},
                 this.userRowMapper);
     }
 
@@ -197,7 +200,7 @@ public class UserDaoJdbc implements UserDao{
 
     @Override
     public void update(User user) {
-        this.jdbcTemplate.update("update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, mail = ? where id = ?",
+        this.jdbcTemplate.update(this.sqlService.getSql("userUpdate"),
                 user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLogin(), user.getRecommend(), user.getMail(), user.getId());
 
     }

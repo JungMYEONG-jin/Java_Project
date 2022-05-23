@@ -54,7 +54,20 @@
     <!--  application components -->
     <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource" />
-        <property name="sqlAdd" value="insert into users(id, name, password, level, login, recommend, mail) values(?,?,?,?,?,?,?)"/>
+        <property name="sqlService" ref="sqlService"/>
+    </bean>
+
+    <bean id="sqlService" class="springbook.user.sqlservice.SimpleSqlService">
+        <property name="sqlMap">
+                    <map>
+                        <entry key="userAdd" value="insert into users(id, name, password, level, login, recommend, mail) values(?,?,?,?,?,?,?)"/>
+                        <entry key="userGet" value="select * from users where id = ?"/>
+                        <entry key="userGetAll" value="select * from users"/>
+                        <entry key="userGetCount" value="select count(*) from users"/>
+                        <entry key="userUpdate" value="update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, mail = ? where id = ?"/>
+                        <entry key="userDeleteAll" value="delete from users"/>
+                    </map>
+        </property>
     </bean>
 
     <bean id="userService" class="springbook.user.service.UserServiceImpl">
