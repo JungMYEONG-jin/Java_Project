@@ -23,9 +23,9 @@
     </bean>
 
     <!-- aop -->
-    <aop:config>
-        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)" />
-    </aop:config>
+<!--    <aop:config>-->
+<!--        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)" />-->
+<!--    </aop:config>-->
 
     <tx:advice id="transactionAdvice">
         <tx:attributes>
@@ -54,6 +54,7 @@
     <!--  application components -->
     <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource" />
+        <property name="sqlAdd" value="insert into users(id, name, password, level, login, recommend, mail) values(?,?,?,?,?,?,?)"/>
     </bean>
 
     <bean id="userService" class="springbook.user.service.UserServiceImpl">

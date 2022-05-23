@@ -18,7 +18,11 @@ import java.util.List;
 public class UserDaoJdbc implements UserDao{
 
     private JdbcTemplate jdbcTemplate;
+    private String sqlAdd;
 
+    public void setSqlAdd(String sqlAdd) {
+        this.sqlAdd = sqlAdd;
+    }
 
     private RowMapper<User> userRowMapper = new RowMapper<User>() {
         @Override
@@ -43,7 +47,7 @@ public class UserDaoJdbc implements UserDao{
 
 
     public void add(User user) {
-            this.jdbcTemplate.update("insert into users(id, name, password, level, login, recommend, mail) values(?,?,?,?,?,?,?)",
+            this.jdbcTemplate.update(this.sqlAdd,
                     user.getId(), user.getName(), user.getPassword(), user.getLevel().getValue(), user.getLogin(), user.getRecommend(), user.getMail());
     }
 
