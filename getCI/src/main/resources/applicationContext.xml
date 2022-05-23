@@ -10,107 +10,66 @@
         http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 <!--    <bean id="connectionMaker" class="springbook.user.dao.DConnectionMaker"/>-->
+
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver"/>
         <property name="url" value="jdbc:h2:tcp://localhost/~/tobey"/>
         <property name="username" value="sa"/>
         <property name="password" value=""/>
     </bean>
-    <bean id="userServiceImpl" class="springbook.user.service.UserServiceImpl">
-        <property name="userDao" ref="userDao"/>
-        <property name="mailSender" ref="mailSender"/>
-     </bean>
-    <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
+
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
-<!--    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">-->
-<!--        <property name="host" value="mail.server.com"/>-->
-<!--    </bean>-->
-    <bean id="mailSender" class="springbook.user.service.DummyMailSender"></bean>
-<!--    <bean id="userService" class="springbook.user.service.UserServiceTx">-->
-<!--        <property name="transactionManager" ref="transactionManager"/>-->
-<!--        <property name="userService" ref="userServiceImpl"></property>-->
-<!--    </bean>-->
-
-<!--    target-->
-    <bean id="userServiceImpl2" class="springbook.user.service.UserServiceImpl">
-        <property name="userDao" ref="userDao"/>
-        <property name="mailSender" ref="mailSender"/>
+        <property name="dataSource" ref="dataSource" />
     </bean>
 
-    <bean id="message" class="springbook.bean.MessageFactoryBean">
-        <property name="text" value="Factory Bean"/>
-    </bean>
+    <!-- aop -->
+    <aop:config>
+        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)" />
+    </aop:config>
 
-<!--    <bean id="userService" class="springbook.user.service.TxProxyFactoryBean">-->
-<!--        <property name="target" ref="userServiceImpl"/>-->
-<!--        <property name="transactionManager" ref="transactionManager"/>-->
-<!--        <property name="pattern" value="upgradeLevels"/>-->
-<!--        <property name="serviceInterface" value="springbook.user.service.UserService"/>-->
-<!--    </bean>-->
-
-<!--    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">-->
-<!--        <property name="target" ref="userServiceImpl"/>-->
-<!--        <property name="interceptorNames">-->
-<!--            <list>-->
-<!--                <value>transactionAdvisor</value>-->
-<!--            </list>-->
-<!--        </property>-->
-<!--    </bean>-->
-    <bean id="userService" class="springbook.user.service.UserServiceImpl">
-        <property name="userDao" ref="userDao"/>
-        <property name="mailSender" ref="mailSender"/>
-    </bean>
-
-<!--    <bean id="transactionAdvice" class="springbook.user.service.TransactionAdvice">-->
-<!--        <property name="transactionManager" ref="transactionManager"/>-->
-<!--    </bean>-->
-
-<!--    <bean id="transactionAdvice" class="org.springframework.transaction.interceptor.TransactionInterceptor">-->
-<!--        <property name="transactionManager" ref="transactionManager"/>-->
-<!--        <property name="transactionAttributes">-->
-<!--            <props>-->
-<!--                <prop key="get*">PROPAGATION_REQUIRED, readOnly, timeout_30</prop>-->
-<!--                <prop key="upgrade*">PROPAGATION_REQUIRES_NEW, ISOLATION_SERIALIZABLE</prop>-->
-<!--                <prop key="*">PROPAGATION_REQUIRED</prop>-->
-<!--            </props>-->
-<!--        </property>-->
-<!--    </bean>-->
-
-<!--    upgrade로 시작하는걸 매핑시켜줄거다라는뜻-->
-<!--    <bean id = "transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">-->
-<!--        <property name="mappedName" value="upgrade*"/>-->
-<!--    </bean>-->
-<bean id ="transactionPointcut" class="springbook.user.service.NameMatchClassMethodPointcut">
-    <property name="mapped" value="ServiceImpl"/>
-    <property name="mappedName" value="upgrade*"/>
-</bean>
-
-    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+    <tx:advice id="transactionAdvice">
         <tx:attributes>
-            <tx:method name="get*" propagation="REQUIRED" read-only="true" timeout="30"/>
-            <tx:method name="upgrade*" propagation="REQUIRES_NEW" isolation="SERIALIZABLE"/>
-            <tx:method name="*"/>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="*" />
         </tx:attributes>
     </tx:advice>
 
+    <!--
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 
-    <aop:config>
-        <aop:pointcut id="transactionPointcut" expression="execution(* *..*ServiceImpl.upgrade*(..))"/>
-        <aop:advisor advice-ref="transactionAdvice" pointcut-ref="transactionPointcut"/>
-    </aop:config>
-
-
-
-<!--    어드바이스와 포인트컷을 담을 어드바이저를 등록-->
-    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-        <property name="advice" ref="transactionAdvice"/>
-        <property name="pointcut" ref="transactionPointcut"/>
+    <bean id="transactionAdvice" class="springbook.user.service.TransactionAdvice">
+        <property name="transactionManager" ref="transactionManager" />
     </bean>
 
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+    <bean id="transactionPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
+        <property name="expression" value="execution(* *..*ServiceImpl.upgrade*(..))" />
+    </bean>
+
+    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+        <property name="advice" ref="transactionAdvice" />
+        <property name="pointcut" ref="transactionPointcut" />
+    </bean>
+     -->
+
+    <!--  application components -->
+    <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="userService" class="springbook.user.service.UserServiceImpl">
+        <property name="userDao" ref="userDao" />
+        <property name="mailSender" ref="mailSender" />
+    </bean>
+
+    <bean id="testUserService" class="springbook.user.service.TestUserService" parent="userService" />
+
+    <!--
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="mail.server.com" />
+    </bean>
+     -->
+    <bean id="mailSender" class="springbook.user.service.DummyMailSender" />
+
+
 
 </beans>
