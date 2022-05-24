@@ -1,6 +1,7 @@
 package springbook.user.dao;
 
 import springbook.user.domain.User;
+import springbook.user.sqlservice.SqlService;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -21,4 +22,6 @@ public interface UserDao {
     void setDataSource(DataSource dataSource);
 
     void update(User user);
+
+    SqlService getSqlService();
 }

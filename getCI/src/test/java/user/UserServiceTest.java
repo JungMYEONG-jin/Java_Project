@@ -56,7 +56,6 @@ public class UserServiceTest {
 
     }
 
-
     @Test
     public void readOnlyTransactionAttribute() {
         testUserService.getAll();

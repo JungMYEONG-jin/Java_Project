@@ -42,7 +42,9 @@ public class UserDaoJdbc implements UserDao{
         }
     };
 
-
+    public SqlService getSqlService() {
+        return sqlService;
+    }
 
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
