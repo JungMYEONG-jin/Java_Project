@@ -54,6 +54,9 @@ public class XmlSqlService implements SqlService, SqlRegistry, SqlReader{
         }
     }
 
+    // object to xml is marshaller
+    // xml to object is unmarshaller
+
 
     @Override
     public void read(SqlRegistry sqlRegistry) {
