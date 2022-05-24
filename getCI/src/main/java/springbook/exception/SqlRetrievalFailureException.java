@@ -2,7 +2,7 @@ package springbook.exception;
 
 public class SqlRetrievalFailureException extends RuntimeException{
 
-    public SqlRetrievalFailureException(String message)
+    public SqlRetrievalFailureException(SqlNotFoundException message)
     {
         super(message);
     }

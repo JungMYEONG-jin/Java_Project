@@ -7,6 +7,7 @@ import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
@@ -41,7 +42,8 @@ public class UserServiceTest {
 
     @Autowired UserService userService;
     @Autowired UserService testUserService;
-    @Autowired UserDao userDao;
+    @Autowired
+    UserDao userDao;
     @Autowired MailSender mailSender;
     @Autowired PlatformTransactionManager transactionManager; // auto bean
     @Autowired ApplicationContext context;

@@ -1,5 +1,6 @@
 package springbook.user.sqlservice;
 
+import springbook.exception.SqlNotFoundException;
 import springbook.exception.SqlRetrievalFailureException;
 
 import java.util.Map;
@@ -17,7 +18,7 @@ public class SimpleSqlService implements SqlService{
         String sql = sqlMap.get(key);
         if(sql == null)
         {
-            throw new SqlRetrievalFailureException(key+" not existed in the map!!");
+            throw new SqlNotFoundException(key+" not existed in the map!!");
         }else {
             return sql;
         }
