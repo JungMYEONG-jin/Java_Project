@@ -13,7 +13,9 @@ import java.io.IOException;
 
 public class JaxbXmlSqlReader implements SqlReader{
 
-    private String sqlMapFile;
+    private static final String DEFAULT_FILE = "../resources/userdao/sqlmap.xml";
+
+    private String sqlMapFile = DEFAULT_FILE;
 
     public void setSqlMapFile(String sqlMapFile) {
         this.sqlMapFile = sqlMapFile;
