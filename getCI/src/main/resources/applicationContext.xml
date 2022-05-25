@@ -93,5 +93,8 @@
     <bean id="mailSender" class="springbook.user.service.DummyMailSender" />
 
 
+    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPath" value="springbook.user.sqlservice.jaxb"/>
+    </bean>
 
 </beans>
