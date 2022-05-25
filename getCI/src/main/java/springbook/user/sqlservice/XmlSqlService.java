@@ -1,6 +1,7 @@
 package springbook.user.sqlservice;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import springbook.exception.SqlNotFoundException;
 import springbook.exception.SqlRetrievalFailureException;
 import springbook.user.sqlservice.jaxb.SqlType;
