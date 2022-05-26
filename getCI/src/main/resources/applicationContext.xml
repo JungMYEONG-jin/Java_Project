@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:aop="http://www.springframework.org/schema/aop"
-        xmlns:tx="http://www.springframework.org/schema/tx"
-        xmlns:context="http://www.springframework.org/schema/context"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd
         http://www.springframework.org/schema/tx
-        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 <!--    <bean id="connectionMaker" class="springbook.user.dao.DConnectionMaker"/>-->
 
     <tx:annotation-driven/>
@@ -65,7 +66,7 @@
 
     <bean id="sqlService" class="springbook.user.sqlservice.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"></property>
-        <property name=""
+        <property name="sqlRegistry" ref="sqlRegistry"></property>
     </bean>
 
 <!--    <bean id="sqlService" class="springbook.user.sqlservice.BaseSqlService">-->
@@ -77,7 +78,7 @@
         <property name="sqlMapFile" value="../resources/userdao/sqlmap.xml"/>
     </bean>
 
-    <bean id="sqlRegistry" class="springbook.user.sqlservice.HashMapSqlRegistry">
+    <bean id="sqlRegistry" class="springbook.user.sqlservice.updatable.ConcurrentHashMapSqlRegistry">
     </bean>
 
 
@@ -99,5 +100,9 @@
     <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPath" value="springbook.user.sqlservice.jaxb"/>
     </bean>
+
+    <jdbc:embedded-database id="embeddedDatabase" type="H2">
+        <jdbc:script location="schema.sql"/>
+    </jdbc:embedded-database>
 
 </beans>
