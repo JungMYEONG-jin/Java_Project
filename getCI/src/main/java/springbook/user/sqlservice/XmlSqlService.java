@@ -1,9 +1,11 @@
 package springbook.user.sqlservice;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import springbook.exception.SqlNotFoundException;
 import springbook.exception.SqlRetrievalFailureException;
+import springbook.user.dao.UserDao;
 import springbook.user.sqlservice.jaxb.SqlType;
 import springbook.user.sqlservice.jaxb.Sqlmap;
 
@@ -22,7 +24,7 @@ public class XmlSqlService implements SqlService, SqlRegistry, SqlReader{
 
     private Map<String, String> sqlMap = new HashMap<>();
     // 이름을 값으로 넣는건 좋지 않은 습관임. set 하게끔 변경
-    private String sqlMapFile;
+    private Resource sqlmap = new ClassPathResource("sqlmap.xml", UserDao.class);
     private SqlReader sqlReader;
     private SqlRegistry sqlRegistry;
 
@@ -34,8 +36,8 @@ public class XmlSqlService implements SqlService, SqlRegistry, SqlReader{
         this.sqlRegistry = sqlRegistry;
     }
 
-    public void setSqlMapFile(String sqlMapFile) {
-        this.sqlMapFile = sqlMapFile;
+    public void setsqlmap(Resource sqlmap) {
+        this.sqlmap = sqlmap;
     }
 
     @PostConstruct
@@ -65,7 +67,7 @@ public class XmlSqlService implements SqlService, SqlRegistry, SqlReader{
         try{
             JAXBContext context = JAXBContext.newInstance(contextPath);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            Source xmlSource = new StreamSource(new ClassPathResource(this.sqlMapFile).getInputStream());
+            Source xmlSource = new StreamSource(this.sqlmap.getInputStream());
             Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(xmlSource);
 
             for(SqlType sql : sqlmap.getSql()){
