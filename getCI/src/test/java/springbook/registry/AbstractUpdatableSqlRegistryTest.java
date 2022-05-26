@@ -26,7 +26,7 @@ public abstract class AbstractUpdatableSqlRegistryTest {
         checkFindResult("sql1", "sql2", "sql3");
     }
 
-    private void checkFindResult(String exp1, String exp2, String exp3){
+    public void checkFindResult(String exp1, String exp2, String exp3){
         Assertions.assertThat(sqlRegistry.findSql("key1")).isEqualTo(exp1);
         Assertions.assertThat(sqlRegistry.findSql("key2")).isEqualTo(exp2);
         Assertions.assertThat(sqlRegistry.findSql("key3")).isEqualTo(exp3);

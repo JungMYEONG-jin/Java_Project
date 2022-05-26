@@ -78,7 +78,8 @@
         <property name="sqlMapFile" value="../resources/userdao/sqlmap.xml"/>
     </bean>
 
-    <bean id="sqlRegistry" class="springbook.user.sqlservice.updatable.ConcurrentHashMapSqlRegistry">
+    <bean id="sqlRegistry" class="springbook.issuetracker.sqlservice.updatable.EmbeddedSqlRegistry">
+        <property name="dataSource" ref="embeddedDatabase"/>
     </bean>
 
 
