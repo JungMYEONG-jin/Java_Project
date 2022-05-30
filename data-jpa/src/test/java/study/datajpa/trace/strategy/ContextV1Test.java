@@ -100,6 +100,7 @@ public class ContextV1Test {
         ContextV1 contextV2 = new ContextV1(() -> log.info("business logic 2 is running"));
         contextV2.execute();
 
+
     }
 
 
