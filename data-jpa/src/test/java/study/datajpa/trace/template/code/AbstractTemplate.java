@@ -12,7 +12,8 @@ public abstract class AbstractTemplate {
         long endTime = System.currentTimeMillis();
         long resultTime = endTime - startTime;
         log.info("resultTime={}", resultTime);
-    }
+    }// 이건 구현 완료
 
+    // 이건 사용자가 지정
     protected abstract void call();
 }
