@@ -3,6 +3,7 @@ package study.datajpa.trace.strategy;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import study.datajpa.trace.strategy.code.strategy.ContextV1;
+import study.datajpa.trace.strategy.code.strategy.Strategy;
 import study.datajpa.trace.strategy.code.strategy.StrategyLogic1;
 import study.datajpa.trace.strategy.code.strategy.StrategyLogic2;
 
@@ -42,5 +43,65 @@ public class ContextV1Test {
         ContextV1 contextV2 = new ContextV1(strategyLogic2);
         contextV2.execute();
     }
+
+    @Test
+    void strategyV2(){
+        Strategy logic1 = new Strategy(){
+            @Override
+            public void call(){
+                log.info("business logic1 is running");
+            }
+        };
+        log.info("strategyLogic1={}", logic1.getClass());
+        ContextV1 contextV1 = new ContextV1(logic1);
+        contextV1.execute();
+
+        Strategy logic2 = new Strategy(){
+            @Override
+            public void call(){
+                log.info("business logic2 is running");
+            }
+        };
+
+        log.info("strategyLogic2={}", logic2.getClass());
+        ContextV1 contextV2 = new ContextV1(logic2);
+        contextV2.execute();
+
+
+    }
+
+    @Test
+    void strategyV3(){
+        ContextV1 contextV1 = new ContextV1(new Strategy() {
+            @Override
+            public void call() {
+                log.info("business logic 1 is running");
+            }
+        });
+        contextV1.execute();
+
+
+        ContextV1 contextV2 = new ContextV1(new Strategy() {
+            @Override
+            public void call() {
+                log.info("business logic 2 is running");
+            }
+        });
+        contextV2.execute();
+
+
+    }
+
+    @Test
+    void strategyV4(){
+        ContextV1 contextV1 = new ContextV1(() -> log.info("business logic 1 is running"));
+        contextV1.execute();
+
+        ContextV1 contextV2 = new ContextV1(() -> log.info("business logic 2 is running"));
+        contextV2.execute();
+
+    }
+
+
 
 }
