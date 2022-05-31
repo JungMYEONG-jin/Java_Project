@@ -7,11 +7,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import study.datajpa.config.AppV1Config;
+import study.datajpa.config.AppV2Config;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Import(AppV1Config.class) // 해당 클래스를 스프링 빈으로 등록
+@Import({AppV1Config.class, AppV2Config.class}) // 해당 클래스를 스프링 빈으로 등록
 @EnableJpaAuditing // 추적
 @SpringBootApplication(scanBasePackages = "study.datajpa.proxy.app")
 public class DataJpaApplication {
