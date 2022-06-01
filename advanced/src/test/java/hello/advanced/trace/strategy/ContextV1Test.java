@@ -1,5 +1,8 @@
 package hello.advanced.trace.strategy;
 
+import hello.advanced.trace.strategy.code.strategy.ContextV1;
+import hello.advanced.trace.strategy.code.strategy.StrategyLogic1;
+import hello.advanced.trace.strategy.code.strategy.StrategyLogic2;
 import hello.advanced.trace.template.code.AbstractTemplate;
 import hello.advanced.trace.template.code.SubClassLogic1;
 import hello.advanced.trace.template.code.SubClassLogic2;
@@ -13,6 +16,16 @@ public class ContextV1Test {
     void strategyV0() {
         logic1();
         logic2();
+    }
+
+    @Test
+    void strategyV1() {
+        ContextV1 context = new ContextV1(new StrategyLogic1());
+        context.execute();
+
+        context = new ContextV1(new StrategyLogic2());
+        context.execute();
+
     }
 
     private void logic1(){
