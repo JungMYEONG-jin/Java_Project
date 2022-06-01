@@ -46,4 +46,28 @@ public class TemplateMethodTest {
         template1.execute();
         template2.execute();
     }
+
+    /**
+     * lambda FUNCTION
+     */
+    @Test
+    void templateMethodV2() {
+        AbstractTemplate template1 = new AbstractTemplate() {
+            @Override
+            protected void call() {
+                log.info("logic1");
+            }
+        };
+
+        AbstractTemplate template2 = new AbstractTemplate() {
+            @Override
+            protected void call() {
+                log.info("logic2");
+            }
+        };
+
+        template1.execute();
+        template2.execute();
+    }
+
 }
