@@ -40,5 +40,7 @@ export CLASSPATH = ".:$JAVA_HOME/lib:/user/home/ubuntu/driver/selenium.jar"
 
 source ~/.bashrc
 
+javac a.java
+java a
 ```
 
