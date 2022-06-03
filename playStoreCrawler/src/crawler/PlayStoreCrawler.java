@@ -6,22 +6,23 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class PlayStoreCrawler implements Crawler{
 
-    private static final HashMap<String, String> appInfo = new HashMap<>();
     private static final String preURL = "https://play.google.com/store/apps/details?id=";
     private static final String postURL = "&hl=ko&gl=US";
-    public PlayStoreCrawler() {
-        appInfo.put("앱 이름",null);
-        appInfo.put("버전",null);
-        appInfo.put("업데이트 날짜",null);
-    }
 
     @Override
     public HashMap<String, String> getInfos(String packageName) {
+
+        HashMap<String, String> appInfo = new HashMap<>();
+        appInfo.put("앱 이름",null);
+        appInfo.put("버전",null);
+        appInfo.put("업데이트 날짜",null);
+
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
         // set background setting
         ChromeOptions chromeOptions = new ChromeOptions();
@@ -44,7 +45,7 @@ public class PlayStoreCrawler implements Crawler{
 
             System.out.println("로드중입니다...");
 
-            sleep(1000);
+            sleep(2000);
 
             WebElement title = driver.findElement(By.xpath("//*[@id=\"yDmH0d\"]/div[4]/div[2]/div/div/div/div/div[1]/div/div/h5[@class='xzVNx']"));
             System.out.println("앱 이름 = " + title.getText());
@@ -64,8 +65,8 @@ public class PlayStoreCrawler implements Crawler{
                 WebElement value = webElement.findElement(By.xpath("div[@class='reAt0']"));
                 String keyText = key.getText();
                 String valueText = value.getText();
-                System.out.println("key = " + keyText);
-                System.out.println("value = " + valueText);
+//                System.out.println("key = " + keyText);
+//                System.out.println("value = " + valueText);
 
                 if (keyText.equals("버전") || keyText.equals("업데이트 날짜")){
                     appInfo.put(keyText, valueText);
@@ -81,12 +82,22 @@ public class PlayStoreCrawler implements Crawler{
             System.out.println("키값이 변경되었습니다. 수정해주세요.");
         }
 
-
-
         driver.quit();
 
         return appInfo;
     }
+
+    @Override
+    public List<HashMap<String, String>> getListInfos(String[] packageNames) {
+
+        List<HashMap<String, String>> infos = new ArrayList<>();
+
+        for (String packageName : packageNames) {
+            infos.add(getInfos(packageName));
+        }
+        return infos;
+    }
+
 
     private void sleep(int millis){
         try{
