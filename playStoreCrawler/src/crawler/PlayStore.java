@@ -11,7 +11,6 @@ import java.util.List;
 
 public class PlayStore {
 
-
     public static void main(String[] args) {
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
         ChromeOptions chromeOptions = new ChromeOptions();
