@@ -25,7 +25,7 @@ public class PlayStore {
 
         driver.get(solURL);
 
-        List<WebElement> elements = driver.findElements(By.xpath("//div[@class='h3YV2d']"));
+//        List<WebElement> elements = driver.findElements(By.xpath("//div[@class='h3YV2d']"));
 
         WebElement element = driver.findElement(By.xpath("//button[@aria-label='앱 정보 자세히 알아보기']"));
         if (element.isEnabled()){
