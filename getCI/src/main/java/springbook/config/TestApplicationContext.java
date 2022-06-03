@@ -8,10 +8,13 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.mail.MailSender;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import springbook.issuetracker.sqlservice.updatable.EmbeddedSqlRegistry;
 import springbook.user.dao.UserDao;
 import springbook.user.dao.UserDaoJdbc;
@@ -28,6 +31,7 @@ import javax.sql.DataSource;
 import java.sql.Driver;
 
 @Configuration
+@EnableTransactionManagement
 //@ImportResource("/applicationContext.xml")
 public class TestApplicationContext {
 
@@ -86,13 +90,16 @@ public class TestApplicationContext {
         return sqlService;
     }
 
-    @Resource
-    EmbeddedDatabase embeddedDatabase;
+    @Bean
+    public DataSource embeddedDatabase(){
+        return new EmbeddedDatabaseBuilder().setName("embeddedDatabase").setType(EmbeddedDatabaseType.H2).addScript("../resources/data.sql").build();
+    }
+
 
     @Bean
     public SqlRegistry sqlRegistry(){
         EmbeddedSqlRegistry sqlRegistry = new EmbeddedSqlRegistry();
-        sqlRegistry.setDataSource(this.embeddedDatabase);
+        sqlRegistry.setDataSource(embeddedDatabase());
         return sqlRegistry;
     }
 
