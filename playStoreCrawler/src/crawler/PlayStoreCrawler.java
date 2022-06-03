@@ -16,6 +16,19 @@ public class PlayStoreCrawler implements Crawler{
     private static final String postURL = "&hl=ko&gl=US";
 
 
+    private WebDriver getBackGroundDriver(){
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        // set background setting
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--no-sandbox");
+
+        WebDriver driver = new ChromeDriver(chromeOptions);
+
+        return driver;
+    }
+
+
     private HashMap<String, String> doCrawling(WebDriver driver, String packageName){
 
         HashMap<String, String> appInfo = new HashMap<>();
@@ -80,13 +93,9 @@ public class PlayStoreCrawler implements Crawler{
     @Override
     public HashMap<String, String> getInfo(String packageName) {
 
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-        // set background setting
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--headless");
-        chromeOptions.addArguments("--no-sandbox");
 
-        WebDriver driver = new ChromeDriver(chromeOptions);
+
+        WebDriver driver = getBackGroundDriver();
 
         HashMap<String, String> appInfo = doCrawling(driver, packageName);
 
@@ -101,13 +110,7 @@ public class PlayStoreCrawler implements Crawler{
 
         List<HashMap<String, String>> infos = new ArrayList<>();
 
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-        // set background setting
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--headless");
-        chromeOptions.addArguments("--no-sandbox");
-
-        WebDriver driver = new ChromeDriver(chromeOptions);
+        WebDriver driver = getBackGroundDriver();
 
         for (String packageName : packageNames) {
             infos.add(doCrawling(driver, packageName));
