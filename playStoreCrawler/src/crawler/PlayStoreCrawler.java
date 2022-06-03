@@ -15,21 +15,13 @@ public class PlayStoreCrawler implements Crawler{
     private static final String preURL = "https://play.google.com/store/apps/details?id=";
     private static final String postURL = "&hl=ko&gl=US";
 
-    @Override
-    public HashMap<String, String> getInfos(String packageName) {
+
+    private HashMap<String, String> doCrawling(WebDriver driver, String packageName){
 
         HashMap<String, String> appInfo = new HashMap<>();
         appInfo.put("앱 이름",null);
         appInfo.put("버전",null);
         appInfo.put("업데이트 날짜",null);
-
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-        // set background setting
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--headless");
-        chromeOptions.addArguments("--no-sandbox");
-
-        WebDriver driver = new ChromeDriver(chromeOptions);
 
         String url = preURL + packageName + postURL;
 
@@ -81,20 +73,47 @@ public class PlayStoreCrawler implements Crawler{
         if(appInfo.size()!=3){
             System.out.println("키값이 변경되었습니다. 수정해주세요.");
         }
+        return appInfo;
+    }
+
+
+    @Override
+    public HashMap<String, String> getInfo(String packageName) {
+
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        // set background setting
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--no-sandbox");
+
+        WebDriver driver = new ChromeDriver(chromeOptions);
+
+        HashMap<String, String> appInfo = doCrawling(driver, packageName);
 
         driver.quit();
 
         return appInfo;
+
     }
 
     @Override
-    public List<HashMap<String, String>> getListInfos(String[] packageNames) {
+    public List<HashMap<String, String>> getInfoList(String[] packageNames) {
 
         List<HashMap<String, String>> infos = new ArrayList<>();
 
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        // set background setting
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--no-sandbox");
+
+        WebDriver driver = new ChromeDriver(chromeOptions);
+
         for (String packageName : packageNames) {
-            infos.add(getInfos(packageName));
+            infos.add(doCrawling(driver, packageName));
         }
+        driver.quit();
+
         return infos;
     }
 

@@ -16,7 +16,7 @@ class TestCrawlerTest {
     public void singleTest(){
 
 
-        HashMap<String, String> infos = crawler.getInfos("com.shinhan.sbanking");
+        HashMap<String, String> infos = crawler.getInfo("com.shinhan.sbanking");
 
         for (String s : infos.keySet()) {
             System.out.println("key = " + s + " value = "+infos.get(s));
@@ -29,7 +29,7 @@ class TestCrawlerTest {
     public void listTest(){
         String[] arr = {"com.shinhan.sbanking", "com.shinhan.smartcaremgr", "com.shinhan.sbankmini"};
 
-        List<HashMap<String, String>> listInfos = crawler.getListInfos(arr);
+        List<HashMap<String, String>> listInfos = crawler.getInfoList(arr);
         for (HashMap<String, String> listInfo : listInfos) {
             System.out.println("===========================\n");
 
@@ -40,8 +40,11 @@ class TestCrawlerTest {
             System.out.println("===========================\n");
         }
 
+        Assertions.assertTrue(listInfos.size() == 3);
 
     }
+
+
 
 
 

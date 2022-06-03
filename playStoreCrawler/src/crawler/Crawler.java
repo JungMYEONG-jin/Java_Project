@@ -4,6 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface Crawler {
-    HashMap<String, String> getInfos(String packageName);
-    List<HashMap<String, String >> getListInfos(String[] packageNames);
+    HashMap<String, String> getInfo(String packageName);
+    List<HashMap<String, String >> getInfoList(String[] packageNames);
 }
