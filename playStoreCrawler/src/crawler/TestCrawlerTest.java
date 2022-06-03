@@ -31,13 +31,13 @@ class TestCrawlerTest {
 
         List<HashMap<String, String>> listInfos = crawler.getListInfos(arr);
         for (HashMap<String, String> listInfo : listInfos) {
-            System.out.println("===========================\n\n\n");
+            System.out.println("===========================\n");
 
             for (String s : listInfo.keySet()) {
                 System.out.println("key = " + s + " value = "+listInfo.get(s));
             }
 
-            System.out.println("===========================\n\n\n");
+            System.out.println("===========================\n");
         }
 
 
