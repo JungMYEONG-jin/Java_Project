@@ -19,6 +19,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import springbook.config.TestApplicationContext;
 import springbook.exception.TestUserServiceException;
 import springbook.hello.handler.TransactionHandler;
 import springbook.user.dao.UserDao;
@@ -37,8 +38,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest(classes = Runnable.class)
-@ContextConfiguration(locations = "/applicationContext.xml")
+//@ContextConfiguration(locations = "/applicationContext.xml")
+@ContextConfiguration(classes = TestApplicationContext.class)
 public class UserServiceTest {
+
 
     @Autowired UserService userService;
     @Autowired UserService testUserService;

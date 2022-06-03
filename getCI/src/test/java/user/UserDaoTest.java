@@ -1,4 +1,4 @@
-package kakao.chapter1;
+package user;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -12,6 +12,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import springbook.config.TestApplicationContext;
 import springbook.exception.DuplicateUserIdException;
 import springbook.user.dao.UserDao;
 import springbook.user.dao.UserDaoFactory;
@@ -22,7 +23,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 @SpringBootTest(classes = Runnable.class)
-@ContextConfiguration(locations = "/applicationContext.xml")
+//@ContextConfiguration(locations = "/applicationContext.xml")
+@ContextConfiguration(classes = TestApplicationContext.class)
 @DirtiesContext // 테스트 메소드에서 application context 구성이나 상태를 변경한다는것을 프레임워크에 알려준다.
 public class UserDaoTest {
 
