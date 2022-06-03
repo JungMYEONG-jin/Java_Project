@@ -2,6 +2,7 @@ package com.shinhan.security.imple;
 
 import com.shinhan.security.callback.SAListener;
 import com.shinhan.security.simpleauth.crypto.SACryptoUtil;
+import com.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthCryptoException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthMessageException;
@@ -74,7 +75,7 @@ public class SASimpleAuthAction {
         return resultJson;
     }
 
-    public String reg_server(String strReqTag, String reqJson, String cusno, String challenge, HttpSession session) throws SASimpleAuthException {
+    public String reg_server(String strReqTag, String reqJson, String cusno, String challenge, HttpSession session) throws SASimpleAuthException, SAInvalidPasswordException {
         SALogUtil.fine("================================reg_server :: start=======================================");
         String resultJson = null;
         boolean isSuccess = false;
@@ -157,12 +158,12 @@ public class SASimpleAuthAction {
                 {
                     String clientPasswd = passwordInfo.get("clientPasswd");
                     if(SAValidateUtils.isEmpty(clientPasswd)) {
-                        throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
+                        throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
                     }
                     SALogUtil.fine("Password: "+clientPasswd);
                     boolean isValidPassword = this.listener.CheckPasswordValidation(clientPasswd, sign_plain_text_msg.type,session);
                     if(!isValidPassword) {
-                        throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_INVALID, SAErrorMessage.ERR_CODE_PASSWORD_INVALID);
+                        throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_INVALID, SAErrorMessage.ERR_CODE_PASSWORD_INVALID);
                     }
                 }
             }else
@@ -239,7 +240,7 @@ public class SASimpleAuthAction {
         return resultJson;
     }
 
-    public String auth_Init_server(String strReqTag, String reqJson, HttpSession session) throws SASimpleAuthException {
+    public String auth_Init_server(String strReqTag, String reqJson, HttpSession session) throws SASimpleAuthException, SAInvalidPasswordException {
         SALogUtil.fine("================================auth_init_server :: start=======================================");
         String resultJson = null;
         SAAuthInitClientMessage objAuthInitClientMessage = new SAAuthInitClientMessage();
@@ -333,7 +334,7 @@ public class SASimpleAuthAction {
                     SALogUtil.fine("RSA(Client Sha(id+Sha(uuid)+type)): "+clientPasswd);
 
                     if(SAValidateUtils.isEmpty(clientPasswd)) {
-                        throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
+                        throw new SAInvalidPasswordException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
                     }
 
                     String rawClientPasswd = SACryptoUtil.rsaDecrypt(clientPasswd, publicKey);
@@ -356,7 +357,7 @@ public class SASimpleAuthAction {
                     SALogUtil.fine("Server Sha(id+Sha(uuid)+type): "+serverPasswd);
 
                     if(!rawClientPasswd.toUpperCase().equals(serverPasswd.toUpperCase()) && !rawClientPasswd.equals(serverPasswd)) {
-                        throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NOT_MATCH, SAErrorMessage.ERR_CODE_PASSWORD_NOT_MATCH);
+                        throw new SAInvalidPasswordException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NOT_MATCH, SAErrorMessage.ERR_CODE_PASSWORD_NOT_MATCH);
                     }
 
                 }

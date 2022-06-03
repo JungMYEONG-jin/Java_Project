@@ -34,7 +34,7 @@ sudo vim ~/.bashrc
 
 -- 해당 문구 추가
 
-export CLASSPATH = ".:$JAVA_HOME/lib:/user/home/ubuntu/driver/selenium.jar"
+export CLASSPATH = ".:$JAVA_HOME/lib:/usr/home/ubuntu/driver/selenium.jar"
 
 -- 그리고 적용시켜주기
 

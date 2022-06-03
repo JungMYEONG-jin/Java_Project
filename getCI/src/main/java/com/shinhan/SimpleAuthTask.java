@@ -4,6 +4,7 @@ import com.shinhan.security.callback.SAListener;
 import com.shinhan.security.imple.SAProperty;
 import com.shinhan.security.imple.SASimpleAuthAction;
 import com.shinhan.security.simpleauth.SAConst;
+import com.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthMessageException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthSQLException;
@@ -251,7 +252,9 @@ public class SimpleAuthTask implements SAListener
         }catch (SASimpleAuthException e)
         {
 
-        }finally {
+        } catch (SAInvalidPasswordException e) {
+            e.printStackTrace();
+        } finally {
             String strSessionChallenge = paramHttpSession.getAttribute(ses_nm_challenge).toString();
             if(strSessionChallenge!=null || strSessionChallenge.length()>0)
             {
@@ -296,7 +299,9 @@ public class SimpleAuthTask implements SAListener
             }
         } catch (SASimpleAuthException e) {
             e.printStackTrace();
-        }finally {
+        } catch (SAInvalidPasswordException e) {
+            e.printStackTrace();
+        } finally {
             if (action!=null)
                 action=null;
         }
