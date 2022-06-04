@@ -1,6 +1,7 @@
 package crawler;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -17,7 +18,8 @@ public class PlayStoreCrawler implements Crawler{
 
 
     private WebDriver getBackGroundDriver(){
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+//        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
         // set background setting
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--headless");
@@ -46,8 +48,8 @@ public class PlayStoreCrawler implements Crawler{
         if (element.isEnabled()){
             System.out.println("클릭이 가능합니다.");
 
-            element.click();
-
+//            element.click();
+            element.sendKeys(Keys.ENTER); // 리눅스에서 클릭이 안되는 현상으로 인해 enter로 변경
             System.out.println("로드중입니다...");
 
             sleep(2000);

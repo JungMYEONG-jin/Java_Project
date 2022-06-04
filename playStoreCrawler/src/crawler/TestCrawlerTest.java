@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TestCrawlerTest {
 
-    PlayStoreCrawler crawler = new PlayStoreCrawler();
+    Crawler crawler = new PlayStoreCrawler();
 
     @Test
     public void singleTest(){
