@@ -2,6 +2,7 @@ package crawler;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,10 @@ class TestCrawlerTest {
         Assertions.assertTrue(listInfos.size() == 3);
 
     }
+
+
+
+
 
 
 

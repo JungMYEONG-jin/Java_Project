@@ -1,5 +1,7 @@
 package crawler;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +17,6 @@ public class PlayStoreCrawler implements Crawler{
 
     private static final String preURL = "https://play.google.com/store/apps/details?id=";
     private static final String postURL = "&hl=ko&gl=US";
-
 
     private WebDriver getBackGroundDriver(){
 //        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
@@ -89,6 +90,78 @@ public class PlayStoreCrawler implements Crawler{
             System.out.println("키값이 변경되었습니다. 수정해주세요.");
         }
         return appInfo;
+    }
+
+
+    public void doReviewCrawling(WebDriver driver, String packageName){
+
+        JSONArray jsonArray = new JSONArray();
+
+        String url = preURL + packageName + postURL;
+
+        driver.get(url);
+
+        System.out.println(packageName+" review crawling start ");
+
+        // 리뷰 모두 보기 xpath
+        WebElement element = driver.findElement(By.xpath("//*[@id='ow59']/section/div/div/div[5]/div/div/button/span[@class='VfPpkd-vQzf8d']"));
+        JSONObject jsonObject = new JSONObject();
+        if (element.isEnabled()){
+            System.out.println("클릭이 가능합니다.");
+
+//            element.click();
+            element.sendKeys(Keys.ENTER); // 리눅스에서 클릭이 안되는 현상으로 인해 Enter send
+            System.out.println("로드중입니다...");
+
+            sleep(2000);
+
+            WebElement title = driver.findElement(By.xpath("//*[@id=\"yDmH0d\"]/div[4]/div[2]/div/div/div/div/div[1]/div/div/h5[@class='xzVNx']"));
+            String titleName = title.getText();
+            System.out.println("앱 이름 = " + titleName);
+
+
+
+            WebElement parentAppInfos = driver.findElement(By.xpath("//*[@id=\"yDmH0d\"]/div[4]/div[2]/div/div/div/div/div[2]/div/div[1]"));
+            // 자세한 앱 정보 뽑아내기
+            List<WebElement> reviews = parentAppInfos.findElements(By.xpath("//div[@class='RHo1pe']"));
+
+            System.out.println("리뷰 갯수: " + reviews.size());
+            for (WebElement webElement : reviews) {
+                // div class "q078ud" key
+                // div class "reAt0" value
+                WebElement userElement = webElement.findElement(By.xpath("div[@class='X5PpBb']"));
+                WebElement reviewDateElement = webElement.findElement(By.xpath("div[@class='Jx4nYe']/span[@class='bp9Aid']"));
+                WebElement reviewElement = webElement.findElement(By.xpath("div[@class='h3YV2d']"));
+
+                String userName = userElement.getText();
+                String reviewDate = reviewDateElement.getText();
+                String review = reviewElement.getText();
+
+                jsonObject.put("이름", titleName);
+                jsonObject.put("작성자", userName);
+                jsonObject.put("작성일", reviewDate);
+                jsonObject.put("리뷰", review);
+
+                jsonArray.add(jsonObject);
+                jsonObject.clear();
+            }
+
+        }else{
+            System.out.println("클릭이 불가능합니다. xpath 확인해주세요.");
+        }
+
+        for(Object obj : jsonArray){
+            JSONObject temp = (JSONObject) obj;
+            System.out.println("review = " + temp);
+        }
+
+    }
+
+    @Override
+    public void getReviews(String packageName) {
+        WebDriver driver = getBackGroundDriver();
+        doReviewCrawling(driver, packageName);
+        driver.quit();
     }
 
 
