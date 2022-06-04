@@ -2,10 +2,7 @@ package crawler;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -17,6 +14,7 @@ public class PlayStoreCrawler implements Crawler{
 
     private static final String preURL = "https://play.google.com/store/apps/details?id=";
     private static final String postURL = "&hl=ko&gl=US";
+    private static final String reviewURL = "&showAllReviews=true";
 
     private WebDriver getBackGroundDriver(){
 //        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
@@ -93,20 +91,20 @@ public class PlayStoreCrawler implements Crawler{
     }
 
 
-    public void doReviewCrawling(WebDriver driver, String packageName){
+    public void doReviewCrawling(WebDriver driver, String packageName) {
 
         JSONArray jsonArray = new JSONArray();
 
-        String url = preURL + packageName + postURL;
+        String url = preURL + packageName + postURL + reviewURL;
 
         driver.get(url);
 
-        System.out.println(packageName+" review crawling start ");
+        System.out.println(packageName + " review crawling start ");
 
         // 리뷰 모두 보기 xpath
         WebElement element = driver.findElement(By.xpath("//button[@class='VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-dgl2Hf ksBjEc lKxP2d qfvgSe aLey0c']"));
-        JSONObject jsonObject = new JSONObject();
-        if (element.isEnabled()){
+
+        if (element.isEnabled()) {
             System.out.println("클릭이 가능합니다.");
 
 //            element.click();
@@ -120,10 +118,11 @@ public class PlayStoreCrawler implements Crawler{
             System.out.println("앱 이름 = " + titleName);
 
 
+//            WebElement parentAppInfos = driver.findElement(By.xpath("//*[@id=\"yDmH0d\"]/div[4]/div[2]/div/div/div/div/div[2]/div/div[1]"));
+            WebElement parentAppInfo = driver.findElement(By.xpath("//*[@id=\"yDmH0d\"]/div[4]/div[2]/div/div/div/div/div[2]"));
+//            JavascriptExecutor js = (JavascriptExecutor) driver;
+            List<WebElement> reviews = driver.findElements(By.xpath("//div[@class='RHo1pe']"));
 
-            WebElement parentAppInfos = driver.findElement(By.xpath("//*[@id=\"yDmH0d\"]/div[4]/div[2]/div/div/div/div/div[2]/div/div[1]"));
-            // 자세한 앱 정보 뽑아내기
-            List<WebElement> reviews = parentAppInfos.findElements(By.xpath("//div[@class='RHo1pe']"));
 
             System.out.println("리뷰 갯수: " + reviews.size());
             for (WebElement webElement : reviews) {
@@ -147,15 +146,13 @@ public class PlayStoreCrawler implements Crawler{
 
             }
 
-        }else{
-            System.out.println("클릭이 불가능합니다. xpath 확인해주세요.");
-        }
 
-        for(Object obj : jsonArray){
-            JSONObject temp = (JSONObject) obj;
-            System.out.println("review = " + temp.toJSONString());
-        }
+            for (Object obj : jsonArray) {
+                JSONObject temp = (JSONObject) obj;
+                System.out.println("review = " + temp.toJSONString());
+            }
 
+        }
     }
 
     @Override
