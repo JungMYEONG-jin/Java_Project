@@ -45,6 +45,11 @@ class TestCrawlerTest {
 
     }
 
+    @Test
+    public void reviewTest(){
+        crawler.getReviews("com.shinhan.sbanking");
+    }
+
 
 
 

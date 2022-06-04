@@ -104,7 +104,7 @@ public class PlayStoreCrawler implements Crawler{
         System.out.println(packageName+" review crawling start ");
 
         // 리뷰 모두 보기 xpath
-        WebElement element = driver.findElement(By.xpath("//*[@id='ow59']/section/div/div/div[5]/div/div/button/span[@class='VfPpkd-vQzf8d']"));
+        WebElement element = driver.findElement(By.xpath("//button[@class='VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-dgl2Hf ksBjEc lKxP2d qfvgSe aLey0c']"));
         JSONObject jsonObject = new JSONObject();
         if (element.isEnabled()){
             System.out.println("클릭이 가능합니다.");
@@ -129,21 +129,22 @@ public class PlayStoreCrawler implements Crawler{
             for (WebElement webElement : reviews) {
                 // div class "q078ud" key
                 // div class "reAt0" value
-                WebElement userElement = webElement.findElement(By.xpath("div[@class='X5PpBb']"));
-                WebElement reviewDateElement = webElement.findElement(By.xpath("div[@class='Jx4nYe']/span[@class='bp9Aid']"));
+                JSONObject obj = new JSONObject();
+                WebElement userElement = webElement.findElement(By.xpath("header/div[1]/div[1]/div[@class='X5PpBb']"));
+                WebElement reviewDateElement = webElement.findElement(By.xpath("header/div[2]/span[@class='bp9Aid']"));
                 WebElement reviewElement = webElement.findElement(By.xpath("div[@class='h3YV2d']"));
 
                 String userName = userElement.getText();
                 String reviewDate = reviewDateElement.getText();
                 String review = reviewElement.getText();
 
-                jsonObject.put("이름", titleName);
-                jsonObject.put("작성자", userName);
-                jsonObject.put("작성일", reviewDate);
-                jsonObject.put("리뷰", review);
+                obj.put("이름", titleName);
+                obj.put("작성자", userName);
+                obj.put("작성일", reviewDate);
+                obj.put("리뷰", review);
 
-                jsonArray.add(jsonObject);
-                jsonObject.clear();
+                jsonArray.add(obj);
+
             }
 
         }else{
@@ -152,7 +153,7 @@ public class PlayStoreCrawler implements Crawler{
 
         for(Object obj : jsonArray){
             JSONObject temp = (JSONObject) obj;
-            System.out.println("review = " + temp);
+            System.out.println("review = " + temp.toJSONString());
         }
 
     }
