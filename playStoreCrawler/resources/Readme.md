@@ -42,5 +42,10 @@ source ~/.bashrc
 
 javac a.java
 java a
+
+
+-- kill all chromedriver
+
+kill $(ps aux | grep chromedriver | grep -v grep | awk '{print $2}')
 ```
 
