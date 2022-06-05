@@ -29,6 +29,15 @@ public class PlayStoreCrawler implements Crawler{
         return driver;
     }
 
+    private WebDriver getForeGroundDriver(){
+//        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
+        // set foreground setting
+        WebDriver driver = new ChromeDriver();
+
+        return driver;
+    }
+
 
     private HashMap<String, String> doCrawling(WebDriver driver, String packageName){
 
