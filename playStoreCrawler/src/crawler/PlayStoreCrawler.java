@@ -107,7 +107,7 @@ public class PlayStoreCrawler implements Crawler{
         driver.get(url);
         System.out.println(packageName + " review crawling start ");
 
-        List<WebElement> reviews;
+        List<WebElement> reviews = new ArrayList<>();
 
         // 리뷰 모두 보기 xpath
         WebElement element = driver.findElement(By.xpath("//button[@class='VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-dgl2Hf ksBjEc lKxP2d qfvgSe aLey0c']"));
@@ -129,38 +129,37 @@ public class PlayStoreCrawler implements Crawler{
 //            WebElement parentAppInfos = driver.findElement(By.xpath("//*[@id=\"yDmH0d\"]/div[4]/div[2]/div/div/div/div/div[2]/div/div[1]"));
             WebElement parentAppInfo = driver.findElement(By.xpath("//*[@id=\"yDmH0d\"]/div[4]/div[2]/div/div/div/div/div[2]"));
 
-            int cnt = 0;
-            int b = 0;
-            while(cnt<5) {
+
+            int b = -1;
+            while(b<20) {
+
                 reviews = driver.findElements(By.xpath("//div[@class='RHo1pe']"));
                 System.out.println("리뷰 갯수: " + reviews.size());
-                if(b != reviews.size()) {
-                   for (WebElement webElement : reviews) {
-                       // div class "q078ud" key
-                       // div class "reAt0" value
-                       JSONObject obj = new JSONObject();
-                       WebElement userElement = webElement.findElement(By.xpath("header/div[1]/div[1]/div[@class='X5PpBb']"));
-                       WebElement reviewDateElement = webElement.findElement(By.xpath("header/div[2]/span[@class='bp9Aid']"));
-                       WebElement reviewElement = webElement.findElement(By.xpath("div[@class='h3YV2d']"));
-
-                       String userName = userElement.getText();
-                       String reviewDate = reviewDateElement.getText();
-                       String review = reviewElement.getText();
-
-                       obj.put("이름", titleName);
-                       obj.put("작성자", userName);
-                       obj.put("작성일", reviewDate);
-                       obj.put("리뷰", review);
-
-                       jsonArray.add(obj);
-
-                   }
-                }
-                b = reviews.size();
-                cnt++;
                 JavascriptExecutor js = (JavascriptExecutor) driver;
                 js.executeScript("arguments[0].scrollIntoView()", reviews.get(reviews.size()-1)); // 내부 view scroll
-                sleep(200);
+                sleep(100);
+                b++;
+            }
+
+            System.out.println("리뷰 개수 = " + reviews.size());
+            for (WebElement webElement : reviews) {
+                // div class "q078ud" key
+                // div class "reAt0" value
+                JSONObject obj = new JSONObject();
+                WebElement userElement = webElement.findElement(By.xpath("header/div[1]/div[1]/div[@class='X5PpBb']"));
+                WebElement reviewDateElement = webElement.findElement(By.xpath("header/div[2]/span[@class='bp9Aid']"));
+                WebElement reviewElement = webElement.findElement(By.xpath("div[@class='h3YV2d']"));
+
+                String userName = userElement.getText();
+                String reviewDate = reviewDateElement.getText();
+                String review = reviewElement.getText();
+
+                obj.put("이름", titleName);
+                obj.put("작성자", userName);
+                obj.put("작성일", reviewDate);
+                obj.put("리뷰", review);
+
+                jsonArray.add(obj);
 
             }
 
