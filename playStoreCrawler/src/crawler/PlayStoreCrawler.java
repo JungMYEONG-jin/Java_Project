@@ -100,7 +100,7 @@ public class PlayStoreCrawler implements Crawler{
     }
 
 
-    public void doReviewCrawling(WebDriver driver, String packageName) {
+    public JSONArray doReviewCrawling(WebDriver driver, String packageName) {
 
         JSONArray jsonArray = new JSONArray();
         String url = preURL + packageName + postURL + reviewURL;
@@ -130,15 +130,15 @@ public class PlayStoreCrawler implements Crawler{
             WebElement parentAppInfo = driver.findElement(By.xpath("//*[@id=\"yDmH0d\"]/div[4]/div[2]/div/div/div/div/div[2]"));
 
 
-            int b = -1;
-            while(b<20) {
+            int limit = 300;
+            while(reviews.size()<limit) {
 
                 reviews = driver.findElements(By.xpath("//div[@class='RHo1pe']"));
                 System.out.println("리뷰 갯수: " + reviews.size());
                 JavascriptExecutor js = (JavascriptExecutor) driver;
                 js.executeScript("arguments[0].scrollIntoView()", reviews.get(reviews.size()-1)); // 내부 view scroll
-                sleep(100);
-                b++;
+                sleep(40);
+
             }
 
             System.out.println("리뷰 개수 = " + reviews.size());
@@ -163,23 +163,20 @@ public class PlayStoreCrawler implements Crawler{
 
             }
 
-
-            for (Object obj : jsonArray) {
-                JSONObject temp = (JSONObject) obj;
-                System.out.println("review = " + temp.toJSONString());
-            }
         }
+        return jsonArray;
     }
 
     @Override
     public void getReviews(String packageName) {
 //        WebDriver driver = getBackGroundDriver();
         WebDriver driver = getForeGroundDriver();
-        doReviewCrawling(driver, packageName);
-        driver.quit();
+        JSONArray jsonArray = doReviewCrawling(driver, packageName);
+        for (Object o : jsonArray) {
+            JSONObject obj = (JSONObject) o;
+            System.out.println("Review = " + obj.toJSONString());
+        }
     }
-
-
     @Override
     public HashMap<String, String> getInfo(String packageName) {
 
