@@ -1,14 +1,15 @@
 package crawler;
 
+import org.checkerframework.checker.units.qual.K;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 public class PlayStoreCrawler implements Crawler{
 
@@ -170,12 +171,44 @@ public class PlayStoreCrawler implements Crawler{
     @Override
     public void getReviews(String packageName) {
 //        WebDriver driver = getBackGroundDriver();
-        WebDriver driver = getForeGroundDriver();
+        WebDriver driver = getBackGroundDriver();
         JSONArray jsonArray = doReviewCrawling(driver, packageName);
-        for (Object o : jsonArray) {
-            JSONObject obj = (JSONObject) o;
-            System.out.println("Review = " + obj.toJSONString());
+        Collections.sort(jsonArray, new Comparator() {
+
+            private static final String KEY_NAME = "작성일";
+            @Override
+            public int compare(Object a, Object b) {
+                String str1 = new String();
+                String str2 = new String();
+                try {
+                    str1 = ((JSONObject)a).get(KEY_NAME).toString();
+                    str2 = ((JSONObject)b).get(KEY_NAME).toString();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                return str1.compareTo(str2);
+            }
+        });
+
+        FileWriter fw = null;
+        try{
+            fw = new FileWriter("reviews.txt");
+            for(Object obj : jsonArray){
+                JSONObject review = (JSONObject) obj;
+                fw.write(review.toJSONString());
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            driver.quit();
+            try{
+                fw.flush();
+                fw.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
+
     }
     @Override
     public HashMap<String, String> getInfo(String packageName) {
