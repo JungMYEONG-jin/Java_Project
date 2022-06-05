@@ -7,6 +7,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -169,7 +170,7 @@ public class PlayStoreCrawler implements Crawler{
     }
 
     @Override
-    public void getReviews(String packageName) {
+    public JSONArray getReviews(String packageName) {
 //        WebDriver driver = getBackGroundDriver();
         WebDriver driver = getBackGroundDriver();
         JSONArray jsonArray = doReviewCrawling(driver, packageName);
@@ -189,31 +190,13 @@ public class PlayStoreCrawler implements Crawler{
                 return str1.compareTo(str2);
             }
         });
+        driver.quit();
+        return jsonArray;
 
-        FileWriter fw = null;
-        try{
-            fw = new FileWriter("reviews.txt");
-            for(Object obj : jsonArray){
-                JSONObject review = (JSONObject) obj;
-                fw.write(review.toJSONString());
-            }
-        }catch (IOException e){
-            e.printStackTrace();
-        }finally {
-            driver.quit();
-            try{
-                fw.flush();
-                fw.close();
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-        }
 
     }
     @Override
     public HashMap<String, String> getInfo(String packageName) {
-
-
 
         WebDriver driver = getBackGroundDriver();
 
@@ -241,6 +224,36 @@ public class PlayStoreCrawler implements Crawler{
     }
 
 
+    @Override
+    public void saveAppInformationToJSON(String packageName){
+        WebDriver driver = getBackGroundDriver();
+
+        HashMap<String, String> appInfo = doCrawling(driver, packageName);
+
+        JSONArray jsonArray = doReviewCrawling(driver, packageName);
+        JSONObject info = new JSONObject(appInfo);
+        jsonArray.add(0, info);
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter("reviews.txt");
+            for (Object obj : jsonArray) {
+                JSONObject review = (JSONObject) obj;
+                fw.write(review.toJSONString());
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            driver.quit();
+            try{
+                fw.flush();
+                fw.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+
+        }
+
+    }
     private void sleep(int millis){
         try{
             Thread.sleep(millis);
@@ -248,6 +261,7 @@ public class PlayStoreCrawler implements Crawler{
             e.printStackTrace();
         }
     }
+
 
 
 }

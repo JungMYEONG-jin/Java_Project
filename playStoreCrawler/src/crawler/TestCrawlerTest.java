@@ -50,6 +50,11 @@ class TestCrawlerTest {
         crawler.getReviews("com.shinhan.sbanking");
     }
 
+    @Test
+    public void integratedTest(){
+        crawler.saveAppInformationToJSON("com.shinhan.sbanking");
+    }
+
 
 
 
