@@ -13,7 +13,7 @@ public class CountingDaoFactory {
     public UserDao userDao()
     {
         UserDao userDao = new UserDaoJdbc();
-        userDao.setDataSource(dataSource());
+//        userDao.setDataSource(dataSource());
         return userDao;
     }
 
