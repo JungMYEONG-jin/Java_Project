@@ -1,5 +1,6 @@
-package crawler;
+package crawler.playStore.crawler;
 
+import crawler.Crawler;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
@@ -10,7 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class PlayStoreCrawler implements Crawler{
+public class PlayStoreCrawler implements Crawler {
 
     private static final String preURL = "https://play.google.com/store/apps/details?id=";
     private static final String postURL = "&hl=ko&gl=US";

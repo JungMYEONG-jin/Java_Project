@@ -1,7 +1,9 @@
-package crawler;
+package crawler.playStore.crawling;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import crawler.Crawler;
+import crawler.playStore.crawler.PlayStoreCrawler;
+import org.assertj.core.api.Assertions;
+import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
 import java.util.HashMap;
@@ -23,7 +25,9 @@ class TestCrawlerTest {
             System.out.println("key = " + s + " value = "+infos.get(s));
         }
 
-        Assertions.assertTrue(infos.size() == 3);
+        Assertions.assertThat(infos.size()).isEqualTo(3);
+
+
     }
 
     @Test
@@ -40,9 +44,6 @@ class TestCrawlerTest {
 
             System.out.println("===========================\n");
         }
-
-        Assertions.assertTrue(listInfos.size() == 3);
-
     }
 
     @Test
