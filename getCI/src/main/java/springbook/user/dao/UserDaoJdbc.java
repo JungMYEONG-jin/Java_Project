@@ -1,11 +1,14 @@
 package springbook.user.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import springbook.exception.DuplicateUserIdException;
 import springbook.exception.ErrorCode;
 import springbook.user.domain.Level;
@@ -17,10 +20,13 @@ import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
+@Repository
 public class UserDaoJdbc implements UserDao{
 
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
     private SqlService sqlService;
 
     public void setSqlService(SqlService sqlService) {
@@ -46,7 +52,9 @@ public class UserDaoJdbc implements UserDao{
         return sqlService;
     }
 
+    @Autowired
     public void setDataSource(DataSource dataSource) {
+
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
