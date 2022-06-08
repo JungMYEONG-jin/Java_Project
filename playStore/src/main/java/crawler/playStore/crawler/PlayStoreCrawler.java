@@ -138,7 +138,7 @@ public class PlayStoreCrawler implements Crawler {
                 System.out.println("리뷰 갯수: " + reviews.size());
                 JavascriptExecutor js = (JavascriptExecutor) driver;
                 js.executeScript("arguments[0].scrollIntoView()", reviews.get(reviews.size()-1)); // 내부 view scroll
-                sleep(40);
+                sleep(400);
 
             }
 

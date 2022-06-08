@@ -2,7 +2,10 @@ package crawler.playStore.crawling;
 
 import crawler.Crawler;
 import crawler.playStore.crawler.PlayStoreCrawler;
+import crawler.playStore.crawler.entity.AppRepository;
 import org.assertj.core.api.Assertions;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
@@ -24,6 +27,7 @@ class TestCrawlerTest {
         for (String s : infos.keySet()) {
             System.out.println("key = " + s + " value = "+infos.get(s));
         }
+
 
         Assertions.assertThat(infos.size()).isEqualTo(3);
 
@@ -48,7 +52,7 @@ class TestCrawlerTest {
 
     @Test
     public void reviewTest(){
-        crawler.getReviews("com.shinhan.sbanking");
+        JSONArray reviews = crawler.getReviews("com.shinhan.sbanking");
     }
 
     @Test
@@ -56,6 +60,11 @@ class TestCrawlerTest {
         crawler.saveAppInformationToJSON("com.shinhan.sbanking");
     }
 
+    @Test
+    public void jpaTest(){
+        HashMap<String, String> infos = crawler.getInfo("com.shinhan.sbanking");
+        JSONArray reviews = crawler.getReviews("com.shinhan.sbanking");
+    }
 
 
 
