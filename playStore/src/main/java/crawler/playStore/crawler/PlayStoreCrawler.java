@@ -18,8 +18,8 @@ public class PlayStoreCrawler implements Crawler {
     private static final String reviewURL = "&showAllReviews=true";
 
     private WebDriver getBackGroundDriver(){
-//        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+//        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
         // set background setting
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--headless");
@@ -131,7 +131,7 @@ public class PlayStoreCrawler implements Crawler {
             WebElement parentAppInfo = driver.findElement(By.xpath("//*[@id=\"yDmH0d\"]/div[4]/div[2]/div/div/div/div/div[2]"));
 
 
-            int limit = 300;
+            int limit = 50;
             while(reviews.size()<limit) {
 
                 reviews = driver.findElements(By.xpath("//div[@class='RHo1pe']"));

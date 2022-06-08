@@ -1,5 +1,6 @@
 package crawler.playStore.crawler.entity;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -7,10 +8,11 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class AppRepository {
 
     @PersistenceContext
-    private EntityManager em;
+    private final EntityManager em;
 
     public void save(App app){
         em.persist(app);

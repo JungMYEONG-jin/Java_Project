@@ -16,14 +16,31 @@ public class App {
 
     @Id
     @GeneratedValue
-    @Column(name = "App_id")
+    @Column(name = "Review_Number")
     private Long id;
 
     @Column(name = "Name")
     private String name;
-    private String review;
-    private String reviewDate;
+    @Column(name = "UpdateDate")
+    private String updateDate;
+    @Column(name = "Version")
+    private String version;
+
+    @Column(name = "Writer")
     private String writer;
+    @Column(name = "ReviewDate")
+    private String reviewDate;
+    @Column(name = "Review", length = 1000)
+    private String review;
 
+    public App(){}
 
+    public App(String name, String updateDate, String version, String writer, String reviewDate, String review) {
+        this.name = name;
+        this.updateDate = updateDate;
+        this.version = version;
+        this.writer = writer;
+        this.reviewDate = reviewDate;
+        this.review = review;
+    }
 }
