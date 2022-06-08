@@ -1,7 +1,10 @@
 package springbook.user.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -11,9 +14,13 @@ import springbook.user.domain.User;
 
 import java.util.List;
 
+@Service("userService")
 public class UserServiceImpl implements UserService{
 
-    UserDao userDao;
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
     private MailSender mailSender;
 
     public void setMailSender(MailSender mailSender) {
