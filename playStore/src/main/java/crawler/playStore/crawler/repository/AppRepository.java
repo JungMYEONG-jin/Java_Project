@@ -1,5 +1,6 @@
-package crawler.playStore.crawler.entity;
+package crawler.playStore.crawler.repository;
 
+import crawler.playStore.crawler.entity.App;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

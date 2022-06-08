@@ -3,7 +3,7 @@ package crawler.playStore.crawling;
 import crawler.Crawler;
 import crawler.playStore.crawler.PlayStoreCrawler;
 import crawler.playStore.crawler.entity.App;
-import crawler.playStore.crawler.entity.AppRepository;
+import crawler.playStore.crawler.repository.AppRepository;
 import org.assertj.core.api.Assertions;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,13 +15,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import java.util.HashMap;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

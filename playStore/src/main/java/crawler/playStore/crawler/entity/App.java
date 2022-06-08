@@ -43,4 +43,17 @@ public class App {
         this.reviewDate = reviewDate;
         this.review = review;
     }
+
+    @Override
+    public String toString() {
+        return "App{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", updateDate='" + updateDate + '\'' +
+                ", version='" + version + '\'' +
+                ", writer='" + writer + '\'' +
+                ", reviewDate='" + reviewDate + '\'' +
+                ", review='" + review + '\'' +
+                '}';
+    }
 }
