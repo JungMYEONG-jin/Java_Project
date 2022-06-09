@@ -1,7 +1,7 @@
 package kakao.getCI.springbook.config;
 
 import kakao.getCI.springbook.user.service.DummyMailSender;
-import kakao.getCI.springbook.user.service.TestUserService;
+import kakao.getCI.springbook.user.service.UserServiceTest.TestUserService;
 import kakao.getCI.springbook.user.service.UserService;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -17,7 +17,7 @@ import java.sql.Driver;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "kakao.getCI")
-@Import({SqlServiceContext.class, AppContext.TestAppContext.class, AppContext.ProductionAppContext.class})
+@Import(SqlServiceContext.class)
 //@ImportResource("/applicationContext.xml")
 public class AppContext {
 
