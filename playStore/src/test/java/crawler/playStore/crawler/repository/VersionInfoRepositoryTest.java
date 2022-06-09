@@ -1,6 +1,6 @@
 package crawler.playStore.crawler.repository;
 
-import crawler.Crawler;
+import crawler.playStore.crawler.Crawler;
 import crawler.playStore.crawler.PlayStoreCrawler;
 import crawler.playStore.crawler.entity.VersionInfo;
 import crawler.playStore.crawler.entity.compositekey.VersionId;

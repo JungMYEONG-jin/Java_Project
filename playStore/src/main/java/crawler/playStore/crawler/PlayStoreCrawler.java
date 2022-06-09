@@ -1,6 +1,5 @@
 package crawler.playStore.crawler;
 
-import crawler.Crawler;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
@@ -18,8 +17,8 @@ public class PlayStoreCrawler implements Crawler {
     private static final String reviewURL = "&showAllReviews=true";
 
     private WebDriver getBackGroundDriver(){
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-//        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
+//        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
         // set background setting
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--headless");

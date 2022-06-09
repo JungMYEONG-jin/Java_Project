@@ -1,4 +1,4 @@
-package crawler;
+package crawler.playStore.crawler;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;

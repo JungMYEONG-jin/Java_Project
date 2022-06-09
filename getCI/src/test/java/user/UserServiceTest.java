@@ -1,18 +1,24 @@
 package user;
 
 import kakao.getCI.springbook.user.service.UserService;
+import kakao.getCI.springbook.user.service.UserServiceImpl;
 import org.assertj.core.api.Assertions;
+import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.TransientDataAccessResourceException;
+import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import kakao.getCI.springbook.config.AppContext;
@@ -21,149 +27,142 @@ import kakao.getCI.springbook.user.domain.Level;
 import kakao.getCI.springbook.user.domain.User;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static kakao.getCI.springbook.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
+import static kakao.getCI.springbook.user.service.UserServiceImpl.MIN_RECCOMEND_FOR_GOLD;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = Runnable.class)
 //@ContextConfiguration(locations = "/applicationContext.xml")
 @ContextConfiguration(classes = AppContext.class)
-@ActiveProfiles("tset")
+@ActiveProfiles("test")
 public class UserServiceTest {
-
-
-    @Autowired
-    UserService userService;
+    @Autowired UserService userService;
     @Autowired UserService testUserService;
-    @Autowired
-    UserDao userDao;
+    @Autowired UserDao userDao;
     @Autowired MailSender mailSender;
-    @Autowired PlatformTransactionManager transactionManager; // auto bean
+    @Autowired PlatformTransactionManager transactionManager;
     @Autowired ApplicationContext context;
 
 
     List<User> users;	// test fixture
 
-    @BeforeEach
-    public void init() {
-        users = Arrays.asList(new User("id11", "mj", "paord123", Level.GOLD, 30, 20),
-                new User("id12", "mk", "pass22", Level.SILVER, 0, 10));
-
+    @Before
+    public void setUp() {
+        users = Arrays.asList(
+                new User("bumjin", "박범진", "p1", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER-1, 0),
+                new User("joytouch", "강명성", "p2", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, 0),
+                new User("erwins", "신승한", "p3",Level.SILVER, 60, MIN_RECCOMEND_FOR_GOLD-1),
+                new User("madnite1", "이상호", "p4",Level.SILVER, 60, MIN_RECCOMEND_FOR_GOLD),
+                new User("green", "오민규", "p5", Level.GOLD, 100, Integer.MAX_VALUE)
+        );
     }
 
     @Test
-    public void readOnlyTransactionAttribute() {
-        testUserService.getAll();
-    }
+    public void upgradeLevels() throws Exception {
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
 
-    @Test
-    public void transactionSync()
-    {
-        userService.deleteAll(); // 1번째
+        MockUserDao mockUserDao = new MockUserDao(this.users);
+        userServiceImpl.setUserDao(mockUserDao);
 
-        userService.add(users.get(0)); // 2번째
-        userService.add(users.get(1)); // 3번째
+        MockMailSender mockMailSender = new MockMailSender();
+        userServiceImpl.setMailSender(mockMailSender);
 
-        // 총 3번의 트랜잭션 이걸 한번에 처리할수 없을까??
-    }
+        userServiceImpl.upgradeLevels();
 
-    // 한번에 트랜잭션 처리
-    @Test
-    public void transactionOneTimeSync()
-    {
-        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
-        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+        List<User> updated = mockUserDao.getUpdated();
+        assertThat(updated.size()).isEqualTo(2);
+        checkUserAndLevel(updated.get(0), "joytouch", Level.SILVER);
+        checkUserAndLevel(updated.get(1), "madnite1", Level.GOLD);
 
-        // 앞에서 만들어진 트랜잭션에 모두 참여...
-        userService.deleteAll(); //
-
-        userService.add(users.get(0)); //
-        userService.add(users.get(1)); //
-
-        transactionManager.commit(txStatus); // 앞에서 시작한 트랜잭션 커밋
+        List<String> request = mockMailSender.getRequests();
+        assertThat(request.size()).isEqualTo(2);
+        assertThat(request.get(0)).isEqualTo(users.get(1).getMail());
+        assertThat(request.get(1)).isEqualTo(users.get(3).getMail());
 
     }
 
-    @Test
-    public void transactionOneTimeSyncReadOnly()
-    {
-        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
-        txDefinition.setReadOnly(true); // set read only setting
-        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
-
-        // 앞에서 만들어진 트랜잭션에 모두 참여...
-        userService.deleteAll(); //
-
-        userService.add(users.get(0)); //
-        userService.add(users.get(1)); //
-
-        transactionManager.commit(txStatus); // 앞에서 시작한 트랜잭션 커밋
-
+    private void checkUserAndLevel(User updated, String expectedId, Level expectedLevel) {
+        assertThat(updated.getId()).isEqualTo(expectedId);
+        assertThat(updated.getLevel()).isEqualTo(expectedLevel);
     }
 
-    @Test
-    public void rollbackTest()
-    {
-        userDao.deleteAll();
-        Assertions.assertThat(userDao.getCount()).isEqualTo(0);
+    static class MockUserDao implements UserDao {
+        private List<User> users;
+        private List<User> updated = new ArrayList<User>();
 
-        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
-        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
-
-
-        userService.add(users.get(0)); //
-        userService.add(users.get(1)); //
-
-        Assertions.assertThat(userDao.getCount()).isEqualTo(2);
-
-
-        transactionManager.rollback(txStatus); // 앞에서 시작한 트랜잭션 rollback
-        Assertions.assertThat(userDao.getCount()).isEqualTo(0);
-
-    }
-
-
-    @Test
-    public void rollbackTest2()
-    {
-
-        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
-        userService.deleteAll();
-        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
-
-        try{
-
-            userService.add(users.get(0)); //
-            userService.add(users.get(1)); //
-            Assertions.assertThat(userDao.getCount()).isEqualTo(2);
-        }finally {
-            transactionManager.rollback(txStatus); // 앞에서 시작한 트랜잭션 rollback
-            Assertions.assertThat(userDao.getCount()).isEqualTo(0);
+        private MockUserDao(List<User> users) {
+            this.users = users;
         }
 
+        public List<User> getUpdated() {
+            return this.updated;
+        }
 
+        public List<User> getAll() {
+            return this.users;
+        }
+
+        public void update(User user) {
+            updated.add(user);
+        }
+
+        public void add(User user) { throw new UnsupportedOperationException(); }
+        public void deleteAll() { throw new UnsupportedOperationException(); }
+        public User get(String id) { throw new UnsupportedOperationException(); }
+        public int getCount() { throw new UnsupportedOperationException(); }
     }
 
+    static class MockMailSender implements MailSender {
+        private List<String> requests = new ArrayList<String>();
+
+        public List<String> getRequests() {
+            return requests;
+        }
+
+        public void send(SimpleMailMessage mailMessage) throws MailException {
+            requests.add(mailMessage.getTo()[0]);
+        }
+
+        public void send(SimpleMailMessage[] mailMessage) throws MailException {
+        }
+    }
+
+
+
+
+
     @Test
-    @Transactional
-    @Rollback
-    public void transactionalAnnotationTest()
-    {
+    @Transactional(propagation= Propagation.NEVER)
+    public void transactionSync() {
         userService.deleteAll();
         userService.add(users.get(0));
         userService.add(users.get(1));
     }
 
-    @Test
-    @Transactional(readOnly = true)
-    public void readOnlyTest()
-    {
-        // read only 속성으로 인해 삭제 실행시 에러가 나야함.
-        userService.deleteAll();
-        userService.add(users.get(0));
-        userService.add(users.get(1));
+    public static class TestUserService extends UserServiceImpl {
+        private String id = "madnite1"; // users(3).getId()
+
+        protected void upgradeLevel(User user) {
+            if (user.getId().equals(this.id)) throw new TestUserServiceException();
+            super.upgradeLevel(user);
+        }
+
+        public List<User> getAll() {
+            for(User user : super.getAll()) {
+                super.update(user);
+            }
+            return null;
+        }
     }
 
-
+    static class TestUserServiceException extends RuntimeException {
+    }
 
 
 

@@ -1,4 +1,4 @@
-package crawler;
+package crawler.playStore.crawler;
 
 import org.json.simple.JSONArray;
 import org.openqa.selenium.WebDriver;

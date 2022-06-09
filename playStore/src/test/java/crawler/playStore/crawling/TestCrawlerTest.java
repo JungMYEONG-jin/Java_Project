@@ -1,6 +1,6 @@
 package crawler.playStore.crawling;
 
-import crawler.Crawler;
+import crawler.playStore.crawler.Crawler;
 import crawler.playStore.crawler.PlayStoreCrawler;
 import crawler.playStore.crawler.entity.App;
 import crawler.playStore.crawler.repository.AppRepository;
