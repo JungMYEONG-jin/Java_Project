@@ -31,6 +31,6 @@ public class OrderControllerInterfaceProxy implements OrderControllerV1 {
 
     @Override
     public String noLog() {
-        return null;
+        return target.noLog();
     }
 }
