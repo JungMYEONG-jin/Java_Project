@@ -4,7 +4,9 @@ import kakao.getCI.springbook.user.service.DummyMailSender;
 import kakao.getCI.springbook.user.service.UserServiceTest.TestUserService;
 import kakao.getCI.springbook.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -27,6 +29,19 @@ public class AppContext {
     @Autowired
     Environment env;
 
+    @Value("${spring.datasource.driver-class-name}") Class<? extends Driver> driverClass;
+    @Value("${spring.datasource.url}") String url;
+    @Value("${spring.datasource.username}") String username;
+    @Value("${spring.datasource.password}") String password;
+
+    // 반드시 static 선언
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer(){
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
+
+
     @Bean
     public DataSource dataSource(){
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
@@ -34,15 +49,20 @@ public class AppContext {
 //        dataSource.setUrl("jdbc:h2:tcp://localhost/~/tobey");
 //        dataSource.setUsername("sa");
 //        dataSource.setPassword("");
-        try{
-            dataSource.setDriverClass((Class<? extends java.sql.Driver>)Class.forName(env.getProperty("db.driverClass")));
-        }catch (ClassNotFoundException e){
-            throw new RuntimeException(e);
-        }
-
-        dataSource.setUrl("jdbc:h2:tcp://localhost/~/tobey");
+//        try{
+//            dataSource.setDriverClass((Class<? extends java.sql.Driver>)Class.forName(env.getProperty("db.driverClass")));
+//        }catch (ClassNotFoundException e){
+//            throw new RuntimeException(e);
+//        }
+//
+//        dataSource.setUrl("jdbc:h2:tcp://localhost/~/tobey");
 //      dataSource.setUsername("sa");
 //      dataSource.setPassword("");
+
+        dataSource.setDriverClass(this.driverClass);
+        dataSource.setUrl(this.url);
+        dataSource.setUsername(this.username);
+        dataSource.setPassword(this.password);
 
         return dataSource;
     }
