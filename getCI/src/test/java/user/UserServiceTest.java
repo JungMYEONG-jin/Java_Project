@@ -1,5 +1,6 @@
 package user;
 
+import kakao.getCI.springbook.user.service.UserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,16 +9,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import springbook.config.AppContext;
-import springbook.user.dao.UserDao;
-import springbook.user.domain.Level;
-import springbook.user.domain.User;
-import springbook.user.service.*;
+import kakao.getCI.springbook.config.AppContext;
+import kakao.getCI.springbook.user.dao.UserDao;
+import kakao.getCI.springbook.user.domain.Level;
+import kakao.getCI.springbook.user.domain.User;
 
 
 import java.util.Arrays;
@@ -26,10 +27,12 @@ import java.util.List;
 @SpringBootTest(classes = Runnable.class)
 //@ContextConfiguration(locations = "/applicationContext.xml")
 @ContextConfiguration(classes = AppContext.class)
+@ActiveProfiles("tset")
 public class UserServiceTest {
 
 
-    @Autowired UserService userService;
+    @Autowired
+    UserService userService;
     @Autowired UserService testUserService;
     @Autowired
     UserDao userDao;

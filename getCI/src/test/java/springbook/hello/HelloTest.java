@@ -1,9 +1,11 @@
 package springbook.hello;
 
-import org.junit.jupiter.api.Assertions;
+import kakao.getCI.springbook.hello.Hello;
+import kakao.getCI.springbook.hello.HelloTarget;
+import kakao.getCI.springbook.hello.HelloUppercase;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import springbook.hello.handler.UppercaseHandler;
+import kakao.getCI.springbook.hello.handler.UppercaseHandler;
 
 import java.lang.reflect.Proxy;
 

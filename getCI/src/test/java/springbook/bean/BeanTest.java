@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
-import springbook.Message;
+import kakao.getCI.springbook.Message;
 
 @SpringBootTest(classes = Runnable.class)
 @ContextConfiguration(locations = "/applicationContext.xml")

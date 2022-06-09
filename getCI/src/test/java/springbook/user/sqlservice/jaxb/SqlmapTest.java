@@ -1,5 +1,7 @@
 package springbook.user.sqlservice.jaxb;
 
+import kakao.getCI.springbook.user.sqlservice.jaxb.SqlType;
+import kakao.getCI.springbook.user.sqlservice.jaxb.Sqlmap;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,11 +13,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = Runnable.class)
 class SqlmapTest {

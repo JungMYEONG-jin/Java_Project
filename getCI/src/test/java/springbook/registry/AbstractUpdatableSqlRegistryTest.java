@@ -3,9 +3,8 @@ package springbook.registry;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import springbook.exception.SqlNotFoundException;
-import springbook.issuetracker.sqlservice.UpdatableSqlRegistry;
-import springbook.user.sqlservice.updatable.ConcurrentHashMapSqlRegistry;
+import kakao.getCI.springbook.exception.SqlNotFoundException;
+import kakao.getCI.springbook.issuetracker.sqlservice.UpdatableSqlRegistry;
 
 public abstract class AbstractUpdatableSqlRegistryTest {
 

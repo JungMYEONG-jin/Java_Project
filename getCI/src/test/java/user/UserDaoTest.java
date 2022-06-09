@@ -6,22 +6,22 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import springbook.config.AppContext;
-import springbook.config.TestAppContext;
-import springbook.user.dao.UserDao;
-import springbook.user.domain.Level;
-import springbook.user.domain.User;
+import kakao.getCI.springbook.config.AppContext;
+import kakao.getCI.springbook.user.dao.UserDao;
+import kakao.getCI.springbook.user.domain.Level;
+import kakao.getCI.springbook.user.domain.User;
 
 import java.sql.SQLException;
 
 @SpringBootTest(classes = Runnable.class)
 //@ContextConfiguration(locations = "/applicationContext.xml")
-@ContextConfiguration(classes = {AppContext.class, TestAppContext.class})
+@ContextConfiguration(classes = AppContext.class)
 @DirtiesContext // 테스트 메소드에서 application context 구성이나 상태를 변경한다는것을 프레임워크에 알려준다.
 public class UserDaoTest {
 
@@ -120,6 +120,16 @@ public class UserDaoTest {
         User findUser2 = userDao.get(user2.getId());
         assertThat(findUser2.getName()).isEqualTo("komet");
 
+    }
+
+    @Autowired
+    DefaultListableBeanFactory bf;
+
+    @Test
+    public void beans(){
+        for(String str : bf.getBeanDefinitionNames()){
+            System.out.println("str = " + bf.getBean(str).getClass().getName());
+        }
     }
 
 

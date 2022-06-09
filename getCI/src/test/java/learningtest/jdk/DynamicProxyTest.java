@@ -10,12 +10,10 @@ import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cglib.proxy.MethodProxy;
-import springbook.hello.Hello;
-import springbook.hello.HelloTarget;
-import springbook.hello.handler.UppercaseHandler;
+import kakao.getCI.springbook.hello.Hello;
+import kakao.getCI.springbook.hello.HelloTarget;
+import kakao.getCI.springbook.hello.handler.UppercaseHandler;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 @SpringBootTest(classes = Runnable.class)
