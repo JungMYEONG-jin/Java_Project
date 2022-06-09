@@ -1,9 +1,12 @@
 package kakao.getCI.springbook.config;
 
 import kakao.getCI.springbook.issuetracker.sqlservice.updatable.EmbeddedSqlRegistry;
+import kakao.getCI.springbook.user.dao.UserDao;
 import kakao.getCI.springbook.user.sqlservice.SqlRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.oxm.Unmarshaller;
@@ -16,11 +19,16 @@ import javax.sql.DataSource;
 @Configuration
 public class SqlServiceContext {
 
+    @Autowired SqlMapConfig sqlMapConfig;
+
     @Bean
     public SqlService sqlService(){
         OxmSqlService sqlService = new OxmSqlService();
         sqlService.setSqlRegistry(sqlRegistry());
         sqlService.setUnmarshaller(unmarshaller());
+
+        sqlService.setSqlmap(this.sqlMapConfig.getSqlMapResource());
+
         return sqlService;
     }
 

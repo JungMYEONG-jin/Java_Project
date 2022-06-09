@@ -26,12 +26,17 @@ public class OxmSqlService implements SqlService{
         this.sqlRegistry = sqlRegistry;
     }
 
+    public void setSqlmap(Resource sqlmap) {
+        this.oxmSqlReader.setSqlmap(sqlmap);
+    }
+
+
     private class OxmSqlReader implements SqlReader{
 
         private Unmarshaller unmarshaller;
 
         private final String DEAFULT_FILE = "/userdao/sqlmap.xml";
-        private Resource sqlmap = new ClassPathResource("./sqlmap.xml", UserDao.class);
+        private Resource sqlmap = new ClassPathResource("/sqlmap.xml");
 
         public void setUnmarshaller(Unmarshaller unmarshaller) {
             this.unmarshaller = unmarshaller;
@@ -46,7 +51,7 @@ public class OxmSqlService implements SqlService{
 
             try{
 
-                Source xmlSource = new StreamSource(new ClassPathResource("./sqlmap.xml").getInputStream());
+                Source xmlSource = new StreamSource(new ClassPathResource("/sqlmap.xml").getInputStream());
 
 //                Source xmlSource = new StreamSource(sqlmap.getInputStream());
                 Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(xmlSource);

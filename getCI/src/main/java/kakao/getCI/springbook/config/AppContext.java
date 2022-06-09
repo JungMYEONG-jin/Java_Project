@@ -1,5 +1,6 @@
 package kakao.getCI.springbook.config;
 
+import kakao.getCI.springbook.user.dao.UserDao;
 import kakao.getCI.springbook.user.service.DummyMailSender;
 import kakao.getCI.springbook.user.service.UserServiceTest.TestUserService;
 import kakao.getCI.springbook.user.service.UserService;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
@@ -21,13 +24,10 @@ import java.sql.Driver;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "kakao.getCI")
-@Import(SqlServiceContext.class)
+@EnableSqlService
 @PropertySource("/application.properties")
 //@ImportResource("/applicationContext.xml")
-public class AppContext {
-
-    @Autowired
-    Environment env;
+public class AppContext implements SqlMapConfig{
 
     @Value("${spring.datasource.driver-class-name}") Class<? extends Driver> driverClass;
     @Value("${spring.datasource.url}") String url;
@@ -74,6 +74,11 @@ public class AppContext {
         return tm;
     }
 
+    @Override
+    public Resource getSqlMapResource() {
+        return new ClassPathResource("sqlmap.xml", UserDao.class);
+    }
+
 
     @Configuration
     @Profile("production")
@@ -81,8 +86,8 @@ public class AppContext {
         @Bean
         public MailSender mailSender(){
             JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-            mailSender.setHost("127.0.0.1");
-            mailSender.setPort(25);
+            mailSender.setHost("localhost");
+            mailSender.setPort(8080);
             return mailSender;
         }
     }
@@ -101,7 +106,6 @@ public class AppContext {
         }
 
     }
-
 
 
 
