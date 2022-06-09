@@ -3,7 +3,9 @@ package kakao.getCI.springbook.config;
 import kakao.getCI.springbook.user.service.DummyMailSender;
 import kakao.getCI.springbook.user.service.UserServiceTest.TestUserService;
 import kakao.getCI.springbook.user.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
@@ -18,16 +20,29 @@ import java.sql.Driver;
 @EnableTransactionManagement
 @ComponentScan(basePackages = "kakao.getCI")
 @Import(SqlServiceContext.class)
+@PropertySource("/application.properties")
 //@ImportResource("/applicationContext.xml")
 public class AppContext {
+
+    @Autowired
+    Environment env;
 
     @Bean
     public DataSource dataSource(){
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setDriverClass(Driver.class);
+//        dataSource.setDriverClass(Driver.class);
+//        dataSource.setUrl("jdbc:h2:tcp://localhost/~/tobey");
+//        dataSource.setUsername("sa");
+//        dataSource.setPassword("");
+        try{
+            dataSource.setDriverClass((Class<? extends java.sql.Driver>)Class.forName(env.getProperty("db.driverClass")));
+        }catch (ClassNotFoundException e){
+            throw new RuntimeException(e);
+        }
+
         dataSource.setUrl("jdbc:h2:tcp://localhost/~/tobey");
-        dataSource.setUsername("sa");
-        dataSource.setPassword("");
+//      dataSource.setUsername("sa");
+//      dataSource.setPassword("");
 
         return dataSource;
     }
