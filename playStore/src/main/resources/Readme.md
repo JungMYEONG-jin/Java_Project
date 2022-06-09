@@ -47,7 +47,15 @@ java a
 -- kill all chromedriver
 
 kill $(ps aux | grep chromedriver | grep -v grep | awk '{print $2}')
+
+
+-- 분할 압축 해제하기
+zip -s 0 ~/Downloads/splitted-zip.zip --out ~/Desktop/singlefile-filename.zip
 ```
+
+
+
+
 
 
 작동 예시
