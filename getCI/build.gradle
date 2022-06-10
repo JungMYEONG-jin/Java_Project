@@ -32,6 +32,9 @@ dependencies {
 // https://mvnrepository.com/artifact/org.springframework/spring-oxm
 	implementation 'org.springframework:spring-oxm:3.0.7.RELEASE'
 
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
 	// https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
 	runtimeOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.6.10'
 	runtimeOnly 'com.h2database:h2'
@@ -43,3 +46,5 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+

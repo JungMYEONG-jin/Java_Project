@@ -48,6 +48,30 @@ public abstract class DataInitController {
 
     }
 
+    public void dataException(Exception e)
+    {
+        WARNINGMsg w = new WARINGMsg();
+        w.msg = e.getMessage();
+
+        if(w.msg == null || w.msg.trim().equals("")){
+            w.msg = "Exception occurred";
+            w.detail = RES.EXCEPTION_DETAIL_MSG;
+        }else if(w.msg.indexOf("ORA-") > -1){
+            w.msg = "DB Error occurred";
+            w.detail = "Retry it";
+        }else{
+            w.msg = "Exception occurred";
+            w.detail = RES.EXCEPTION_DETAIL_MSG;
+        }
+
+        JSONObject errorObj = new JSONObject();
+
+        errorObj.put("msg", w.msg);
+        errorObj.put("detail", w.detail);
+
+
+    }
+
     public JSONObject noDataException()
     {
         JSONObject head = new JSONObject();
