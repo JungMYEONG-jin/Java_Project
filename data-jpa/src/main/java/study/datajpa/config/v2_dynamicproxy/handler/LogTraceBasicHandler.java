@@ -22,7 +22,7 @@ public class LogTraceBasicHandler implements InvocationHandler {
         try{
             String msg = method.getDeclaringClass().getSimpleName() + "." + method.getName() + "()";
             status = trace.begin(msg);
-            Object result = method.invoke(target, trace);
+            Object result = method.invoke(target, args);
             trace.end(status);
             return result;
         }catch (Exception e){
