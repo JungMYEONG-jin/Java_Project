@@ -11,6 +11,7 @@ import study.datajpa.config.AppV2Config;
 import study.datajpa.config.v1_proxy.ConcreteProxyConfig;
 import study.datajpa.config.v1_proxy.InterfaceProxyConfig;
 import study.datajpa.config.v2_dynamicproxy.DynamicProxyBasicConfig;
+import study.datajpa.config.v2_dynamicproxy.DynamicProxyFilterConfig;
 import study.datajpa.trace.logtrace.LogTrace;
 import study.datajpa.trace.logtrace.ThreadLocalLogTrace;
 
@@ -21,7 +22,8 @@ import java.util.UUID;
 @EnableJpaAuditing // 추적
 //@Import(InterfaceProxyConfig.class)
 //@Import(ConcreteProxyConfig.class)
-@Import(DynamicProxyBasicConfig.class)
+//@Import(DynamicProxyBasicConfig.class)
+@Import(DynamicProxyFilterConfig.class)
 @SpringBootApplication(scanBasePackages = "study.datajpa.proxy.app")
 public class DataJpaApplication {
 
