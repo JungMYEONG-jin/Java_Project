@@ -235,7 +235,7 @@ public class SUPLoggerUtil {
             }
 
         }catch (Exception el){
-            Logger.exception("exception ", e);
+            Logger.fine("exception, ", e);
         }
 
 
