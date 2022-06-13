@@ -1,4 +1,4 @@
-package sol.com.shinhan.filter;
+package sol.com.shinhan.superplatform.filter;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;

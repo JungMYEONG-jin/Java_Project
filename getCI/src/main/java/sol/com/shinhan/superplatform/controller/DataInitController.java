@@ -1,4 +1,4 @@
-package sol.com.shinhan.controller;
+package sol.com.shinhan.superplatform.controller;
 
 import org.json.simple.JSONObject;
 

@@ -1,4 +1,4 @@
-package sol.com.shinhan.filter;
+package sol.com.shinhan.superplatform.filter;
 
 import org.apache.commons.io.IOUtils;
 

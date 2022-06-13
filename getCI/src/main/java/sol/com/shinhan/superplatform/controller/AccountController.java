@@ -1,4 +1,4 @@
-package sol.com.shinhan.controller;
+package sol.com.shinhan.superplatform.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import sol.com.shinhan.service.AccountManagerService;
-import sol.com.shinhan.service.AccountService;
-import sol.com.shinhan.service.AllAccountService;
+import sol.com.shinhan.superplatform.service.AccountManagerService;
+import sol.com.shinhan.superplatform.service.AccountService;
+import sol.com.shinhan.superplatform.service.AllAccountService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

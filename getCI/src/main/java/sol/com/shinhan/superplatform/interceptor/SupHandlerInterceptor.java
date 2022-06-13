@@ -1,4 +1,4 @@
-package sol.com.shinhan.interceptor;
+package sol.com.shinhan.superplatform.interceptor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
