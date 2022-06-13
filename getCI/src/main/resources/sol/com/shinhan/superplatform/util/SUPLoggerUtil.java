@@ -1,6 +1,5 @@
 package sol.com.shinhan.superplatform.util;
 
-import com.sun.org.apache.xerces.internal.parsers.XML11Configuration;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.web.context.request.RequestContextHolder;
