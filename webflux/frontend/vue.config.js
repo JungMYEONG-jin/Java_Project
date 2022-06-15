@@ -1,31 +1,23 @@
 const bootstrapSassAbstractsImports = require('vue-cli-plugin-bootstrap-vue/sassAbstractsImports.js')
-const { defineConfig } = require('@vue/cli-service')
 module.exports = {
-  outputDir: "../src/main/resources/static",
+  outputDir: "../src/main/resources/static",  // 빌드 타겟 디렉토리
   devServer: {
     proxy: {
       '/api': {
-        // api uri 접근시 서버 포트로 변경
+        // '/api' 로 들어오면 포트 8081(스프링 서버)로 보낸다
         target: 'http://localhost:8088',
-        changeOrigin: true
+        changeOrigin: true // cross origin 허용
       }
     }
-  }
-};
-
-
-
-
-//defineConfig({
-//   transpileDependencies: true
+  },
 	css: {
 		loaderOptions: {
 			sass: {
 				additionalData: bootstrapSassAbstractsImports.join('\n')
-			}
+			},
 			scss: {
 				additionalData: [...bootstrapSassAbstractsImports, ''].join(';\n')
 			}
 		}
 	}
-// }
+};

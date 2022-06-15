@@ -11,7 +11,6 @@ import OSM from 'ol/source/OSM';
 import {fromLonLat} from 'ol/proj.js'
 import {defaults} from 'ol/control.js';
 
-
 export default {
   name: 'MainMap',
   data() {
@@ -22,11 +21,13 @@ export default {
   mounted() {
     this.olMap = new OlMap({
       target: this.$refs.map,
-      controls: defaults({
-        attribution: false,
-        zoom: false,
-        rotate: false,
-      }),
+      controls: defaults(
+          {
+            attribution: false,
+            zoom: false,
+            rotate: false,
+          }
+      ),
       layers: [
         new OlLayerTile({
           source: new OSM()
