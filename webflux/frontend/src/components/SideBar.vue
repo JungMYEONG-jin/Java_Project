@@ -19,7 +19,7 @@
         </div>
         <div class="location-info-area">
           <FontAwesomeIcon icon="location-dot"/>
-          <BInput placeholder="위치 정보 직접 입력하기"/>
+          <BInput placeholder="위치 정보 직접 입력하기" v-model="address"/>
         </div>
         <div class="rate-area">
           <BFormRating />
@@ -53,13 +53,20 @@ export default {
   },
   data() {
     return {
-      isVisibleSideBar: true
+      isVisibleSideBar: true,
+      address: undefined
     }
   },
   methods: {
     showSideBar() {
       this.isVisibleSideBar = !this.isVisibleSideBar;
     }
+  },
+  save() {
+
+  },
+  created() {
+    this.$root.$refs.sideBar = this;
   }
 }
 </script>
@@ -85,6 +92,7 @@ export default {
         input, input::placeholder, input:focus {
           font-size: 2rem;
           font-weight: bold;
+          font-family: 'Nanum Barun Gothic';
           color: #fff;
           box-shadow: none;
           background: none;

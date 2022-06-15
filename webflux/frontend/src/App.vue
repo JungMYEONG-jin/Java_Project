@@ -20,6 +20,7 @@ export default {
 
 <style lang="scss">
 @import "~@/assets/scss/vendors/bootstrap-vue/index";
+
 #app {
   position: absolute;
   top: 0;

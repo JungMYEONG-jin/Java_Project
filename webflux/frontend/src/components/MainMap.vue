@@ -8,8 +8,14 @@ import OlLayerTile from 'ol/layer/Tile.js';
 import OlView from 'ol/View.js';
 import OlMap from 'ol/Map.js';
 import OSM from 'ol/source/OSM';
-import {fromLonLat} from 'ol/proj.js'
+import {fromLonLat, toLonLat} from 'ol/proj.js'
 import {defaults} from 'ol/control.js';
+import axios from 'axios'
+import Geocoder from 'ol-geocoder'
+
+
+const EPSG_3857 = 'EPSG:3857';
+const EPSG_4326 = 'EPSG:4326';
 
 export default {
   name: 'MainMap',
@@ -38,6 +44,38 @@ export default {
         zoom: 10
       })
     })
+    this.olMap.on('click', async (e) => {
+      const lonLatArr = toLonLat(e.coordinate)
+      const lon = lonLatArr[0]
+      const lat = lonLatArr[1]
+      const addressInfo = await that.getAddress(lon, lat)
+      this.$root.$refs.sideBar.address = addressInfo.data.display_name.split(", ").reverse().join(" ");
+      console.log(toLonLat(e.coordinate));
+    })
+
+    const geocoder = new Geocoder('nominatim', {
+      provider: 'osm',
+      lang: 'kr',
+      placeholder: '주소검색',
+      limit: 5,
+      autoComplete: true,
+      keepOpen: true
+    });
+  },
+  methods: {
+
+    se
+
+    getAddress (lon, lat) {
+      return axios.get('https://nominatim.openstreetmap.org/reverse',
+          {
+            params: {
+              format: 'json',
+              lon: lon,
+              lat: lat
+            }
+          })
+    }
   }
 
 }
