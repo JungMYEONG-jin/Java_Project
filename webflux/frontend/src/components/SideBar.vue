@@ -18,6 +18,7 @@
           </div>
         </div>
         <div class="location-info-area">
+          <FontAwesomeIcon icon="location-dot"/>
           <BInput placeholder="위치 정보 직접 입력하기"/>
         </div>
         <div class="rate-area">
@@ -36,7 +37,8 @@
         size="sm"
         @click="showSideBar"
     >
-      {{ isVisibleSideBar ? '닫힘' : '열림' }}
+<!--      {{ isVisibleSideBar ? '닫힘' : '열림' }}-->
+      <FontAwesomeIcon :icon="isVisibleSideBar ? 'angle-left' : 'angle-right'"/>
     </BButton>
   </div>
 </template>
@@ -106,7 +108,9 @@ export default {
       }
 
       > .location-info-area {
-        padding: 10px;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
 
         input, input::placeholder, input:focus {
           font-size: 1rem;
