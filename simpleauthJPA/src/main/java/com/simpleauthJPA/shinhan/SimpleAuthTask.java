@@ -1,20 +1,22 @@
 package com.simpleauthJPA.shinhan;
 
-import com.shinhan.security.callback.SAListener;
-import com.shinhan.security.imple.SAProperty;
-import com.shinhan.security.imple.SASimpleAuthAction;
-import com.shinhan.security.simpleauth.SAConst;
-import com.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
-import com.shinhan.security.simpleauth.exception.SASimpleAuthException;
-import com.shinhan.security.simpleauth.exception.SASimpleAuthMessageException;
-import com.shinhan.security.simpleauth.exception.SASimpleAuthSQLException;
-import com.shinhan.security.simpleauth.message.SAErrorMessage;
-import com.shinhan.security.simpleauth.message.SAMessageUtil;
-import com.shinhan.security.simpleauth.tlv.SAErrsEnum;
-import com.shinhan.security.simpleauth.tlv.SATagsEnum;
-import com.shinhan.security.simpleauth.util.SAHexUtil;
-import com.shinhan.security.simpleauth.util.SAUtil;
-import com.shinhan.util.SADBSimpleAuthMgr;
+
+
+import com.simpleauthJPA.shinhan.security.callback.SAListener;
+import com.simpleauthJPA.shinhan.security.imple.SAProperty;
+import com.simpleauthJPA.shinhan.security.imple.SASimpleAuthAction;
+import com.simpleauthJPA.shinhan.security.simpleauth.SAConst;
+import com.simpleauthJPA.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
+import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthException;
+import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthMessageException;
+import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthSQLException;
+import com.simpleauthJPA.shinhan.security.simpleauth.message.SAErrorMessage;
+import com.simpleauthJPA.shinhan.security.simpleauth.message.SAMessageUtil;
+import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SAErrsEnum;
+import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SATagsEnum;
+import com.simpleauthJPA.shinhan.security.simpleauth.util.SAHexUtil;
+import com.simpleauthJPA.shinhan.security.simpleauth.util.SAUtil;
+import com.simpleauthJPA.shinhan.util.SADBSimpleAuthMgr;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;

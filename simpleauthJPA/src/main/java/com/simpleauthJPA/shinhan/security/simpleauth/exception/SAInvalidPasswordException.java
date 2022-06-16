@@ -1,7 +1,7 @@
 package com.simpleauthJPA.shinhan.security.simpleauth.exception;
 
-import com.shinhan.security.simpleauth.tlv.SAErrsEnum;
-import com.shinhan.security.simpleauth.util.SAUtil;
+import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SAErrsEnum;
+import com.simpleauthJPA.shinhan.security.simpleauth.util.SAUtil;
 
 public class SAInvalidPasswordException extends Exception {
     private static final long serialVersionUID = 1L;

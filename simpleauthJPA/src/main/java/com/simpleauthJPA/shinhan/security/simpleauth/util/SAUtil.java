@@ -1,6 +1,6 @@
 package com.simpleauthJPA.shinhan.security.simpleauth.util;
 
-import com.shinhan.security.simpleauth.tlv.SAErrsEnum;
+import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SAErrsEnum;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 

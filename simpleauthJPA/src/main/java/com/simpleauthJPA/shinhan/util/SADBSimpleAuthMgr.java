@@ -1,10 +1,12 @@
 package com.simpleauthJPA.shinhan.util;
 
-import com.shinhan.security.imple.SAProperty;
-import com.shinhan.security.simpleauth.exception.SASimpleAuthSQLException;
-import com.shinhan.security.simpleauth.message.SAErrorMessage;
-import com.shinhan.security.simpleauth.tlv.SAErrsEnum;
-import com.shinhan.security.simpleauth.util.SALogUtil;
+
+
+import com.simpleauthJPA.shinhan.security.imple.SAProperty;
+import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthSQLException;
+import com.simpleauthJPA.shinhan.security.simpleauth.message.SAErrorMessage;
+import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SAErrsEnum;
+import com.simpleauthJPA.shinhan.security.simpleauth.util.SALogUtil;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -21,7 +23,8 @@ public class SADBSimpleAuthMgr {
 //            Class.forName("oracle.jdbc.driver.OracleDriver");
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
-            throw new SASimpleAuthSQLException(SAErrsEnum.ERR_JDBC_D, SAErrorMessage.ERR_MSG_JDBC_CLASSNOTFOUND_D, SAErrorMessage.ERR_CODE_JDBC_CLASSNOTFOUND_D);
+            throw new SASimpleAuthSQLException(
+                    SAErrsEnum.ERR_JDBC_D, SAErrorMessage.ERR_MSG_JDBC_CLASSNOTFOUND_D, SAErrorMessage.ERR_CODE_JDBC_CLASSNOTFOUND_D);
         } catch (Exception e) {
             throw new SASimpleAuthSQLException(SAErrsEnum.ERR_JDBC_D, SAErrorMessage.ERR_MSG_JDBC_EXCEPTION_D, SAErrorMessage.ERR_CODE_JDBC_EXCEPTION_D);
         } catch (Throwable e) {

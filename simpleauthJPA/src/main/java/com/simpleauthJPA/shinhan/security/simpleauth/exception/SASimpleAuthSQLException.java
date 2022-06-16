@@ -1,6 +1,7 @@
 package com.simpleauthJPA.shinhan.security.simpleauth.exception;
 
-import com.shinhan.security.simpleauth.tlv.SAErrsEnum;
+
+import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SAErrsEnum;
 
 public class SASimpleAuthSQLException extends SASimpleAuthException {
     private static final long serialVersionUID = 2385998377804941583L;
