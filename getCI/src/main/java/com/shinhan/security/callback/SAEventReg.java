@@ -13,6 +13,12 @@ public class SAEventReg {
 
     private SACallbackChallenge callbackChallenge;
 
+    private SACallbackPasswordCheck saCallbackPasswordCheck;
+
+    public SAEventReg(SACallbackPasswordCheck saCallbackPasswordCheck) {
+        this.saCallbackPasswordCheck = saCallbackPasswordCheck;
+    }
+
     public SAEventReg(SACallbackReg event) {
         this.callbackReg = event;
     }
@@ -43,5 +49,9 @@ public class SAEventReg {
 
     public void doSetChallengeInSession(String challenge) {
         this.callbackChallenge.cbSetChallengeInSession(challenge);
+    }
+
+    public boolean doPasswordValidationCheck(String password, String authtype){
+        return this.saCallbackPasswordCheck.CheckPasswordValidation(password, authtype);
     }
 }

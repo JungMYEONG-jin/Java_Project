@@ -2,6 +2,7 @@ package com.shinhan.security.imple;
 
 import com.shinhan.security.callback.*;
 import com.shinhan.security.simpleauth.crypto.SACryptoUtil;
+import com.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthCryptoException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthException;
 import com.shinhan.security.simpleauth.exception.SASimpleAuthMessageException;
@@ -31,17 +32,6 @@ import java.util.HashMap;
 
 public class SASimpleAuthTask {
     private static String _SASimpleAuthTask_ = "_SASimpleAuthTask_ :: ";
-
-    private static PasswordListener saPasswordListener = null;
-
-    public static void setPasswordListener(PasswordListener saPasswordListener) {
-        SASimpleAuthTask.saPasswordListener = saPasswordListener;
-    }
-
-    private static void clearListener()
-    {
-        saPasswordListener=null;
-    }
 
 
     public static String reg_init_server(String strReqTag, String reqJson, String cusno, HttpServletRequest request, HttpServletResponse response, SACallbackChallenge callBack) throws SASimpleAuthException {
@@ -83,7 +73,11 @@ public class SASimpleAuthTask {
         return resultJson;
     }
 
-    public static String reg_server(String strReqTag, String reqJson, String cusno, String challenge, HttpServletRequest request, HttpServletResponse response, SACallbackReg callBack) throws SASimpleAuthException {
+    public static String reg_server(String strReqTag, String reqJson, String cusno, String challenge, HttpServletRequest request, HttpServletResponse response, SACallbackReg callBack) throws SASimpleAuthException, SAInvalidPasswordException {
+            return reg_server(strReqTag, reqJson, cusno, challenge, request, response, callBack, null);
+    }
+
+    public static String reg_server(String strReqTag, String reqJson, String cusno, String challenge, HttpServletRequest request, HttpServletResponse response, SACallbackReg callBack, SACallbackPasswordCheck saCallbackPasswordCheck) throws SASimpleAuthException, SAInvalidPasswordException {
         SALogUtil.fine("reg_server :: start");
         String resultJson = null;
         boolean isSuccess = false;
@@ -134,9 +128,9 @@ public class SASimpleAuthTask {
             String deSigndata = SACryptoUtil.rsaDecrypt(objRegClientMessage.signdata, publicKey);
             SALogUtil.fine("deSigndata :: " + deSigndata);
 
-            if(saPasswordListener!=null)
+            if(saCallbackPasswordCheck!=null)
             {
-
+                SAEventReg reg = new SAEventReg(saCallbackPasswordCheck);
                 HashMap<String, String> passwordInfo = SAMessageUtil.getPasswordInfo(decryptedRd);
                 boolean isNewer = false;
                 if(passwordInfo!=null) {
@@ -156,14 +150,15 @@ public class SASimpleAuthTask {
                     if (isNewer) {
                         String clientPasswd = passwordInfo.get("clientPasswd");
                         if (isEmpty(clientPasswd)) {
-                            throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
+                            throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
                         }
 
                         SALogUtil.fine("Password: " + clientPasswd);
 
-                        boolean isValidPassword = saPasswordListener.CheckPasswordValidation(clientPasswd, sign_plain_text_msg.type);
+                        boolean isValidPassword = reg.doPasswordValidationCheck(clientPasswd, sign_plain_text_msg.type);
                         if (!isValidPassword) {
-                            throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_INVALID, SAErrorMessage.ERR_CODE_PASSWORD_INVALID);
+                            SALogUtil.fine("Password is invalid! : "+clientPasswd);
+                            throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_INVALID, SAErrorMessage.ERR_CODE_PASSWORD_INVALID);
                         }
                     }
                 }else
@@ -235,7 +230,11 @@ public class SASimpleAuthTask {
         return resultJson;
     }
 
-    public static String auth_Init_server(String strReqTag, String reqJson, HttpServletRequest request, HttpServletResponse response, SACallbackSearch callBack1, SACallbackChallenge callBack2) throws SASimpleAuthException {
+    public static String auth_Init_server(String strReqTag, String reqJson, HttpServletRequest request, HttpServletResponse response, SACallbackSearch callBack1, SACallbackChallenge callBack2) throws SASimpleAuthException, SAInvalidPasswordException{
+            return auth_Init_server(strReqTag, reqJson, request, response, callBack1, callBack2, null);
+    }
+
+    public static String auth_Init_server(String strReqTag, String reqJson, HttpServletRequest request, HttpServletResponse response, SACallbackSearch callBack1, SACallbackChallenge callBack2, SACallbackPasswordCheck saCallbackPasswordCheck) throws SASimpleAuthException, SAInvalidPasswordException {
         SALogUtil.fine("auth_Init_server :: start");
         String resultJson = null;
         SAAuthInitClientMessage objAuthInitClientMessage = new SAAuthInitClientMessage();
@@ -292,7 +291,7 @@ public class SASimpleAuthTask {
             if (!strAppId.equals(appid_db))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_APPID_NOT_MATCH, SAErrorMessage.ERR_CODE_APPID_NOT_MATCH);
 
-            if(saPasswordListener!=null)
+            if(saCallbackPasswordCheck!=null)
             {
                 HashMap<String, String> passwordInfo = SAMessageUtil.getPasswordInfo(reqJson);
                 boolean isNewer = false;
@@ -325,7 +324,7 @@ public class SASimpleAuthTask {
                         SALogUtil.fine("RSA(Client Sha(id+Sha(uuid)+type)): "+clientPasswd);
                         if(isEmpty(clientPasswd))
                         {
-                            throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
+                            throw new SAInvalidPasswordException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
                         }
                         String rawClientPasswd = SACryptoUtil.rsaDecrypt(clientPasswd, publicKey);
 
@@ -350,7 +349,8 @@ public class SASimpleAuthTask {
 
                         if(!rawClientPasswd.toUpperCase().equals(serverPasswd.toUpperCase()) && !rawClientPasswd.equals(serverPasswd))
                         {
-                            throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NOT_MATCH, SAErrorMessage.ERR_CODE_PASSWORD_NOT_MATCH);
+                            SALogUtil.fine("authInit - 비밀번호가 다릅니다.");
+                            throw new SAInvalidPasswordException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NOT_MATCH, SAErrorMessage.ERR_CODE_PASSWORD_NOT_MATCH);
                         }
                     }
 
@@ -574,14 +574,4 @@ public class SASimpleAuthTask {
         return false;
     }
 
-    public static void isListenerNULL()
-    {
-        System.out.println("start~");
-        if(saPasswordListener==null)
-            System.out.println(" i am null");
-        else {
-            System.out.println("i am not null = ");
-//            clearListener();
-        }
-    }
 }

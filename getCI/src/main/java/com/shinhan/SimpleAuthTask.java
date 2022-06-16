@@ -1,5 +1,6 @@
 package com.shinhan;
 
+import com.shinhan.security.callback.SACallbackPasswordCheck;
 import com.shinhan.security.callback.SAListener;
 import com.shinhan.security.imple.SAProperty;
 import com.shinhan.security.imple.SASimpleAuthAction;
