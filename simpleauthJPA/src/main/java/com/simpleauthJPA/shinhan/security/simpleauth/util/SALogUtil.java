@@ -1,6 +1,6 @@
 package com.simpleauthJPA.shinhan.security.simpleauth.util;
 
-import com.shinhan.security.imple.SAProperty;
+import com.simpleauthJPA.shinhan.security.imple.SAProperty;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

@@ -19,12 +19,12 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    List<User> findById(String id);
+    User findById(String id);
     List<User> findByIdAndTypeEquals(String id, String type);
-    @Query("select u from User u where u.Id = :Id and u.UnregDate = '999999999'")
-    List<User> getSAAuthInitInfo(@Param("Id") String id);
-    @Query("select u from User u where u.Id = :Id and u.UnregDate = '999999999'")
-    List<User> getSAAuthInfo(@Param("Id") String id);
+    @Query("select u from User u where u.id = :id and u.unregdate = '999999999'")
+    List<User> getSAAuthInitInfo(@Param("id") String id);
+    @Query("select u from User u where u.id = :id and u.unregdate = '999999999'")
+    List<User> getSAAuthInfo(@Param("id") String id);
 
 }
 

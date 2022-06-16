@@ -1,8 +1,9 @@
 package com.simpleauthJPA.shinhan.security.simpleauth.util;
 
-import com.shinhan.security.simpleauth.exception.SASimpleAuthCryptoException;
-import com.shinhan.security.simpleauth.message.SAErrorMessage;
-import com.shinhan.security.simpleauth.tlv.SAErrsEnum;
+
+import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthCryptoException;
+import com.simpleauthJPA.shinhan.security.simpleauth.message.SAErrorMessage;
+import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SAErrsEnum;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

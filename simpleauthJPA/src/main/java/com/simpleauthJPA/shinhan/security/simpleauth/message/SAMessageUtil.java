@@ -1,8 +1,9 @@
 package com.simpleauthJPA.shinhan.security.simpleauth.message;
 
-import com.shinhan.security.simpleauth.exception.SASimpleAuthMessageException;
-import com.shinhan.security.simpleauth.message.auth.SAAuthInitClientMessage;
-import com.shinhan.security.simpleauth.tlv.SAErrsEnum;
+
+import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthMessageException;
+import com.simpleauthJPA.shinhan.security.simpleauth.message.auth.SAAuthInitClientMessage;
+import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SAErrsEnum;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
