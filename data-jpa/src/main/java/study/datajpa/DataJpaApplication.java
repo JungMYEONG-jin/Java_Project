@@ -12,6 +12,7 @@ import study.datajpa.config.v1_proxy.ConcreteProxyConfig;
 import study.datajpa.config.v1_proxy.InterfaceProxyConfig;
 import study.datajpa.config.v2_dynamicproxy.DynamicProxyBasicConfig;
 import study.datajpa.config.v2_dynamicproxy.DynamicProxyFilterConfig;
+import study.datajpa.config.v6_aop.AopConfig;
 import study.datajpa.trace.logtrace.LogTrace;
 import study.datajpa.trace.logtrace.ThreadLocalLogTrace;
 
@@ -23,7 +24,8 @@ import java.util.UUID;
 //@Import(InterfaceProxyConfig.class)
 //@Import(ConcreteProxyConfig.class)
 //@Import(DynamicProxyBasicConfig.class)
-@Import(DynamicProxyFilterConfig.class)
+//@Import(DynamicProxyFilterConfig.class)
+@Import(AopConfig.class)
 @SpringBootApplication(scanBasePackages = "study.datajpa.proxy.app")
 public class DataJpaApplication {
 
