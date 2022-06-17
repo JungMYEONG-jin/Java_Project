@@ -21,10 +21,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findById(String id);
     List<User> findByIdAndTypeEquals(String id, String type);
+    User findByIdAndUnregdateEquals(String id, String unregdate);
     @Query("select u from User u where u.id = :id and u.unregdate = '999999999'")
     List<User> getSAAuthInitInfo(@Param("id") String id);
     @Query("select u from User u where u.id = :id and u.unregdate = '999999999'")
-    List<User> getSAAuthInfo(@Param("id") String id);
+    List<User> getSAUserInfo(@Param("id") String id);
 
 }
 

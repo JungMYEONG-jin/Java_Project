@@ -44,7 +44,7 @@ public class UserController {
 
     @GetMapping("/users/authinfo/{id}")
     public String getAuthInfo(@PathVariable("id") String id){
-        List<User> users = userRepository.getSAAuthInfo(id);
+        List<User> users = userRepository.getSAUserInfo(id);
         JSONArray arr = new JSONArray();
 
         for (User user : users) {

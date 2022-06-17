@@ -2,6 +2,9 @@ package com.simpleauthJPA.shinhan.security.imple;
 
 
 
+import com.simpleauthJPA.entity.User;
+import com.simpleauthJPA.entity.UserDto;
+import com.simpleauthJPA.repository.UserRepository;
 import com.simpleauthJPA.shinhan.security.callback.SAListener;
 import com.simpleauthJPA.shinhan.security.simpleauth.crypto.SACryptoUtil;
 import com.simpleauthJPA.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
@@ -26,10 +29,14 @@ import com.simpleauthJPA.shinhan.security.simpleauth.util.*;
 
 import javax.servlet.http.HttpSession;
 import java.security.PublicKey;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 
 public class SASimpleAuthAction {
     private static String _SASimpleAuthAction_ = "_SASimpleAuthAction_ :: ";
+
+    private static UserRepository userRepository;
 
     public SAListener listener;
 
@@ -194,21 +201,15 @@ public class SASimpleAuthAction {
                     SALogUtil.fine("uuid :: " + sign_plain_text_msg.uuid);
                     SALogUtil.fine("pubkey :: " + sign_plain_text_msg.pubkey);
                     SALogUtil.fine("type :: " + sign_plain_text_msg.type);
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    map.put(SAProperty.COL_NM_ID, sign_plain_text_msg.id);
-                    map.put(SAProperty.COL_NM_APPID, sign_plain_text_msg.appid);
-                    map.put(SAProperty.COL_NM_UUID, sign_plain_text_msg.uuid);
-                    map.put(SAProperty.COL_NM_PUBKEY, sign_plain_text_msg.pubkey);
-                    map.put(SAProperty.COL_NM_TYPE, sign_plain_text_msg.type);
-                    map.put(SAProperty.COL_NM_STATUS, SAProperty.STATUS_Y);
-                    map.put(SAProperty.COL_NM_CUSNO, cusno);
 
-                    for (String s : map.keySet()) {
-                        System.out.println(s+": "+map.get(s));
+
+                    try{
+                        userRepository.save(new User(sign_plain_text_msg.id, sign_plain_text_msg.appid, cusno, sign_plain_text_msg.uuid, sign_plain_text_msg.type, SAProperty.STATUS_Y, sign_plain_text_msg.pubkey, LocalDateTime.now().toString(), "999999999", null));
+                        isSuccess = true;
+                    }catch (Exception e){
+                        throw new SASimpleAuthException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_DB_INSERT, SAErrorMessage.ERR_CODE_DB_INSERT);
                     }
 
-
-                    isSuccess = this.listener.onSimpleAuthInfoReg(map, cusno, session);
                     SAResultMessage objRegServerMessage = new SAResultMessage();
                     if (isSuccess) {
                         objRegServerMessage.tag = SAHexUtil.tagToHex(SATagsEnum.TAG_REG);
@@ -264,22 +265,21 @@ public class SASimpleAuthAction {
 
             String strId = objAuthInitClientMessage.id;
             String strAppId = objAuthInitClientMessage.appid;
-            HashMap<String, String> map = new HashMap<String, String>();
-            map.put(SAProperty.COL_NM_ID, strId);
-            map.put(SAProperty.COL_NM_APPID, strAppId);
-            map.put(SAProperty.COL_NM_STATUS, SAProperty.STATUS_Y);
 
-            HashMap<String, String> reqMap = new HashMap<String, String>();
-            reqMap = this.listener.onSimpleAuthInfoAuthInitSearch(map, strId, session);
-            if (reqMap == null || reqMap.size() < 1)
+            List<User> saAuthInitInfo = userRepository.getSAUserInfo(strId);
+            if (saAuthInitInfo == null || saAuthInitInfo.size() < 1)
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_ANOTHER_DEVICE_REG, SAErrorMessage.ERR_CODE_ANOTHER_DEVICE_REG);
-            SALogUtil.fine("map result [id search ] :: " + reqMap.toString());
-            String id_db = reqMap.get(SAProperty.COL_NM_ID);
-            String pubkey_db = reqMap.get(SAProperty.COL_NM_PUBKEY);
-            String uuid_db = reqMap.get(SAProperty.COL_NM_UUID);
-            String appid_db = reqMap.get(SAProperty.COL_NM_APPID);
+
+            User user = saAuthInitInfo.get(0);
+            UserDto userDto = new UserDto(user.getId(), user.getPubkey(), user.getUuid(), user.getAppid(), user.getType());
+
+            SALogUtil.fine("Result [id search ] :: " + userDto.toString());
+            String id_db = userDto.getId();
+            String pubkey_db = userDto.getPubkey();
+            String uuid_db = userDto.getUuid();
+            String appid_db = userDto.getAppid();
             // type add
-            String type_db = reqMap.get(SAProperty.COL_NM_TYPE);
+            String type_db = userDto.getType();
 
             if (SAValidateUtils.isEmpty(id_db))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_SERVER_ID_NULL, SAErrorMessage.ERR_CODE_SERVER_ID_NULL);
@@ -327,9 +327,6 @@ public class SASimpleAuthAction {
                  * face_id 4
                  * auto 5
                  */
-
-
-
                 if(isNewer && (type_db.equals("1") || type_db.equals("4"))) // when the version is new and bio information(fingerprint face_id)
                 {
                     String clientPasswd = passwordInfo.get("clientPasswd");
@@ -454,19 +451,17 @@ public class SASimpleAuthAction {
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_AUTH_SERVER, SAErrorMessage.ERR_MSG_TYPE_INVALID, SAErrorMessage.ERR_CODE_TYPE_INVALID);
 
 
-            HashMap<String, String> map = new HashMap<String, String>();
-            map.put(SAProperty.COL_NM_ID, objAuthPlainTextMessage.id);
-            map.put(SAProperty.COL_NM_APPID, objAuthPlainTextMessage.appid);
-            map.put(SAProperty.COL_NM_STATUS, SAProperty.STATUS_Y);
-            HashMap<String, String> reqMap = new HashMap<String, String>();
-            reqMap = this.listener.onSimpleAuthInfoAuthSearch(map, objAuthPlainTextMessage.id, session);
 
-            if (reqMap == null || reqMap.size() < 1)
+            List<User> users = userRepository.getSAUserInfo(objAuthPlainTextMessage.id);
+
+            if (users == null || users.size() < 1)
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_AUTH_SERVER, SAErrorMessage.ERR_MSG_DB_SEARCH, SAErrorMessage.ERR_CODE_DB_SEARCH);
 
-            String pubkey_db = reqMap.get(SAProperty.COL_NM_PUBKEY);
-            String uuid_db = reqMap.get(SAProperty.COL_NM_UUID);
-            String cusno_db = reqMap.get(SAProperty.COL_NM_CUSNO);
+            User user = users.get(0);
+            String pubkey_db = user.getPubkey();
+            String uuid_db = user.getUuid();
+            String cusno_db = user.getCusno();
+
             if (SAValidateUtils.isEmpty(pubkey_db))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_AUTH_SERVER, SAErrorMessage.ERR_MSG_SERVER_PUBKEY_NULL, SAErrorMessage.ERR_CODE_SERVER_PUBKEY_NULL);
             if (SAValidateUtils.isEmpty(uuid_db))
@@ -524,19 +519,17 @@ public class SASimpleAuthAction {
             String strAppId = unRegClientMessage.appid;
             SALogUtil.fine("strId :: " + strId);
             SALogUtil.fine("strAppId :: " + strAppId);
-            HashMap<String, String> map = new HashMap<String, String>();
-            map.put(SAProperty.COL_NM_ID, strId);
-            map.put(SAProperty.COL_NM_APPID, strAppId);
-            map.put(SAProperty.COL_NM_STATUS, SAProperty.STATUS_Y);
-            HashMap<String, String> reqMap = new HashMap<String, String>();
-            reqMap = this.listener.onSimpleAuthInfoUnregSearch(map, strId, session);
-            if (reqMap == null || reqMap.size() < 1)
+
+            List<User> users = userRepository.getSAUserInfo(strId);
+            User user = users.get(0);
+
+            if (users == null || users.size() < 1)
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_UNREG_SERVER, SAErrorMessage.ERR_MSG_DB_SEARCH, SAErrorMessage.ERR_CODE_DB_SEARCH);
-            String id_server_db = reqMap.get(SAProperty.COL_NM_ID);
-            String appid_server_db = reqMap.get(SAProperty.COL_NM_APPID);
-            String uuid_server_db = reqMap.get(SAProperty.COL_NM_UUID);
-            String cusno_server_db = reqMap.get(SAProperty.COL_NM_CUSNO);
-            String type_server_db = reqMap.get(SAProperty.COL_NM_TYPE);
+            String id_server_db = user.getId();
+            String appid_server_db = user.getAppid();
+            String uuid_server_db = user.getUuid();
+            String cusno_server_db = user.getCusno();
+            String type_server_db = user.getType();
             if ((!SAValidateUtils.isEmpty(strId) || !SAValidateUtils.isEmpty(id_server_db)) &&
                     !strId.toUpperCase().equals(id_server_db.toUpperCase()) &&
                     !strId.equals(id_server_db))
@@ -548,7 +541,19 @@ public class SASimpleAuthAction {
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_UNREG_SERVER, SAErrorMessage.ERR_MSG_SERVER_UUID_NULL, SAErrorMessage.ERR_CODE_SERVER_UUID_NULL);
             if (SAValidateUtils.isEmpty(cusno_server_db))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_UNREG_SERVER, SAErrorMessage.ERR_MSG_SERVER_CUSNO_NULL, SAErrorMessage.ERR_CODE_SERVER_CUSNO_NULL);
-            isClear = this.listener.onSimpleAuthInfoUnreg(map, cusno_server_db, session);
+
+            try{
+                User findUser = userRepository.findByIdAndUnregdateEquals(strId, "999999999");
+                // save 시 update와 동일함
+                findUser.setUnregdate(LocalDateTime.now().toString());
+                findUser.setStatus(SAProperty.STATUS_N);
+                userRepository.save(findUser); // update
+                isClear = true;
+            }catch (Exception e){
+                throw new SASimpleAuthException(SAErrsEnum.ERR_UNREG_SERVER, SAErrorMessage.ERR_MSG_JDBC_EXCEPTION_UNREG_S, SAErrorMessage.ERR_CODE_JDBC_EXCEPTION_UNREG_S);
+            }
+
+
             SAResultMessage unRegServerMessage = new SAResultMessage();
             if (isClear) {
                 unRegServerMessage.tag = SAHexUtil.tagToHex(SATagsEnum.TAG_UNREG);

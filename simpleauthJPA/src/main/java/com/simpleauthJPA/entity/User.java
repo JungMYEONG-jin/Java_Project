@@ -1,6 +1,7 @@
 package com.simpleauthJPA.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.context.annotation.Primary;
 
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 public class User {
 
     @Id
@@ -53,4 +55,6 @@ public class User {
         this.unregdate = unregdate;
         this.lastauthdate = lastauthdate;
     }
+
+
 }
