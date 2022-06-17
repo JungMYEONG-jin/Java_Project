@@ -108,34 +108,6 @@ class SimpleAuthTestTest {
         System.out.println("unregist = " + unregist);
     }
 
-    @Test
-    void setListener()
-    {
-        SASimpleAuthTask.setPasswordListener(new PasswordListener() {
-            @Override
-            public boolean CheckPasswordValidation(String password, String authType) {
-                return false;
-            }
-        });
-    }
-    // processinit 할때 한번만 set 선언해주면 될듯
-
-
-
-
-    @Test
-    void listenerTest()
-    {
-        SASimpleAuthTask.isListenerNULL();
-    }
-
-    @Test
-    void
-
-    listenerTest2()
-    {
-        SASimpleAuthTask.isListenerNULL();
-    }
 
 
 }
