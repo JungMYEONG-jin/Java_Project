@@ -4,7 +4,7 @@ import org.aspectj.lang.annotation.Pointcut;
 
 public class Pointcuts {
 
-    @Pointcut("execution(* hello.aop.order.*(..))")
+    @Pointcut("execution(* hello.aop.order..*(..))")
     public void allOrder(){}
 
     @Pointcut("execution(* *..*Service.*(..))")
