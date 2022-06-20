@@ -39,4 +39,30 @@ public class ExecutionTest {
         pointcut.setExpression("execution(* *(..))");
         assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
     }
+
+    @Test
+    void nameMatch(){
+        pointcut.setExpression("execution(* hello(..))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
+    }
+
+    @Test
+    void nameMatchStart1() {
+        pointcut.setExpression("execution (* hel*(..))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
+    }
+
+    @Test
+    void nameMatchStart2() {
+        pointcut.setExpression("execution (* *el*(..))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
+    }
+
+    @Test
+    void nameMatchFalse() {
+        pointcut.setExpression("execution(* nono(..))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isFalse();
+    }
+
+
 }
