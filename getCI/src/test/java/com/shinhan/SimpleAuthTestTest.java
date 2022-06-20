@@ -77,6 +77,7 @@ class SimpleAuthTestTest {
     }
 
 
+
     @Test
     void auth_init_test()
     {
