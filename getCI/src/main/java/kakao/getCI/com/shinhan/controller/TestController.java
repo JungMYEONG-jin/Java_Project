@@ -1,14 +1,18 @@
 package kakao.getCI.com.shinhan.controller;
 
+import kakao.getCI.com.shinhan.security.imple.AopTest;
 import kakao.getCI.com.shinhan.security.imple.SAProperty;
 import kakao.getCI.com.shinhan.security.imple.SimpleAuthTask;
 import kakao.getCI.com.shinhan.security.simpleauth.SAConst;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 
-@Controller
+@RestController
+@Slf4j
 public class TestController {
 
     public String APP_ID 		 = "TEST_ALIAS";
@@ -29,24 +33,9 @@ public class TestController {
 
 
     @GetMapping("/goTest")
-    public void check(){
-        SAProperty.setSA_Log(false);
-        SAProperty.setSA_TBName("MBI_SIMPLEAUTH");
-        SAProperty.setSA_ColumName("ID", "CUSNO", "PUBKEY", "UUID", "APP_ID", "TYPE", "STATUS", "REG_DTTM", "DROP_DTTM", "LAST_AUTH_DTTM");
-
-        // log, sequence, index 생략
-        SAProperty.setSA_DBPoolName("mbbPool");
-        SAProperty.setSA_StatusValue("1", "9");
-        session.setAttribute(SAConst.TAG_CUSNO, CUSNO);
-        session.setAttribute("sa_challenge", strChallenge);
-        session.setAttribute("sa_authkey",AUTH_TYPE);
-
-
-        String reqJson = "{\"tag\":\"3E01\",\"tmppub\":\"30820122300D06092A864886F70D01010105000382010F003082010A0282010100997A4DE16E426664DB117B7EEBAD0F17BF1C317EEE8A4D1D441C60CD26598B03B3BCA3277BDCB0FDC26D3541575D14510103D7A127829A2CF2D2FAC6F61E1AD4D4685945C3AFF3F70B4261CBA77D07A60CB52217A25A1E7F412EBA83D44B4D5F5EC84D7B6AB438814A767637E2FBAFB73EE6442D85AF15A38DE59324ECB65FE58C864AA5B367DAD43C739C8B6562AE013406CF1985DD065FF5BB0D9C23CF118902ED7CB418718BA8B839340583A6BF9058AE04FDFD22AA2E265B5A83EBCB0397EB328D4A4FCC7F29AAAE528C3D18AE71475D3E574E3B53ABCD2747098EE2291F235C578788B72715768F2A6371C495693F543F15DDB2F518161BB7801307D0FD0203010001\",\"appid\":\"TEST_ALIAS\"}";
-        System.out.println("reqJson = " + reqJson);
-
-//        HttpSession session = new MockHttpSession();
-//        session.setAttribute(SAConst.TAG_CUSNO, CUSNO);
-        String serverResult = new SimpleAuthTask().registInit("3E01", reqJson, session);
+    public String check(){
+        String s = new AopTest().test1();
+        log.info(s);
+        return s;
     }
 }

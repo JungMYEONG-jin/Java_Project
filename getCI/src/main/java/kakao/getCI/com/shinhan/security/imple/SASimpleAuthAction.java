@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 import java.security.PublicKey;
 import java.util.HashMap;
 
+@Component
 public class SASimpleAuthAction {
     private static String _SASimpleAuthAction_ = "_SASimpleAuthAction_ :: ";
 

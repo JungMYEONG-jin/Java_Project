@@ -24,12 +24,14 @@ import kakao.getCI.com.shinhan.security.simpleauth.util.SAHexUtil;
 import kakao.getCI.com.shinhan.security.simpleauth.util.SALogUtil;
 import kakao.getCI.com.shinhan.security.simpleauth.util.SAUtil;
 import kakao.getCI.com.shinhan.security.callback.*;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.PublicKey;
 import java.util.HashMap;
 
+@Component
 public class SASimpleAuthTask {
     private static String _SASimpleAuthTask_ = "_SASimpleAuthTask_ :: ";
 

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 
+@Component
 public class SimpleAuthTask implements SAListener
 {
 

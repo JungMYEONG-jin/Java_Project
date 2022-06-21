@@ -1,5 +1,8 @@
 package kakao.getCI.com.shinhan.security.imple;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class SAProperty {
     public static String COL_NM_ID = "id";
 
