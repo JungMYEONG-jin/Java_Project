@@ -28,7 +28,7 @@ public class ExecutionTest {
 
     @Test
     void exactMatch(){
-        pointcut.setExpression("execution(public String hello.aop.member.MemberServiceImpl.hello(String))");
+        pointcut.setExpression("execution(public String study.datajpa.aop.member.MemberServiceImpl.hello(String))");
         assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
 
     }
@@ -65,25 +65,32 @@ public class ExecutionTest {
 
     @Test
     void packageExactMatch1(){
-        pointcut.setExpression("execution(* hello.aop.member.MemberServiceImpl.hello(..))");
+        pointcut.setExpression("execution(* study.datajpa.aop.member.MemberServiceImpl.hello(..))");
         assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
     }
 
     @Test
     void packageExactMatch2() {
-        pointcut.setExpression("execution(* hello.aop.member.*.*(..))");
+        pointcut.setExpression("execution(* study.datajpa.aop.member.*.*(..))");
         assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
     }
 
     @Test
     void packageExactMatchFalse() {
-        pointcut.setExpression("execution(* hello.aop.*.*(..))");
+        pointcut.setExpression("execution(* study.datajpa.aop.*.*(..))");
         assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isFalse();
     }
 
     @Test
     void packageMatchSubPackage1() {
-        pointcut.setExpression("execution(* hello.aop.member..*.*(..))");
+        pointcut.setExpression("execution(* study.datajpa.aop.member..*.*(..))");
         assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
     }
+
+    @Test
+    void packageMatchSubPackage2(){
+        pointcut.setExpression("execution(* study.datajpa.aop..*.*(..))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
+    }
+
 }
