@@ -16,6 +16,7 @@ repositories {
 dependencies {
 //	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	implementation 'javax.servlet:jstl'
@@ -34,6 +35,9 @@ dependencies {
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	testCompileOnly 'org.projectlombok:lombok' // 테스트 의존성 추가
+	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	// https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
 	runtimeOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.6.10'
