@@ -26,7 +26,7 @@ import java.util.UUID;
 //@Import(DynamicProxyBasicConfig.class)
 //@Import(DynamicProxyFilterConfig.class)
 @Import(AopConfig.class)
-@SpringBootApplication(scanBasePackages = "study.datajpa.proxy.app")
+@SpringBootApplication(scanBasePackages = "study.datajpa.aop")
 public class DataJpaApplication {
 
 	public static void main(String[] args) {
