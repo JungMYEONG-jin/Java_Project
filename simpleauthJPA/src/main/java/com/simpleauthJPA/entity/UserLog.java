@@ -17,13 +17,13 @@ public class UserLog {
 
     @Column
     private String cusno;
-    @Column
+    @Column(length = 999)
     private String id;
     @Column
     private String tag;
-    @Column
+    @Column(length = 2555)
     private String injson;
-    @Column
+    @Column(length = 2555)
     private String outjson;
     @Column
     private String msg;

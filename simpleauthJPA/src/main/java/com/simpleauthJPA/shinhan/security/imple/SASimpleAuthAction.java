@@ -87,7 +87,7 @@ public class SASimpleAuthAction {
             objRegInitServerMessage.erroryn = "n";
             resultJson = SAMessageUtil.toJSON(objRegInitServerMessage);
             userLogService.fine(String.valueOf(_SASimpleAuthAction_) + " reginit server (JSON) :: " + resultJson);
-            userLogService.SALog(cusno, id, strReqTag, null, null, "SUCCESS", "0", null);
+            userLogService.SALog(cusno, id, strReqTag, reqJson, resultJson, "SUCCESS", "0", null);
         } catch (SASimpleAuthException e) {
             throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_SERVER, e.getMsg(), e.getCode());
         } catch (Exception e) {
