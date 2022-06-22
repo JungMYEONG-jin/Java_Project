@@ -1,4 +1,4 @@
-package kakao.getCI.com.shinhan.security.callback;
+package kakao.getCI.com.shinhan.security.listener;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;

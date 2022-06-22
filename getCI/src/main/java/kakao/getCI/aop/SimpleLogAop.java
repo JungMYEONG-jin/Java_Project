@@ -1,4 +1,4 @@
-package kakao.getCI.com.aop;
+package kakao.getCI.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.jni.Proc;

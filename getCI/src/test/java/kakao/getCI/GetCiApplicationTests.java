@@ -1,8 +1,7 @@
 package kakao.getCI;
 
 //import kakao.getCI.aop.AopConfig;
-import kakao.getCI.com.aop.SimpleLogAop;
-import kakao.getCI.com.shinhan.security.imple.AopTest;
+import kakao.getCI.aop.SimpleLogAop;
 import kakao.getCI.com.shinhan.security.imple.SAProperty;
 import kakao.getCI.com.shinhan.security.imple.SimpleAuthTask;
 import kakao.getCI.com.shinhan.security.simpleauth.SAConst;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpSession;
 

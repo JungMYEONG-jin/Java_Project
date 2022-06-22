@@ -1,11 +1,6 @@
 package kakao.getCI.com.shinhan.controller;
 
-import kakao.getCI.com.shinhan.security.imple.AopTest;
-import kakao.getCI.com.shinhan.security.imple.SAProperty;
-import kakao.getCI.com.shinhan.security.imple.SimpleAuthTask;
-import kakao.getCI.com.shinhan.security.simpleauth.SAConst;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

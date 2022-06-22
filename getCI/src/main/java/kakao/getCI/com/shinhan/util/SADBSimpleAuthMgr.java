@@ -10,6 +10,7 @@ import java.sql.*;
 import java.util.HashMap;
 
 public class SADBSimpleAuthMgr {
+
     public static int deleteSAInfo(HashMap<String, String> inputMap) throws SASimpleAuthSQLException {
         String query = "UPDATE " + SAProperty.TB_NAME +
                 " SET " + SAProperty.COL_NM_STATUS + " = ? , DROP_DTTM=  TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')" +

@@ -1,6 +1,6 @@
 package kakao.getCI.com.shinhan.security.imple;
 
-import kakao.getCI.com.shinhan.security.callback.SAListener;
+import kakao.getCI.com.shinhan.security.listener.SAListener;
 import kakao.getCI.com.shinhan.security.simpleauth.crypto.SACryptoUtil;
 import kakao.getCI.com.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
 import kakao.getCI.com.shinhan.security.simpleauth.exception.SASimpleAuthCryptoException;

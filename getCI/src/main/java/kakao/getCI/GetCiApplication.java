@@ -1,9 +1,8 @@
 package kakao.getCI;
 
-import kakao.getCI.com.aop.SimpleLogAop;
+import kakao.getCI.aop.SimpleLogAop;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 
 @Import(SimpleLogAop.class)

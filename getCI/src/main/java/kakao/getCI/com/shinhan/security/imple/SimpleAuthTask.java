@@ -1,8 +1,7 @@
 package kakao.getCI.com.shinhan.security.imple;
 
-import kakao.getCI.com.shinhan.security.callback.SAListener;
-import kakao.getCI.com.shinhan.security.imple.SAProperty;
-import kakao.getCI.com.shinhan.security.imple.SASimpleAuthAction;
+import kakao.getCI.com.shinhan.security.listener.DBService;
+import kakao.getCI.com.shinhan.security.listener.SAListener;
 import kakao.getCI.com.shinhan.security.simpleauth.SAConst;
 import kakao.getCI.com.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
 import kakao.getCI.com.shinhan.security.simpleauth.exception.SASimpleAuthException;
@@ -21,6 +20,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 @Component
@@ -391,6 +391,7 @@ public class SimpleAuthTask implements SAListener
     public boolean CheckPasswordValidation(String password, String authType, HttpSession paramHttpSession) {
         return false;
     }
+
 
 
 }
