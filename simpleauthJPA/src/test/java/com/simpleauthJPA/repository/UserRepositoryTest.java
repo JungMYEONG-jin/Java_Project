@@ -14,8 +14,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,6 +82,23 @@ class UserRepositoryTest {
             System.out.println("user " + idx++ + " = " + userDto);
         }
 
+    }
+
+    /**
+     * PESSIMISTIC_WRITE 설정하여 readOnly 일때 테스트 실행 가능함.
+     * 해당 옵션 없으면 실행 불가.
+     */
+    @Test
+    @Transactional(readOnly = true)
+    void LockModeTest(){
+        List<User> result = userRepository.findLockByCusno("20220333");
+        System.out.println("result.size() = " + result.size());
+
+        List<UserDto> userDtoList = result.stream().map(e -> new UserDto(e.getId(), e.getPubkey(), e.getUuid(), e.getAppid(), e.getType())).collect(Collectors.toList());
+        int idx = 1;
+        for (UserDto userDto : userDtoList) {
+            System.out.println("userDto" + idx++ +" = " + userDto);
+        }
     }
 
 }

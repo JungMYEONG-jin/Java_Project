@@ -30,5 +30,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findByCusno(String cusno, Pageable pageable);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<User> findLockByCusno(String cusno);
+
+
+
+
+
+
 }
 
