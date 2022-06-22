@@ -2,27 +2,28 @@ package com.simpleauthJPA.shinhan;
 
 
 
-import com.simpleauthJPA.shinhan.security.callback.SAListener;
+import com.simpleauthJPA.entity.User;
+import com.simpleauthJPA.repository.UserRepository;
+import com.simpleauthJPA.shinhan.security.listener.SAListener;
 import com.simpleauthJPA.shinhan.security.imple.SAProperty;
 import com.simpleauthJPA.shinhan.security.imple.SASimpleAuthAction;
 import com.simpleauthJPA.shinhan.security.simpleauth.SAConst;
 import com.simpleauthJPA.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
 import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthException;
 import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthMessageException;
-import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthSQLException;
 import com.simpleauthJPA.shinhan.security.simpleauth.message.SAErrorMessage;
 import com.simpleauthJPA.shinhan.security.simpleauth.message.SAMessageUtil;
 import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SAErrsEnum;
 import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SATagsEnum;
 import com.simpleauthJPA.shinhan.security.simpleauth.util.SAHexUtil;
 import com.simpleauthJPA.shinhan.security.simpleauth.util.SAUtil;
-import com.simpleauthJPA.shinhan.util.SADBSimpleAuthMgr;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 
 public class SimpleAuthTask implements SAListener
 {
@@ -46,6 +47,7 @@ public class SimpleAuthTask implements SAListener
     private static String saveVersion = "";
     private static String type = "";
     private static JSONObject jsonObject = null;
+    private UserRepository userRepository;
 
 
 
@@ -56,83 +58,44 @@ public class SimpleAuthTask implements SAListener
     }
 
     @Override
-    public boolean onSimpleAuthInfoReg(HashMap<String, String> paramHashMap, String paramString, HttpSession paramHttpSession) {
-
+    public boolean onSimpleAuthInfoReg(Object var) throws SASimpleAuthException {
         try{
-            if(paramHashMap!=null)
+            if(var!=null)
             {
-                int cnt = SADBSimpleAuthMgr.insertSAInfo(paramHashMap);
+                User user = (User) var;
+                User savedUser = userRepository.save(user);
+                List<User> findUser = userRepository.findByIdAndTypeEquals(savedUser.getId(), "999999999");
+                int cnt = findUser.size(); // id random 생성하여 user 마다 고유함.
                 if(cnt==1)
                     return true;
                 else
                     return false;
             }
-        } catch (SASimpleAuthSQLException e) {
-            e.printStackTrace();
-        }
-
-
-        return false;
-    }
-
-    @Override
-    public HashMap<String, String> onSimpleAuthInfoAuthInitSearch(HashMap<String, String> paramHashMap, String paramString, HttpSession paramHttpSession) {
-
-        try{
-            HashMap<String, String> saAuthInitInfo = SADBSimpleAuthMgr.getSAAuthInitInfo(paramHashMap);
-            if(saAuthInitInfo!=null)
-                return saAuthInitInfo;
-        } catch (SASimpleAuthSQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    @Override
-    public HashMap<String, String> onSimpleAuthInfoAuthSearch(HashMap<String, String> paramHashMap, String paramString, HttpSession paramHttpSession) {
-
-        try{
-            HashMap<String, String> saAuthInfo = SADBSimpleAuthMgr.getSAAuthInfo(paramHashMap);
-            if(saAuthInfo!=null)
-                return saAuthInfo;
-        } catch (SASimpleAuthSQLException e) {
-            e.printStackTrace();
-        }
-
-
-        return null;
-    }
-
-    @Override
-    public HashMap<String, String> onSimpleAuthInfoUnregSearch(HashMap<String, String> paramHashMap, String paramString, HttpSession paramHttpSession) {
-
-        try{
-            HashMap<String, String> saUnregInfo = SADBSimpleAuthMgr.getSAUnregInfo(paramHashMap);
-            if(saUnregInfo!=null)
-                return saUnregInfo;
-        } catch (SASimpleAuthSQLException e) {
-            e.printStackTrace();
-        }
-
-
-        return null;
-    }
-
-    @Override
-    public boolean onSimpleAuthInfoUnreg(HashMap<String, String> paramHashMap, String paramString, HttpSession paramHttpSession) {
-
-        try{
-            int cnt = SADBSimpleAuthMgr.deleteSAInfo(paramHashMap);
-            if (cnt==1)
-                return true;
-            else
-                return false;
-        } catch (SASimpleAuthSQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new SASimpleAuthException(e.toString());
         }
         return false;
     }
+
+    @Override
+    public User onSimpleAuthUserSearch(Object var) throws SASimpleAuthException {
+        try{
+            if(var != null){
+                User user = (User) var;
+                List<User> findUser = userRepository.findByIdAndTypeEquals(user.getId(), "999999999");
+                int cnt = findUser.size();
+                if(cnt==1){
+                    return findUser.get(0);
+                }else{
+                    return null;
+                }
+            }
+        }catch (Exception e) {
+            throw new SASimpleAuthException(e.toString());
+        }
+        return null;
+    }
+
 
     @Override
     public String processInit(String reqJson, HttpSession paramHttpSession) {

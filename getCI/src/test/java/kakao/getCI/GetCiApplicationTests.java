@@ -3,12 +3,14 @@ package kakao.getCI;
 //import kakao.getCI.aop.AopConfig;
 import kakao.getCI.aop.SimpleLogAop;
 import kakao.getCI.com.shinhan.security.imple.SAProperty;
+import kakao.getCI.com.shinhan.security.imple.SASimpleAuthAction;
 import kakao.getCI.com.shinhan.security.imple.SimpleAuthTask;
 import kakao.getCI.com.shinhan.security.simpleauth.SAConst;
 import kakao.getCI.com.shinhan.security.simpleauth.exception.SASimpleAuthException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpSession;
@@ -36,12 +38,9 @@ class GetCiApplicationTests {
 	public String UUID 			 = "uuid";
 	HttpSession session;
 
+	@Autowired
+	SimpleAuthTask task;
 
-	@Test
-	void testAop() {
-		String s = new AopTest().test1();
-		log.info(s);
-	}
 
 	@BeforeEach
 	void init()
@@ -72,7 +71,7 @@ class GetCiApplicationTests {
 
 //        HttpSession session = new MockHttpSession();
 //        session.setAttribute(SAConst.TAG_CUSNO, CUSNO);
-		String serverResult = new SimpleAuthTask().registInit("3E01", reqJson, session);
+		String serverResult = task.registInit("3E01", reqJson, session);
 
 	}
 

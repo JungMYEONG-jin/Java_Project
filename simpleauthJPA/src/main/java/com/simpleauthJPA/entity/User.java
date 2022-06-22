@@ -56,5 +56,4 @@ public class User {
         this.lastauthdate = lastauthdate;
     }
 
-
 }

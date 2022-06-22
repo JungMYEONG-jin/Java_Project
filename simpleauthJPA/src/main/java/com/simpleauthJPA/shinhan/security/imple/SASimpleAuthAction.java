@@ -5,7 +5,7 @@ package com.simpleauthJPA.shinhan.security.imple;
 import com.simpleauthJPA.entity.User;
 import com.simpleauthJPA.entity.UserDto;
 import com.simpleauthJPA.repository.UserRepository;
-import com.simpleauthJPA.shinhan.security.callback.SAListener;
+import com.simpleauthJPA.shinhan.security.listener.SAListener;
 import com.simpleauthJPA.shinhan.security.simpleauth.crypto.SACryptoUtil;
 import com.simpleauthJPA.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
 import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthCryptoException;

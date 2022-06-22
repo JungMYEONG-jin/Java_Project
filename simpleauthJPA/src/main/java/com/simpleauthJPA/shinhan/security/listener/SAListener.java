@@ -1,4 +1,7 @@
-package com.simpleauthJPA.shinhan.security.callback;
+package com.simpleauthJPA.shinhan.security.listener;
+
+import com.simpleauthJPA.entity.User;
+import com.simpleauthJPA.shinhan.security.simpleauth.exception.SASimpleAuthException;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
@@ -6,15 +9,9 @@ import java.util.HashMap;
 public interface SAListener {
     void onSetChallengeInSession(String paramString, HttpSession paramHttpSession);
 
-    boolean onSimpleAuthInfoReg(HashMap<String, String> paramHashMap, String paramString, HttpSession paramHttpSession);
+    Object onSimpleAuthUserSearch(Object user) throws SASimpleAuthException;
 
-    HashMap<String, String> onSimpleAuthInfoAuthInitSearch(HashMap<String, String> paramHashMap, String paramString, HttpSession paramHttpSession);
-
-    HashMap<String, String> onSimpleAuthInfoAuthSearch(HashMap<String, String> paramHashMap, String paramString, HttpSession paramHttpSession);
-
-    HashMap<String, String> onSimpleAuthInfoUnregSearch(HashMap<String, String> paramHashMap, String paramString, HttpSession paramHttpSession);
-
-    boolean onSimpleAuthInfoUnreg(HashMap<String, String> paramHashMap, String paramString, HttpSession paramHttpSession);
+    boolean onSimpleAuthInfoReg(Object user) throws SASimpleAuthException;
 
     Object processInit(String paramString, HttpSession paramHttpSession);
 

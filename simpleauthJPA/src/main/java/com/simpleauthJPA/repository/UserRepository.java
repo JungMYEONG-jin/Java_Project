@@ -1,6 +1,7 @@
 package com.simpleauthJPA.repository;
 
 import com.simpleauthJPA.entity.User;
+import com.simpleauthJPA.entity.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +17,7 @@ import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 
-
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     User findById(String id);
@@ -26,6 +27,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> getSAAuthInitInfo(@Param("id") String id);
     @Query("select u from User u where u.id = :id and u.unregdate = '999999999'")
     List<User> getSAUserInfo(@Param("id") String id);
+
+    Page<User> findByCusno(String cusno, Pageable pageable);
 
 }
 

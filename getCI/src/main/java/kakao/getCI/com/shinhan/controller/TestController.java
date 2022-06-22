@@ -27,10 +27,5 @@ public class TestController {
     HttpSession session;
 
 
-    @GetMapping("/goTest")
-    public String check(){
-        String s = new AopTest().test1();
-        log.info(s);
-        return s;
-    }
+
 }

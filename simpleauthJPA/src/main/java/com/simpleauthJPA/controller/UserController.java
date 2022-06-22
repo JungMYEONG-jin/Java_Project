@@ -62,7 +62,7 @@ public class UserController {
     }
 
 
-    @PostConstruct
+//    @PostConstruct
     private void init()
     {
         String id = UUID.randomUUID().toString();
