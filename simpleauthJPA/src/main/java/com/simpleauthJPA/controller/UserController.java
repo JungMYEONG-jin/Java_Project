@@ -2,6 +2,7 @@ package com.simpleauthJPA.controller;
 
 import com.simpleauthJPA.entity.User;
 import com.simpleauthJPA.repository.UserRepository;
+import com.simpleauthJPA.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -19,12 +20,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
 
     @GetMapping("/users/{id}/{type}")
     public String findUser(@PathVariable("id") String id, @PathVariable("type") String type){
-        List<User> users = userRepository.findByIdAndTypeEquals(id, type);
+        List<User> users = userService.findByIdAndType(id, type);
         JSONArray arr = new JSONArray();
 
         for (User user : users) {
@@ -44,7 +45,7 @@ public class UserController {
 
     @GetMapping("/users/authinfo/{id}")
     public String getAuthInfo(@PathVariable("id") String id){
-        List<User> users = userRepository.getSAUserInfo(id);
+        List<User> users = userService.getUserInfo(id);
         JSONArray arr = new JSONArray();
 
         for (User user : users) {
@@ -68,7 +69,7 @@ public class UserController {
         String id = UUID.randomUUID().toString();
         for(int i=0;i<10;i++)
         {
-            userRepository.save(new User(id, "sbank", "20220333", id.substring(4,12), "3", "9", "939939999", LocalDateTime.now().toString(), "999999999", null));
+            userService.save(new User(id, "sbank", "20220333", id.substring(4,12), "3", "9", "939939999", LocalDateTime.now().toString(), "999999999", null));
         }
 
     }
