@@ -22,7 +22,6 @@ public class UserController {
 
     private final UserService userService;
 
-
     @GetMapping("/users/{id}/{type}")
     public String findUser(@PathVariable("id") String id, @PathVariable("type") String type){
         List<User> users = userService.findByIdAndType(id, type);
@@ -69,7 +68,7 @@ public class UserController {
         String id = UUID.randomUUID().toString();
         for(int i=0;i<10;i++)
         {
-            userService.save(new User(id, "sbank", "20220333", id.substring(4,12), "3", "9", "939939999", LocalDateTime.now().toString(), "999999999", null));
+            userService.save(new User(id, "sbank", "0987654321", id.substring(4,12), "3", "9", "939939999", LocalDateTime.now().toString(), "999999999", null));
         }
 
     }

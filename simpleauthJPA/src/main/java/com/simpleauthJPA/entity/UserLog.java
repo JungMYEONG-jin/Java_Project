@@ -4,10 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "mbi_simpleauth_log")
@@ -15,6 +12,7 @@ import javax.persistence.Table;
 @Setter
 public class UserLog {
     @Id
+    @GeneratedValue
     private Long seq;
 
     @Column

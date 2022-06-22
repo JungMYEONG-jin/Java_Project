@@ -4,6 +4,7 @@ package com.simpleauthJPA.shinhan;
 
 import com.simpleauthJPA.entity.User;
 import com.simpleauthJPA.repository.UserRepository;
+import com.simpleauthJPA.service.UserLogService;
 import com.simpleauthJPA.shinhan.security.listener.SAListener;
 import com.simpleauthJPA.shinhan.security.imple.SAProperty;
 import com.simpleauthJPA.shinhan.security.imple.SASimpleAuthAction;
@@ -20,11 +21,14 @@ import com.simpleauthJPA.shinhan.security.simpleauth.util.SAUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 
+@Component
 public class SimpleAuthTask implements SAListener
 {
 
@@ -47,10 +51,9 @@ public class SimpleAuthTask implements SAListener
     private static String saveVersion = "";
     private static String type = "";
     private static JSONObject jsonObject = null;
+
+    @Autowired
     private UserRepository userRepository;
-
-
-
 
     @Override
     public void onSetChallengeInSession(String paramString, HttpSession paramHttpSession) {

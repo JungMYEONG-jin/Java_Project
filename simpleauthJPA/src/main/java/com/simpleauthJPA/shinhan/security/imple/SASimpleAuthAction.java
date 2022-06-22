@@ -5,6 +5,7 @@ package com.simpleauthJPA.shinhan.security.imple;
 import com.simpleauthJPA.entity.User;
 import com.simpleauthJPA.entity.UserDto;
 import com.simpleauthJPA.repository.UserRepository;
+import com.simpleauthJPA.service.UserLogService;
 import com.simpleauthJPA.shinhan.security.listener.SAListener;
 import com.simpleauthJPA.shinhan.security.simpleauth.crypto.SACryptoUtil;
 import com.simpleauthJPA.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
@@ -26,6 +27,8 @@ import com.simpleauthJPA.shinhan.security.simpleauth.message.unreg.SAUnRegClient
 import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SAErrsEnum;
 import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SATagsEnum;
 import com.simpleauthJPA.shinhan.security.simpleauth.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
 import java.security.PublicKey;
@@ -33,10 +36,15 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
+@Component
 public class SASimpleAuthAction {
     private static String _SASimpleAuthAction_ = "_SASimpleAuthAction_ :: ";
 
-    private static UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    UserLogService userLogService;
 
     public SAListener listener;
 
@@ -46,14 +54,18 @@ public class SASimpleAuthAction {
         this.listener = listener;
     }
 
+    public void setListener(SAListener listener) {
+        this.listener = listener;
+    }
+
     public String reg_init_server(String strReqTag, String reqJson, String cusno, HttpSession session) throws SASimpleAuthException {
-        SALogUtil.fine("================================reg_init_server :: start=======================================");
+        userLogService.fine("================================reg_init_server :: start=======================================");
         String resultJson = null;
         SARegInitClientMessage objRegInitClientMessage = new SARegInitClientMessage();
         PublicKey tmpPubKeyFromClient = null;
         try {
             SAMessageUtil.parseJSONData(reqJson, objRegInitClientMessage);
-            SALogUtil.fine(String.valueOf(_SASimpleAuthAction_) + "reg_init_server client (JSON) :: " + SAMessageUtil.toJSON(objRegInitClientMessage));
+            userLogService.fine(String.valueOf(_SASimpleAuthAction_) + "reg_init_server client (JSON) :: " + SAMessageUtil.toJSON(objRegInitClientMessage));
             if (SAValidateUtils.isEmpty(cusno))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_SERVER, SAErrorMessage.ERR_MSG_CUSNO_NULL, SAErrorMessage.ERR_CODE_CUSNO_NULL);
             if (SAValidateUtils.isEmpty(objRegInitClientMessage.tag))
@@ -74,23 +86,25 @@ public class SASimpleAuthAction {
             objRegInitServerMessage.cusno = SACryptoUtil.rsaEncrypt(cusno, tmpPubKeyFromClient);
             objRegInitServerMessage.erroryn = "n";
             resultJson = SAMessageUtil.toJSON(objRegInitServerMessage);
-            SALogUtil.fine(String.valueOf(_SASimpleAuthAction_) + " reginit server (JSON) :: " + resultJson);
+            userLogService.fine(String.valueOf(_SASimpleAuthAction_) + " reginit server (JSON) :: " + resultJson);
+            userLogService.SALog(cusno, id, strReqTag, null, null, "SUCCESS", "0", null);
         } catch (SASimpleAuthException e) {
             throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_SERVER, e.getMsg(), e.getCode());
         } catch (Exception e) {
             throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_SERVER, e.toString());
         }
-        SALogUtil.fine("================================reg_init_server :: end=======================================");
+
+        userLogService.fine("================================reg_init_server :: end=======================================");
         return resultJson;
     }
 
     public String reg_server(String strReqTag, String reqJson, String cusno, String challenge, HttpSession session) throws SASimpleAuthException, SAInvalidPasswordException {
-        SALogUtil.fine("================================reg_server :: start=======================================");
+        userLogService.fine("================================reg_server :: start=======================================");
         String resultJson = null;
         boolean isSuccess = false;
         SARegClientMessage objRegClientMessage = new SARegClientMessage();
         try {
-            SALogUtil.fine("reg_client_json :: " + reqJson);
+            userLogService.fine("reg_client_json :: " + reqJson);
             SAMessageUtil.parseJSONData(reqJson, objRegClientMessage);
 
             if (SAValidateUtils.isEmpty(cusno))
@@ -106,18 +120,18 @@ public class SASimpleAuthAction {
 
 
             String rd = objRegClientMessage.rd;
-            SALogUtil.fine("rd :: " + rd);
+            userLogService.fine("rd :: " + rd);
             String strSessionChallenge = challenge;
             String challenge_kdf_server = SACryptoUtil.kdf512(SAHexUtil.hexStrToByteArr(strSessionChallenge));
-            SALogUtil.fine("challenge_kdf_server ::" + challenge_kdf_server);
+            userLogService.fine("challenge_kdf_server ::" + challenge_kdf_server);
             String aesKey = challenge_kdf_server.substring(0, 32);
-            SALogUtil.fine("aesKey :: " + aesKey);
+            userLogService.fine("aesKey :: " + aesKey);
             String aesIV = challenge_kdf_server.substring(32, 64);
-            SALogUtil.fine("aesIV :: " + aesIV);
+            userLogService.fine("aesIV :: " + aesIV);
             String decryptedRd = SACryptoUtil.aesDecrypt(aesKey, aesIV, rd);
-            SALogUtil.fine("decryptedRd :: " + decryptedRd);
+            userLogService.fine("decryptedRd :: " + decryptedRd);
             String sha256RegiData = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(decryptedRd));
-            SALogUtil.fine("sha256RegiData :: " + sha256RegiData);
+            userLogService.fine("sha256RegiData :: " + sha256RegiData);
             SARegPlainTextMessage sign_plain_text_msg = new SARegPlainTextMessage();
             SAMessageUtil.parseJSONData(decryptedRd, sign_plain_text_msg);
 
@@ -139,7 +153,7 @@ public class SASimpleAuthAction {
 
             PublicKey publicKey = SACryptoUtil.byteToPublicKey(SAHexUtil.hexStrToByteArr(sign_plain_text_msg.pubkey));
             String deSigndata = SACryptoUtil.rsaDecrypt(objRegClientMessage.signdata, publicKey);
-            SALogUtil.fine("deSigndata :: " + deSigndata);
+            userLogService.fine("deSigndata :: " + deSigndata);
 
             ////////////// password
 
@@ -160,7 +174,7 @@ public class SASimpleAuthAction {
                     isNewer = false;
                 }
 
-                SALogUtil.fine("isNewer: "+isNewer);
+                userLogService.fine("isNewer: "+isNewer);
 
 
                 if(isNewer)
@@ -169,7 +183,7 @@ public class SASimpleAuthAction {
                     if(SAValidateUtils.isEmpty(clientPasswd)) {
                         throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
                     }
-                    SALogUtil.fine("Password: "+clientPasswd);
+                    userLogService.fine("Password: "+clientPasswd);
                     boolean isValidPassword = this.listener.CheckPasswordValidation(clientPasswd, sign_plain_text_msg.type,session);
                     if(!isValidPassword) {
                         throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_INVALID, SAErrorMessage.ERR_CODE_PASSWORD_INVALID);
@@ -177,7 +191,7 @@ public class SASimpleAuthAction {
                 }
             }else
             {
-                SALogUtil.fine("passwordInfo is null");
+                userLogService.fine("passwordInfo is null");
             }
 
 
@@ -195,12 +209,12 @@ public class SASimpleAuthAction {
                 boolean isValidTime = SAValidateUtils.isValidTime(time, SAProperty.TIMEOUT);
 
                 if (isValidTime) {
-                    SALogUtil.fine("id :: " + sign_plain_text_msg.id);
-                    SALogUtil.fine("appid :: " + sign_plain_text_msg.appid);
-                    SALogUtil.fine("challenge :: " + sign_plain_text_msg.challenge);
-                    SALogUtil.fine("uuid :: " + sign_plain_text_msg.uuid);
-                    SALogUtil.fine("pubkey :: " + sign_plain_text_msg.pubkey);
-                    SALogUtil.fine("type :: " + sign_plain_text_msg.type);
+                    userLogService.fine("id :: " + sign_plain_text_msg.id);
+                    userLogService.fine("appid :: " + sign_plain_text_msg.appid);
+                    userLogService.fine("challenge :: " + sign_plain_text_msg.challenge);
+                    userLogService.fine("uuid :: " + sign_plain_text_msg.uuid);
+                    userLogService.fine("pubkey :: " + sign_plain_text_msg.pubkey);
+                    userLogService.fine("type :: " + sign_plain_text_msg.type);
 
 
                     try{
@@ -224,10 +238,10 @@ public class SASimpleAuthAction {
                     } else {
                         throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_DB_INSERT, SAErrorMessage.ERR_CODE_DB_INSERT);
                     }
-                    SALogUtil.fine(String.valueOf(_SASimpleAuthAction_) + "[reg_server_sign_plaintext](:: " + SAMessageUtil.getFieldInfo(sign_plain_text_msg));
-                    SALogUtil.fine(String.valueOf(_SASimpleAuthAction_) + "[reg_server_sign_plaintext](JSON) :: " + SAMessageUtil.toJSON(sign_plain_text_msg));
-                    SALogUtil.fine("_SASimpleAuthTask_+[reg_server](:: " + SAMessageUtil.getFieldInfo(objRegServerMessage));
-                    SALogUtil.fine(String.valueOf(_SASimpleAuthAction_) + "[reg_server](JSON) :: " + SAMessageUtil.toJSON(objRegServerMessage));
+                    userLogService.fine(String.valueOf(_SASimpleAuthAction_) + "[reg_server_sign_plaintext](:: " + SAMessageUtil.getFieldInfo(sign_plain_text_msg));
+                    userLogService.fine(String.valueOf(_SASimpleAuthAction_) + "[reg_server_sign_plaintext](JSON) :: " + SAMessageUtil.toJSON(sign_plain_text_msg));
+                    userLogService.fine("_SASimpleAuthTask_+[reg_server](:: " + SAMessageUtil.getFieldInfo(objRegServerMessage));
+                    userLogService.fine(String.valueOf(_SASimpleAuthAction_) + "[reg_server](JSON) :: " + SAMessageUtil.toJSON(objRegServerMessage));
                 } else {
                     throw new SASimpleAuthException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_TIME_INVALID, SAErrorMessage.ERR_CODE_TIME_INVALID);
                 }
@@ -239,12 +253,12 @@ public class SASimpleAuthAction {
         } catch (Exception e) {
             throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, e.toString());
         }
-        SALogUtil.fine("================================reg_server :: end=======================================");
+        userLogService.fine("================================reg_server :: end=======================================");
         return resultJson;
     }
 
     public String auth_Init_server(String strReqTag, String reqJson, HttpSession session) throws SASimpleAuthException, SAInvalidPasswordException {
-        SALogUtil.fine("================================auth_init_server :: start=======================================");
+        userLogService.fine("================================auth_init_server :: start=======================================");
         String resultJson = null;
         SAAuthInitClientMessage objAuthInitClientMessage = new SAAuthInitClientMessage();
         try {
@@ -273,7 +287,7 @@ public class SASimpleAuthAction {
             User user = saAuthInitInfo.get(0);
             UserDto userDto = new UserDto(user.getId(), user.getPubkey(), user.getUuid(), user.getAppid(), user.getType());
 
-            SALogUtil.fine("Result [id search ] :: " + userDto.toString());
+            userLogService.fine("Result [id search ] :: " + userDto.toString());
             String id_db = userDto.getId();
             String pubkey_db = userDto.getPubkey();
             String uuid_db = userDto.getUuid();
@@ -319,7 +333,7 @@ public class SASimpleAuthAction {
                     isNewer = false;
                 }
 
-                SALogUtil.fine("isNewer: "+isNewer);
+                userLogService.fine("isNewer: "+isNewer);
                 /**
                  * finger print 1
                  * pin 2
@@ -330,7 +344,7 @@ public class SASimpleAuthAction {
                 if(isNewer && (type_db.equals("1") || type_db.equals("4"))) // when the version is new and bio information(fingerprint face_id)
                 {
                     String clientPasswd = passwordInfo.get("clientPasswd");
-                    SALogUtil.fine("RSA(Client Sha(id+Sha(uuid)+type)): "+clientPasswd);
+                    userLogService.fine("RSA(Client Sha(id+Sha(uuid)+type)): "+clientPasswd);
 
                     if(SAValidateUtils.isEmpty(clientPasswd)) {
                         throw new SAInvalidPasswordException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
@@ -338,22 +352,22 @@ public class SASimpleAuthAction {
 
                     String rawClientPasswd = SACryptoUtil.rsaDecrypt(clientPasswd, publicKey);
 
-                    SALogUtil.fine("Client Sha(id+Sha(uuid)+type): "+rawClientPasswd);
-                    SALogUtil.fine("ClientId: "+objAuthInitClientMessage.id.toUpperCase());
-                    SALogUtil.fine("ClientType: "+objAuthInitClientMessage.type);
-                    SALogUtil.fine("ClientUUID: "+objAuthInitClientMessage.uuid.toUpperCase());
+                    userLogService.fine("Client Sha(id+Sha(uuid)+type): "+rawClientPasswd);
+                    userLogService.fine("ClientId: "+objAuthInitClientMessage.id.toUpperCase());
+                    userLogService.fine("ClientType: "+objAuthInitClientMessage.type);
+                    userLogService.fine("ClientUUID: "+objAuthInitClientMessage.uuid.toUpperCase());
 
                     String sid = id_db.toUpperCase();
                     String stype = type_db.toUpperCase();
                     String suuid = uuid_db.toUpperCase();
 
-                    SALogUtil.fine("DB Id: "+sid);
-                    SALogUtil.fine("DB Type: "+stype);
-                    SALogUtil.fine("DB UUID: "+suuid);
+                    userLogService.fine("DB Id: "+sid);
+                    userLogService.fine("DB Type: "+stype);
+                    userLogService.fine("DB UUID: "+suuid);
                     String sha256uuid = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(uuid_db)).toUpperCase();
                     String serverPasswd = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(id_db+sha256uuid+type_db));
 
-                    SALogUtil.fine("Server Sha(id+Sha(uuid)+type): "+serverPasswd);
+                    userLogService.fine("Server Sha(id+Sha(uuid)+type): "+serverPasswd);
 
                     if(!rawClientPasswd.toUpperCase().equals(serverPasswd.toUpperCase()) && !rawClientPasswd.equals(serverPasswd)) {
                         throw new SAInvalidPasswordException(SAErrsEnum.ERR_INIT_AUTH_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NOT_MATCH, SAErrorMessage.ERR_CODE_PASSWORD_NOT_MATCH);
@@ -365,7 +379,7 @@ public class SASimpleAuthAction {
 
             }else
             {
-                SALogUtil.fine("passwordInfo is null");
+                userLogService.fine("passwordInfo is null");
             }
 
 
@@ -383,7 +397,7 @@ public class SASimpleAuthAction {
             objAuthInitServerMessage.time = SACryptoUtil.rsaEncrypt(strTime, publicKey);
             objAuthInitServerMessage.erroryn = "n";
             resultJson = SAMessageUtil.toJSON(objAuthInitServerMessage);
-            SALogUtil.fine(String.valueOf(_SASimpleAuthAction_) + " authinit server (JSON) :: " + resultJson);
+            userLogService.fine(String.valueOf(_SASimpleAuthAction_) + " authinit server (JSON) :: " + resultJson);
 
             this.listener.onSetChallengeInSession(strChallenge, session);
         } catch (SASimpleAuthException e) {
@@ -391,18 +405,18 @@ public class SASimpleAuthAction {
         } catch (Exception e) {
             throw new SASimpleAuthMessageException(SAErrsEnum.ERR_INIT_AUTH_SERVER, e.toString());
         }
-        SALogUtil.fine("================================auth_init_server :: end=======================================");
+        userLogService.fine("================================auth_init_server :: end=======================================");
         return resultJson;
     }
 
     public String auth_server(String strReqTag, String reqJson, String challenge, HttpSession session) throws SASimpleAuthException {
-        SALogUtil.fine("================================auth_server :: start=======================================");
+        userLogService.fine("================================auth_server :: start=======================================");
         String resultJson = null;
         try {
             SAAuthClientMessage objAuthClientMessage = new SAAuthClientMessage();
             SAMessageUtil.parseJSONData(reqJson, objAuthClientMessage);
-            SALogUtil.fine("objAuthClientMessage :: " + objAuthClientMessage);
-            SALogUtil.fine(String.valueOf(_SASimpleAuthAction_) + "auth_client (JSON) :: " + SAMessageUtil.toJSON(objAuthClientMessage));
+            userLogService.fine("objAuthClientMessage :: " + objAuthClientMessage);
+            userLogService.fine(String.valueOf(_SASimpleAuthAction_) + "auth_client (JSON) :: " + SAMessageUtil.toJSON(objAuthClientMessage));
 
 
             if (SAValidateUtils.isEmpty(challenge))
@@ -426,12 +440,12 @@ public class SASimpleAuthAction {
             SAAuthPlainTextMessage objAuthPlainTextMessage = new SAAuthPlainTextMessage();
             SAMessageUtil.parseJSONData(authData, objAuthPlainTextMessage);
 
-            SALogUtil.fine("appid :: " + objAuthPlainTextMessage.appid);
-            SALogUtil.fine("challenge :: " + objAuthPlainTextMessage.challenge);
-            SALogUtil.fine("id :: " + objAuthPlainTextMessage.id);
-            SALogUtil.fine("time :: " + objAuthPlainTextMessage.time);
-            SALogUtil.fine("type :: " + objAuthPlainTextMessage.type);
-            SALogUtil.fine("uuid :: " + objAuthPlainTextMessage.uuid);
+            userLogService.fine("appid :: " + objAuthPlainTextMessage.appid);
+            userLogService.fine("challenge :: " + objAuthPlainTextMessage.challenge);
+            userLogService.fine("id :: " + objAuthPlainTextMessage.id);
+            userLogService.fine("time :: " + objAuthPlainTextMessage.time);
+            userLogService.fine("type :: " + objAuthPlainTextMessage.type);
+            userLogService.fine("uuid :: " + objAuthPlainTextMessage.uuid);
 
 
 
@@ -493,13 +507,13 @@ public class SASimpleAuthAction {
             objAuthServerMessage.uuid = uuid_db;
             objAuthServerMessage.status = SAProperty.STATUS_Y;
             resultJson = SAMessageUtil.toJSON(objAuthServerMessage);
-            SALogUtil.fine(String.valueOf(_SASimpleAuthAction_) + " auth server (JSON) :: " + resultJson);
+            userLogService.fine(String.valueOf(_SASimpleAuthAction_) + " auth server (JSON) :: " + resultJson);
         } catch (SASimpleAuthException e) {
             throw new SASimpleAuthMessageException(SAErrsEnum.ERR_AUTH_SERVER, e.getMsg(), e.getCode());
         } catch (Exception e) {
             throw new SASimpleAuthMessageException(SAErrsEnum.ERR_AUTH_SERVER, e.toString());
         }
-        SALogUtil.fine("================================auth_server :: end=======================================");
+        userLogService.fine("================================auth_server :: end=======================================");
         return resultJson;
     }
 
@@ -517,8 +531,8 @@ public class SASimpleAuthAction {
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_UNREG_SERVER, SAErrorMessage.ERR_MSG_APPID_NULL, SAErrorMessage.ERR_CODE_APPID_NULL);
             String strId = unRegClientMessage.id;
             String strAppId = unRegClientMessage.appid;
-            SALogUtil.fine("strId :: " + strId);
-            SALogUtil.fine("strAppId :: " + strAppId);
+            userLogService.fine("strId :: " + strId);
+            userLogService.fine("strAppId :: " + strAppId);
 
             List<User> users = userRepository.getSAUserInfo(strId);
             User user = users.get(0);
