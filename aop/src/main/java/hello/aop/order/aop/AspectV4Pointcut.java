@@ -9,12 +9,14 @@ import org.aspectj.lang.annotation.Aspect;
 @Aspect
 public class AspectV4Pointcut {
 
+    // 외부 참조하기
     @Around("hello.aop.order.aop.Pointcuts.allOrder()")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable{
         log.info("[log] {}", joinPoint.getSignature());
         return joinPoint.proceed();
     }
 
+    // 외부 참조
     @Around("hello.aop.order.aop.Pointcuts.orderAndService()")
     public Object doTransaction(ProceedingJoinPoint joinPoint) throws Throwable{
         try{

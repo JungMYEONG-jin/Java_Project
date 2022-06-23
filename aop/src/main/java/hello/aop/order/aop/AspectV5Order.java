@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 
+// order는 클래스 단위에만 먹힘. method 단위에는 적용이 불가핟. 만약 순서를 지정하고 싶다면 class 단위로 설정해야함.
 @Slf4j
 public class AspectV5Order {
 

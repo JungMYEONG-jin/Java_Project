@@ -16,6 +16,13 @@ public class AspectV3 {
     @Pointcut("execution(* *..*Service.*(..))")
     private void allService(){}
 
+    @Pointcut("execution(* hello.aop.order..*(..))")
+    private void allOrder2(){}
+
+    @Pointcut("execution(* *..*Service.*(..))")
+    private void allService2() {}
+
+
 
     @Around("allOrder()")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable{
