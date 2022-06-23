@@ -14,4 +14,10 @@ public class AspectV1 {
         log.info("[log] {}", joinPoint.getSignature());
         return joinPoint.proceed();
     }
+
+    @Around("execution(* hello.aop.order..*(..))")
+    public Object doLog2(ProceedingJoinPoint joinPoint) throws Throwable{
+        log.info("[log2] {}", joinPoint.getSignature());
+        return joinPoint.proceed();
+    }
 }

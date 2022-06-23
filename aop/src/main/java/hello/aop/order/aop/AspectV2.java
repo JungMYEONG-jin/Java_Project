@@ -11,11 +11,22 @@ import org.aspectj.lang.annotation.Pointcut;
 public class AspectV2 {
 
     @Pointcut("execution(* hello.aop.order..*(..))")
-    private void allOrder() {}
+    private void allOrder() {} //pointcut signature
+
+    @Pointcut("execution(* hello.aop.order..*(..))")
+    private void all2() {}
+
 
     @Around("allOrder()")
     public Object doLog(ProceedingJoinPoint joinPoint) throws Throwable{
         log.info("[log] {}", joinPoint.getSignature());
         return joinPoint.proceed();
     }
+
+    @Around("all2()")
+    public Object doLog2(ProceedingJoinPoint joinPoint) throws Throwable{
+        log.info("[log2] {}", joinPoint.getSignature());
+        return joinPoint.proceed();
+    }
+
 }
