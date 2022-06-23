@@ -5,7 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
+@Target(ElementType.METHOD) // method level aop
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MethodAop {
+    String value();
 }
