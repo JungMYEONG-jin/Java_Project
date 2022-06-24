@@ -4,18 +4,24 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Subscribe {
+public class Comment {
 
     @Id
     @GeneratedValue
-    @Column(name = "subscribeID")
+    @Column(name = "commentID")
     private Long id;
+
+    @Column(length = 100)
+    private String content;
 
     @Column
     private LocalDateTime createdDate;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 게시글 1개는 유저 1명이 작성 가능.
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "imageID")
+    private Image image;
 }

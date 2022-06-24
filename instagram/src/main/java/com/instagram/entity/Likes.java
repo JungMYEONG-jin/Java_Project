@@ -1,21 +1,25 @@
 package com.instagram.entity;
 
 import javax.persistence.*;
+import java.awt.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Subscribe {
+public class Likes {
 
     @Id
     @GeneratedValue
-    @Column(name = "subscribeID")
+    @Column(name = "likeID")
     private Long id;
 
     @Column
     private LocalDateTime createdDate;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 게시글 1개는 유저 1명이 작성 가능.
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="imageID")
+    private Image image;
 }

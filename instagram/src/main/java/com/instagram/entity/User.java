@@ -2,6 +2,7 @@ package com.instagram.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,6 +31,16 @@ public class User {
     @Column
     private String website;
 
-    @OneToMany // 유저는 여러 게시물을 올릴수 있음
-    private List<Subscribe> subs;
+    @OneToMany(mappedBy = "user") // 유저는 여러 게시물을 올릴수 있음
+    private List<Subscribe> subs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user") // user can have many likes
+    private List<Likes> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Image> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new ArrayList<>();
+
 }
