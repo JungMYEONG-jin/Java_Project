@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Image {
+public class Image extends BaseTimeEntity{
 
     @Id
     @GeneratedValue
@@ -13,8 +13,6 @@ public class Image {
 
     @Column
     private String caption;
-    @Column
-    private LocalDateTime createdDate;
     @Column
     private String postImageUrl;
 

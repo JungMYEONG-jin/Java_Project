@@ -5,15 +5,12 @@ import java.awt.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Likes {
+public class Likes extends BaseTimeEntity{
 
     @Id
     @GeneratedValue
     @Column(name = "likeID")
     private Long id;
-
-    @Column
-    private LocalDateTime createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID")

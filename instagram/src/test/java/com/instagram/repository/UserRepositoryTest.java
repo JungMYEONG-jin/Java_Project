@@ -30,7 +30,6 @@ class UserRepositoryTest {
         User user = new User();
         user.setBio("zzzz");
         user.setComments(null);
-        user.setCreatedDate(LocalDateTime.now());
         user.setEmail("abc@naver.com");
         user.setGender("Male");
         user.setImages(null);

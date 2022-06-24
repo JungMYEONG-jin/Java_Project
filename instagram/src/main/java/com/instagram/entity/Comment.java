@@ -1,10 +1,12 @@
 package com.instagram.entity;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -13,9 +15,6 @@ public class Comment {
 
     @Column(length = 100)
     private String content;
-
-    @Column
-    private LocalDateTime createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID")
