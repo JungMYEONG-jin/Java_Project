@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
 
     void deleteByFromUserAndToUserEquals(User fromUser, User toUser); // 구독해제
-
+    void deleteByFromUser(User fromUser); // 모든 구독자 제거.
 
 
     @Modifying
