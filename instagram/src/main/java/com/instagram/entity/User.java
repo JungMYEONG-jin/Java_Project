@@ -1,11 +1,17 @@
 package com.instagram.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -16,11 +22,11 @@ public class User {
     private String bio;
     @Column
     private LocalDateTime createdDate;
-    @Column
+    @Column(nullable = false)
     private String email;
     @Column
     private String gender;
-    @Column
+    @Column(nullable = false)
     private String password; // 암호화해서 저장하자 sha256
     @Column(length = 20)
     private String phone;
@@ -38,9 +44,12 @@ public class User {
     private List<Likes> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
     private List<Image> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<>();
+
+
 
 }
