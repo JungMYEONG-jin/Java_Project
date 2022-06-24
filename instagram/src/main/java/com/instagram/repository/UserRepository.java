@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByUsername(String username);
 
     @Query("select u from User u where u.username = :username and u.email = :email")
-    List<User> findUser(@Param("username") String username, @Param("email") String email);
+    User findUser(@Param("username") String username, @Param("email") String email);
     // 컴파일시 오류 발견이 가능 @Query 이름이 없는 네임드 쿼리라 생각하면됨.
 
     @Query("select new com.instagram.dto.UserDto(u.username, u.password, u.email) from User u")

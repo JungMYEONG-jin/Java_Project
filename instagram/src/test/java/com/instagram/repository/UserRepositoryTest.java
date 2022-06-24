@@ -35,15 +35,22 @@ class UserRepositoryTest {
         user.setGender("Male");
         user.setImages(null);
         user.setUsername("larena");
-        user.setPassword(passwordEncoder.encode("123456"));
+        user.setPassword("123456");
         user.setPhone("010-1234");
         user.setRole("pro");
         user.setWebsite("Abc.com");
 
+        encodePassword(user);
+        System.out.println("user = " + user.getPassword());
         User savedUser = userRepository.save(user);
         long id = savedUser.getId();
 
         assertThat(savedUser.getEmail()).isEqualTo(userRepository.findById(id).get().getEmail());
-        assertThat(passwordEncoder.matches("123456", savedUser.getPassword())).isTrue(); // 비밀번호 체크
+        assertThat(passwordEncoder.matches("12345116", savedUser.getPassword())).isTrue(); // 비밀번호 체크
+    }
+
+    private void encodePassword(User user) {
+        String password = user.getPassword();
+        user.setPassword(passwordEncoder.encode(password));
     }
 }
