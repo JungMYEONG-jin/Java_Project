@@ -1,5 +1,6 @@
 package com.instagram.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(name = "likesUK", columnNames = {"imageID", "userID"})})
 public class Likes extends BaseTimeEntity{
 
     @Id
@@ -21,6 +23,7 @@ public class Likes extends BaseTimeEntity{
     @Column(name = "likeID")
     private Long id;
 
+    @JsonIgnoreProperties("images")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID")
     private User user;
