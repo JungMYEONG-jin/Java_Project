@@ -32,3 +32,9 @@ logging.level.org.hibernate.SQL=debug
 - @NotEmpty : 빈 값, null을 체크한다.
 - @NotNull : null을 체크한다.
 
+
+> @Around
+- @Around는 Spring AOP중 하나다.
+- 클라이언트 호출을 가로채서 실행이 된다. 따라서 종료후에 꼭 proceed를 실행해 넘겨줘야한다.
+- 그렇지 않다면 클라이언트 호출을 가로챈 이후로 프로그램은 작동하지 않게 된다.
+

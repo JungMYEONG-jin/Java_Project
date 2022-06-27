@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -58,10 +60,16 @@ class SubscribeRepositoryTest {
 
         int followerCount = subscribeRepository.getFollowerCount(1);
         Assertions.assertThat(followerCount).isEqualTo(2);
+
+        List<Subscribe> result = subscribeRepository.findByFromUser(user);
+        Assertions.assertThat(result.size()).isEqualTo(2);
+
+        List<Subscribe> result2 = subscribeRepository.findByFromUserAndToUserEquals(user, user3);
+        Assertions.assertThat(result2.size()).isEqualTo(1);
     }
 
     @Test
-    void delteTest() {
+    void deleteTest() {
         User user = new User();
         user.setEmail("ac.com");
         user.setPassword("123456");

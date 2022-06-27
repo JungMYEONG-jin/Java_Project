@@ -1,6 +1,11 @@
 package com.instagram.service;
 
+import com.instagram.dto.user.UserProfileDto;
+import com.instagram.entity.Subscribe;
 import com.instagram.entity.User;
+import com.instagram.handler.exception.CustomAPIException;
+import com.instagram.handler.exception.CustomException;
+import com.instagram.handler.exception.CustomValidationAPIException;
 import com.instagram.repository.SubscribeRepository;
 import com.instagram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +15,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -33,6 +43,74 @@ public class UserService {
         userRepository.save(user);
         return user.getId();
     }
+
+    @Transactional(readOnly = true)
+    public UserProfileDto userProfile(User pageUser, User principalUser){
+
+        UserProfileDto userProfileDto = new UserProfileDto();
+
+        User findUser = userRepository.findById(pageUser.getId()).orElseThrow(() -> new CustomException("해당 프로필 페이지는 존재하지 안습니다."));
+
+        userProfileDto.setUser(findUser);
+        userProfileDto.setPageOwnerState(pageUser.getId() == principalUser.getId());
+        userProfileDto.setImageCount(findUser.getImages().size());
+
+        List<Subscribe> res = subscribeRepository.findByFromUserAndToUserEquals(principalUser, pageUser);
+        List<Subscribe> res2 = subscribeRepository.findByFromUser(pageUser);
+        userProfileDto.setSubscribeCount(res2.size());
+        userProfileDto.setSubscribeState(res.size() == 1); // 구독관계는 결과가 1명이 나와야함.
+        // A가 B를 구독하면 단 하나의 관계가 성립하는것임.ㄴ
+
+        // 회원 프로필 페이지 이미지에 좋아요 횟수 표시
+        findUser.getImages().forEach(i -> {
+            i.setLikeCnt(i.getLikes().size());
+        });
+
+        return userProfileDto;
+    }
+
+    /**
+     * id로 찾고 전달받은 user 정보로 업데이트
+     * @param id
+     * @param user
+     * @return
+     */
+    @Transactional
+    public User updateInfo(long id, User user){
+        User findUser = userRepository.findById(id).orElseThrow(() -> new CustomValidationAPIException("찾을 수 없는 아이디입니다."));
+
+        // 영속성 관리중이므로 자동으로 수정됨
+        findUser.setName(user.getName());
+        String encodedPassword = getEncodedPassword(user);
+        findUser.setPassword(encodedPassword);
+
+        findUser.setBio(user.getBio());
+        findUser.setWebsite(user.getWebsite());
+        findUser.setPhone(user.getPhone());
+        findUser.setGender(user.getGender());
+        return findUser;
+    }
+
+    @Transactional
+    public User userProfileUpdate(long principalId, MultipartFile profileImageFile){
+        UUID uuid = UUID.randomUUID();
+        String imageFileName = uuid + "_" + profileImageFile.getOriginalFilename();
+
+        Path filePath = Paths.get(uploadDir + imageFileName);
+        try{
+            Files.write(filePath, profileImageFile.getBytes());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        // 사진 DB 저장
+        User user = userRepository.findById(principalId).orElseThrow(() -> new CustomAPIException("해당 ID에 해당하는 유저가 존재하지 않습니다,."));
+        user.setProfileImageUrl(imageFileName);
+        return user;
+    }
+
+
+
 
     /**
      * Search all Users
@@ -75,6 +153,10 @@ public class UserService {
     private void encodePassword(User user) {
         String password = user.getPassword();
         user.setPassword(passwordEncoder.encode(password));
+    }
+
+    private String getEncodedPassword(User user){
+        return passwordEncoder.encode(user.getPassword());
     }
 
 

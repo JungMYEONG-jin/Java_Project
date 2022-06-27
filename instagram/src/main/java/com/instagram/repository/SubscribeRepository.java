@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
 
     void deleteByFromUserAndToUserEquals(User fromUser, User toUser); // 구독해제
@@ -29,5 +31,8 @@ public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
     //구독자 수
     @Query(value = "select count(*) from Subscribe where from_UserID = :pageUserID", nativeQuery = true)
     int getFollowerCount(@Param("pageUserID") int pageUserID);
+
+    List<Subscribe> findByFromUserAndToUserEquals(User fromUser, User ToUser);
+    List<Subscribe> findByFromUser(User pageUser);
 
 }

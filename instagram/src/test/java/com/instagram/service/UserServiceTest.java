@@ -37,4 +37,14 @@ class UserServiceTest {
         System.out.println("findUser = " + findUser.getPassword());
 
     }
+
+    @Test
+    void idTest() {
+        Long aa = 2L;
+        Long bb = 2L;
+        if(aa == bb)
+            System.out.println("Long SAME");
+        else
+            System.out.println("FALSE");
+    }
 }

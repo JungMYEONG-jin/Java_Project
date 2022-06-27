@@ -41,6 +41,8 @@ public class User extends BaseTimeEntity{
     @Column(nullable = false)
     private String name;
 
+    private String profileImageUrl;
+
 
     @OneToMany(mappedBy = "user") // user can have many likes
     private List<Likes> likes = new ArrayList<>();
