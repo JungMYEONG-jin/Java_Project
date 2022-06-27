@@ -1,5 +1,6 @@
 package com.instagram.repository;
 
+import com.instagram.dto.subscribe.SubscribeDto;
 import com.instagram.entity.Subscribe;
 import com.instagram.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,5 +35,11 @@ public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
 
     List<Subscribe> findByFromUserAndToUserEquals(User fromUser, User ToUser);
     List<Subscribe> findByFromUser(User pageUser);
+
+    @Query("select new com.instagram.dto.subscribe.SubscribeDto(u.id, u.username, u.profileImageUrl, case when (u.id = :principalID) then 1 else 0 end, " +
+            "case when (s.fromUser.id = :principalID and s.toUser.id = u.id) then 1 else 0 end ) " +
+            "From User u inner join Subscribe s on u.id = s.toUser.id " +
+            "where s.fromUser.id = :pageUserID")
+    List<SubscribeDto> getSubscribeList(@Param("principalID") long principalID, @Param("pageUserID") long pageUserID);
 
 }
