@@ -38,6 +38,9 @@ public class User extends BaseTimeEntity{
     private String username;
     @Column
     private String website;
+    @Column(nullable = false)
+    private String name;
+
 
     @OneToMany(mappedBy = "user") // user can have many likes
     private List<Likes> likes = new ArrayList<>();

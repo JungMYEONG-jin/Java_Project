@@ -1,4 +1,4 @@
-package com.instagram.dto;
+package com.instagram.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,4 +13,5 @@ public class UserDto {
     private String username;
     private String password;
     private String email;
+    private String name;
 }

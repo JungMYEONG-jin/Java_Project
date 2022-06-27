@@ -27,16 +27,19 @@ class SubscribeRepositoryTest {
         user.setEmail("ac.com");
         user.setPassword("123456");
         user.setUsername("karean");
+        user.setName("minguk");
 
         User user2 = new User();
         user2.setEmail("c121.com");
         user2.setPassword("122223456");
         user2.setUsername("korem");
+        user2.setName("minaaguk");
 
         User user3 = new User();
         user3.setEmail("gote22.com");
         user3.setPassword("ap02oa");
         user3.setUsername("amiak");
+        user3.setName("mklao");
 
         userRepository.save(user);
         userRepository.save(user2);
@@ -63,16 +66,19 @@ class SubscribeRepositoryTest {
         user.setEmail("ac.com");
         user.setPassword("123456");
         user.setUsername("karean");
+        user.setName("minguk");
 
         User user2 = new User();
         user2.setEmail("c121.com");
         user2.setPassword("122223456");
         user2.setUsername("korem");
+        user2.setName("minaaguk");
 
         User user3 = new User();
         user3.setEmail("gote22.com");
         user3.setPassword("ap02oa");
         user3.setUsername("amiak");
+        user3.setName("mklao");
 
         userRepository.save(user);
         userRepository.save(user2);

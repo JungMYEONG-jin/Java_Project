@@ -28,6 +28,7 @@ class CommentRepositoryTest {
         user.setEmail("ac.com");
         user.setPassword("123456");
         user.setUsername("karean");
+        user.setName("mink");
         userRepository.save(user); // save 안하면 flush() 하라고 에러 나옴...
 
         Comment comment = Comment.builder().content("정말 멋지네요.").image(null).user(user).build();
@@ -43,6 +44,7 @@ class CommentRepositoryTest {
         user.setEmail("ac.com");
         user.setPassword("123456");
         user.setUsername("karean");
+        user.setName("mink");
         userRepository.save(user); // save 안하면 flush() 하라고 에러 나옴...
 
         Comment comment = Comment.builder().content("정말 멋지네요.").image(null).user(user).build();

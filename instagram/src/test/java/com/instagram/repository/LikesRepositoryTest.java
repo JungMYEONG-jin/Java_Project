@@ -29,9 +29,9 @@ class LikesRepositoryTest {
     @Test
     void insertTest() {
 
-        User user = User.builder().username("kim").password("kak233##@").email("gotmail.com").build();
-        User user2 = User.builder().username("kang").password("kang##@").email("hotm.com").build();
-        User user3 = User.builder().username("song").password("song232##@").email("coldaa.com").build();
+        User user = User.builder().username("kim").password("kak233##@").email("gotmail.com").name("sunghhon").build();
+        User user2 = User.builder().username("kang").password("kang##@").email("hotm.com").name("amy").build();
+        User user3 = User.builder().username("song").password("song232##@").email("coldaa.com").name("kjje").build();
 
         userRepository.save(user);
         userRepository.save(user2);
@@ -62,9 +62,9 @@ class LikesRepositoryTest {
     @Test
     void unlikeTest() {
 
-        User user = User.builder().username("kim").password("kak233##@").email("gotmail.com").build();
-        User user2 = User.builder().username("kang").password("kang##@").email("hotm.com").build();
-        User user3 = User.builder().username("song").password("song232##@").email("coldaa.com").build();
+        User user = User.builder().username("kim").password("kak233##@").email("gotmail.com").name("sunghhon").build();
+        User user2 = User.builder().username("kang").password("kang##@").email("hotm.com").name("amy").build();
+        User user3 = User.builder().username("song").password("song232##@").email("coldaa.com").name("kjje").build();
 
         userRepository.save(user);
         userRepository.save(user2);
@@ -96,9 +96,9 @@ class LikesRepositoryTest {
 
     @Test
     void deleteByUserTest() {
-        User user = User.builder().username("kim").password("kak233##@").email("gotmail.com").build();
-        User user2 = User.builder().username("kang").password("kang##@").email("hotm.com").build();
-        User user3 = User.builder().username("song").password("song232##@").email("coldaa.com").build();
+        User user = User.builder().username("kim").password("kak233##@").email("gotmail.com").name("sunghhon").build();
+        User user2 = User.builder().username("kang").password("kang##@").email("hotm.com").name("amy").build();
+        User user3 = User.builder().username("song").password("song232##@").email("coldaa.com").name("kjje").build();
 
         userRepository.save(user);
         userRepository.save(user2);

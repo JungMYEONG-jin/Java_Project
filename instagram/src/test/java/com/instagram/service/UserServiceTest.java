@@ -22,11 +22,12 @@ class UserServiceTest {
     PasswordEncoder passwordEncoder;
 
     @Test
-    void rigister() {
+    void register() {
         User user = new User();
         user.setEmail("abc.com");
         user.setPassword("123456");
         user.setUsername("karena");
+        user.setName("koyachi");
 
         Long id = userService.join(user);
         User findUser = userService.findOne(id);

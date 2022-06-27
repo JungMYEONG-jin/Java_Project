@@ -38,6 +38,7 @@ class UserRepositoryTest {
         user.setPhone("010-1234");
         user.setRole("pro");
         user.setWebsite("Abc.com");
+        user.setName("karen");
 
         encodePassword(user);
         System.out.println("user = " + user.getPassword());
@@ -45,7 +46,7 @@ class UserRepositoryTest {
         long id = savedUser.getId();
 
         assertThat(savedUser.getEmail()).isEqualTo(userRepository.findById(id).get().getEmail());
-        assertThat(passwordEncoder.matches("12345116", savedUser.getPassword())).isTrue(); // 비밀번호 체크
+        assertThat(passwordEncoder.matches("123456", savedUser.getPassword())).isTrue(); // 비밀번호 체크
     }
 
     private void encodePassword(User user) {

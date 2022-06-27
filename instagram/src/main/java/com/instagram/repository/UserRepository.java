@@ -1,6 +1,6 @@
 package com.instagram.repository;
 
-import com.instagram.dto.UserDto;
+import com.instagram.dto.user.UserDto;
 import com.instagram.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,8 +8,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
-import javax.persistence.LockModeType;
-import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findUser(@Param("username") String username, @Param("email") String email);
     // 컴파일시 오류 발견이 가능 @Query 이름이 없는 네임드 쿼리라 생각하면됨.
 
-    @Query("select new com.instagram.dto.UserDto(u.username, u.password, u.email) from User u")
+    @Query("select new com.instagram.dto.user.UserDto(u.username, u.password, u.email, u.name) from User u")
     List<UserDto> getMemberDto();
 
     @Query("select u from User u where u.email in :emails")

@@ -25,3 +25,10 @@ logging.level.org.hibernate.SQL=debug
 - 해당 어노테이션은 영속성 관리에서 제외하고 싶을때 사용한다.
 - 메서드에 사용하지말고 필드에 사용하자.
 - 영속성에서 제외되기 때문에 신중한 사용이 필요함.
+
+
+> @NotBlank, @NotEmpty, @NotNull의 차이점
+- @NotBlank : 빈 값, null, 빈 공백(스페이스)를 체크한다.
+- @NotEmpty : 빈 값, null을 체크한다.
+- @NotNull : null을 체크한다.
+
