@@ -39,8 +39,11 @@ public class SubscribeService {
     // 조회는 수정 불가하게
     @Transactional(readOnly = true)
     public List<SubscribeDto> getSubscribeList(User principal, User pageUser){
-        // 후보군 가져오기
-        return subscribeRepository.getSubscribeList(principal.getId(), pageUser.getId());
+
+        return subscribeRepository.getSubscribeListOOP(principal, pageUser);
+        // 혹시 문제 발생시 아래 사용
+//        return subscribeRepository.getSubscribeList(principal.getId(), pageUser.getId());
+
 
     }
 }

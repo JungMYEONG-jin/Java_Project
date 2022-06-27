@@ -161,5 +161,12 @@ class SubscribeRepositoryTest {
             System.out.println("subscribeDto"+ idx++ + " = " + subscribeDto);
         }
 
+        List<SubscribeDto> subscribeListOOP = subscribeRepository.getSubscribeListOOP(user3, user);
+        Assertions.assertThat(subscribeListOOP.size()).isEqualTo(2);
+        System.out.println("subscribeListOOP = " + subscribeListOOP.size());
+        idx = 1;
+        for (SubscribeDto subscribeDto : subscribeListOOP) {
+            System.out.println("subscribeDto"+ idx++ + " = " + subscribeDto);
+        }
     }
 }
