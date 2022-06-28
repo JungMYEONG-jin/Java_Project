@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@ToString(exclude = {"comments", "user", "likes"})
 public class Image extends BaseTimeEntity{
 
     @Id
