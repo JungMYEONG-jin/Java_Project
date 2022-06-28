@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Likes extends BaseTimeEntity{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "likeID")
     private Long id;
 

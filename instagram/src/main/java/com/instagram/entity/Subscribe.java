@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Subscribe extends BaseTimeEntity{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subscribeID")
     private Long id;
 

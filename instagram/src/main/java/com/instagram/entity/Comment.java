@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Comment extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "commentID")
     private Long id;
 

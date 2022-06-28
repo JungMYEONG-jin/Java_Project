@@ -19,7 +19,7 @@ import java.util.List;
 public class User extends BaseTimeEntity{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userID")
     private Long id;
     @Column

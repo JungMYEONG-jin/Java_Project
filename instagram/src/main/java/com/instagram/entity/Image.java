@@ -16,7 +16,7 @@ import java.util.List;
 public class Image extends BaseTimeEntity{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "imageID")
     private Long id;
     @Column
