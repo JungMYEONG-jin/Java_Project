@@ -38,3 +38,7 @@ logging.level.org.hibernate.SQL=debug
 - 클라이언트 호출을 가로채서 실행이 된다. 따라서 종료후에 꼭 proceed를 실행해 넘겨줘야한다.
 - 그렇지 않다면 클라이언트 호출을 가로챈 이후로 프로그램은 작동하지 않게 된다.
 
+> @EnableJpaAuditing
+- BaseEntity에 시간을 자동 관리하게 위임한다.
+- 하지만 위임하고 나서 @EnableJpaAuditing 해당 어노테이션을 메인에 추가해야함.
+- 추가하지 않으면 추적하지 않아 시간을 자동 관리 하지 않음.

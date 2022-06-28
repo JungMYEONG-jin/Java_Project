@@ -44,9 +44,8 @@ class UserRepositoryTest {
         System.out.println("user = " + user.getPassword());
         User savedUser = userRepository.save(user);
         long id = savedUser.getId();
-
         assertThat(savedUser.getEmail()).isEqualTo(userRepository.findById(id).get().getEmail());
-        assertThat(passwordEncoder.matches("123456", savedUser.getPassword())).isTrue(); // 비밀번호 체크
+        assertThat(passwordEncoder.matches("123456", savedUser.getPassword())).isTrue();// 비밀번호 체크
     }
 
     private void encodePassword(User user) {
