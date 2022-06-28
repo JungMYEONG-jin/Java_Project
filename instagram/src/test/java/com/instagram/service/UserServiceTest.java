@@ -1,16 +1,19 @@
 package com.instagram.service;
 
 import com.instagram.entity.User;
+import com.instagram.handler.aop.LogAspect;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Import(LogAspect.class)
 @SpringBootTest
 @Transactional
 class UserServiceTest {
