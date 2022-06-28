@@ -88,6 +88,7 @@ public class UserService {
         findUser.setWebsite(user.getWebsite());
         findUser.setPhone(user.getPhone());
         findUser.setGender(user.getGender());
+        userRepository.save(findUser);
         return findUser;
     }
 

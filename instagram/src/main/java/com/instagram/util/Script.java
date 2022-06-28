@@ -2,7 +2,7 @@ package com.instagram.util;
 
 public class Script {
 
-    public String back(String msg){
+    public static String back(String msg){
         StringBuffer sb = new StringBuffer();
         sb.append("<script>");
         sb.append("alert('" + msg + "');");

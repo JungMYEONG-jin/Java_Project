@@ -35,11 +35,11 @@ public class User extends BaseTimeEntity{
     @Column
     private String role;
     @Column(length = 100)
-    private String username;
+    private String username; // nickname
     @Column
     private String website;
     @Column(nullable = false)
-    private String name;
+    private String name; //사람 이름
 
     private String profileImageUrl;
 
