@@ -19,7 +19,7 @@
         </div>
     </div>
 
-<!--    유저 정보 및 사진등록 구독-->
+<!--    유저 정보 및 사진등록 구-->
     <div class="profile-right">
         <div class="name-group">
             <h2 th:text="${userDto.user.name}"></h2>
@@ -38,9 +38,18 @@
                 </li>
             </li>
         </div>
+
+        <div class="subscribe">
+            <ul>
+                <li><a href="">게시물<span th:text="${userDto.imageCount}"></span></a></li>
+                <li><a href="javascript:subscribeInfoModalOpen(${userDto.user.id}});">팔로잉<span th:text="${userDto.subscribeCount}"></span></a></li>
+            </ul>
+        </div>
+        <div class="state">
+            <h4 th:text="${dto.user.bio}">자기소개</h4>
+            <h4 th:text="${dto.user.website}">사이트</h4>
+        </div>
     </div>
-
-
 </section>
 
 </body>
