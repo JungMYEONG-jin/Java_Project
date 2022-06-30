@@ -41,16 +41,73 @@
 
         <div class="subscribe">
             <ul>
-                <li><a href="">게시물<span th:text="${userDto.imageCount}"></span></a></li>
-                <li><a href="javascript:subscribeInfoModalOpen(${userDto.user.id}});">팔로잉<span th:text="${userDto.subscribeCount}"></span></a></li>
+                <li><a href="">게시물 : <span th:text="${userDto.imageCount}"></span></a></li>
+                <li><a href="javascript:subscribeInfoModalOpen(${userDto.user.id}});">팔로잉 : <span th:text="${userDto.subscribeCount}"></span></a></li>
             </ul>
         </div>
         <div class="state">
-            <h4 th:text="${dto.user.bio}">자기소개</h4>
-            <h4 th:text="${dto.user.website}">사이트</h4>
+            <h4 th:text="${userDto.user.bio}">자기소개</h4>
+            <h4 th:text="${userDto.user.website}">사이트</h4>
         </div>
     </div>
 </section>
+
+<!--게시물-->
+<section id="tab-content">
+<!--    게시물 container-->
+    <div class="profileContainer">
+        <div id="tab-1-content" class="tab-content-item show">
+<!--            grid array-->
+            <div class="tab-1-content-inner">
+<!--                items-->
+                <th:block th:each="image : ${userDto.user.images}">
+                    <div class="img-box">
+                        <a href="/image/image"><img th:src="/upload/${image.postImageUrl}"></a>
+                        <div class="comment">
+                            <a href="/image/image" class=""><i class="fas fa-heart"/><span th:text="${image.likeCnt}"></span> </a>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<!--logout and info change-->
+<div class="modal-info" th:onclick="modalInfo()">
+    <div class="modal">
+        <button th:onclick="location.href eq '/user/1/update'">프로필 변경</button>
+        <button th:onclick="location.href eq '/logout'">프로필 변경</button>
+        <button th:onclick="closePopup('.modal-info')">취소</button>
+    </div>
+</div>
+
+
+<!--profile image change-->
+<div class="modal-image" th:onclick="modalImage()">
+    <div class="modal">
+        <p>프로필 사진 변경</p>
+        <button th:onclick="profileImageUpload(${userDto.user.id}, ${principal.user.id})">사진 업로드</button>
+        <button th:onclick="closePopup('.modal-image')">취소</button>
+    </div>
+</div>
+
+
+<div class="modal-subscribe">
+    <div class="subscribe">
+        <span>팔로잉</span>
+        <button th:onclick="modalClose()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="subscribe-list" id="subscribeModalList">
+
+    </div>
+</div>
+
 
 </body>
 </html>
