@@ -2,10 +2,12 @@ package com.instagram.dto.user;
 
 import com.instagram.entity.User;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
+@ToString
 public class UserUpdateDto {
 
     @NotBlank
