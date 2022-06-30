@@ -1,10 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+<section class="profile">
+    <div class="profileContainer">
+        <!--        user image-->
+        <div class="profile-left">
+            <div class="profile-img-wrap story-border" onclick="popup('.modal-image')">
+                <form id="userProfileImageForm">
+                    <input type="file" name="profileImageFile" style="display: none;" id="userProfileImageInput"/>
+                </form>
+                <img class="profile-image"  th:src="/upload/${userDto.user.profileImageUrl}"
+                     onerror="this.src='/images/person.jpeg'" id="userProfileImage"/>
+            </div>
+        </div>
+    </div>
+
+<!--    유저 정보-->
+    <div class="profile-right">
+        <div class="name-group">
+            <h2>${dto.user.name}</h2>
+            <li th:if="${userDto.pageOwnerState}">
+                <button class="cta" onclick="location.href='/image/upload'">업로드</button>
+                <button class="modi" onclick="popup('.modal-info')">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </li>
+            <li th:unless="${userDto.pageOwnerState}">
+                <li th:if="${userDto.subscribeState}">
+                    <button class="cta blue" onclick="toggleSubscribe(${userDto.user.id}, this)">구독취소</button>
+                </li>
+                <li th:unless="${userDto.subscribeState}">
+                    <button class="cta" onclick="toggleSubscribe(${userDto.user.id}, this)">구독하기</button>
+                </li>
+            </li>
+        </div>
+
+    </div>
+
+
+</section>
 
 </body>
 </html>
