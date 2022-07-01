@@ -5,9 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-
-<footer>
-    <div class="container">
+    <div th:fragment="footerFragment" class="container">
         <ul>
             <li><a th:href="@{#a}">소개</a></li>
             <li><a th:href="@{#a}">블로그</a></li>
@@ -24,7 +22,5 @@
             <p>© 2020 Photogram from There Programing</p>
         </div>
     </div>
-</footer>
-
 </body>
 </html>

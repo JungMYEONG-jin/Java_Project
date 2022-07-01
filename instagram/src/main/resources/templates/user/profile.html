@@ -1,14 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/default_layout}">
 <script type="text/javascript" th:src="@{/js/profile.js}"></script>
-<link th:href="@{/css/kwon.css}" rel="stylesheet">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
 
-<body>
-
+<div layout:fragment="content">
 // <!--<li th:text="|인가코드 = ${userDto.user.profileImageUrl}|">code</li>-->
 <section class="profile">
     <div class="profileContainer">
@@ -112,5 +107,7 @@
     </div>
 </div>
 
-</body>
+</div>
+
+
 </html>
