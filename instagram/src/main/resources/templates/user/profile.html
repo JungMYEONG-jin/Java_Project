@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<script type="text/javascript" th:src="@{/js/profile.js}"></script>
+<link th:href="@{/css/kwon.css}" rel="stylesheet">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+
 <body>
-<!--<li th:text="|인가코드 = ${userDto.user.profileImageUrl}|">code</li>-->
+
+// <!--<li th:text="|인가코드 = ${userDto.user.profileImageUrl}|">code</li>-->
 <section class="profile">
     <div class="profileContainer">
         <!--        user image-->
@@ -79,7 +83,7 @@
 <div class="modal-info" th:onclick="modalInfo()">
     <div class="modal">
         <button th:onclick="location.href eq '/user/1/update'">프로필 변경</button>
-        <button th:onclick="location.href eq '/logout'">프로필 변경</button>
+        <button th:onclick="location.href eq '/logout'">로그아웃</button>
         <button th:onclick="closePopup('.modal-info')">취소</button>
     </div>
 </div>
@@ -107,7 +111,6 @@
 
     </div>
 </div>
-
 
 </body>
 </html>

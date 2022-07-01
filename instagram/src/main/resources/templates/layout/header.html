@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photogram</title>
+    <script src="https://ajax.googleapis.com/ajax/lbs/jquery/3.5.1/jquery.min.js"></script>
+
+<!--    style-->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/story.css}">
+    <link rel="stylesheet" th:href="@{/css/popular.css}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+    <link rel="stylesheet" th:href="@{/css/upload.css}">
+    <link rel="stylesheet" th:href="@{/css/update.css}">
+    <link rel="shortcut icon" th:href="@{/images/insta.svg}">
+<!--    font-->
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css}">
+<!--    fonts-->
+    <link rel="stylesheet" th:href="${https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap}">
+</head>
+
+<body>
+<!--input principalID-->
+    <input type="hidden" id="principalId" th:value="${principal.user.id}"/>
+    <header class="header">
+        <div class="container">
+            <a th:href="/" class="logo">
+                <img th:src="@{/images/logo.jpg}" th:alt="">
+            </a>
+            <nav class="navi">
+                <ul class="navi-list">
+                    <li class="navi-item">
+                        <a th:href="/">
+                            <i class="fas fa-home"></i>
+                        </a>
+                    </li>
+                    <li class="navi-item">
+                        <a th:href="@{/image/popular}">
+                            <i class="far fa-compass"></i>
+                        </a>
+                    </li>
+                    <li class="navi-item">
+                        <a th:href="|/user/${principal.user.id}|">
+                            <i class="far fa-user"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+</body>
+
+
+
+
+</html>
