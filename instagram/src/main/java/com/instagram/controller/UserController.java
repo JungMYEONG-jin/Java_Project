@@ -24,6 +24,11 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("/")
+    public String index(){
+        return "index";
+    }
+
     @GetMapping("/user/{pageUserID}")
     public String profile(@PathVariable int pageUserID, Model model, @AuthenticationPrincipal PrincipalDetails principalDetails){
         User pageUser = userService.findOne((long) pageUserID);
@@ -52,5 +57,3 @@ public class UserController {
         userService.join(user3);
     }
 }
-//630839273080-tbn0mdf47645j677e16vj4f4touskq87.apps.googleusercontent.com
-//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
