@@ -120,3 +120,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 > Entity 는 직렬화 기능을 넣지 않는게 좋다. 다른 Entity와 언제 관계를 형성할 지 모르고 성능 저하를 일으킬 수 있기 때문이다.
 
+> Ambiguous handler methods mapped for URL
+- 해당 오류는 중복된 mapping을 갖는다는 의미다. controller 부분 재확인해서 중복 제거하자.

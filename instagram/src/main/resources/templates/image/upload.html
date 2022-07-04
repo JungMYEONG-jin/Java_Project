@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/default_layout}">
+
+<div layout:fragment="content">
+    <main class="uploadContainer">
+        <section class="upload">
+
+<!--            uploadLogo-->
+            <div class="upload-top">
+                <a href="home.html" class="">
+                    <img th:src="@{/images/logo.jpg}" alt=""/>
+                </a>
+                <p>사진 업로드</p>
+            </div>
+
+<!--            uploadForm-->
+            <form class="upload-form" th:action="@{/image}" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" onchange="imageChoose(this)" style="margin-bottom: 15px; margin-top: 30px;"/>
+                <div class="upload-img">
+                    <img th:src="@{/images/photo.jpeg}" alt="" id="imageUploadPreview"/>
+                </div>
+
+                <div class="upload-form-detail">
+                    <input type="text" placeholder="문구 입력..." name="caption"/>
+                    <button class="cta blue">업로드</button>
+                </div>
+            </form>
+
+        </section>
+    </main>
+</div>
+<br/><br/>
+
+<script th:src="@{/js/upload.js}"></script>

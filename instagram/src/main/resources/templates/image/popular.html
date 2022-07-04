@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/default_layout}">
+
+<div layout:fragment="content">
+    <main class="popular">
+        <div class="exploreContainer">
+            <div class="popular-gallery">
+                <th:block th:each="image : ${images}">
+                    <div class="p-img-box">
+                        <a th:href="|/user/${image.user.id}|">
+                            <img th:src="|/upload/${image.postImageUrl}|">
+                        </a>
+                    </div>
+                </th:block>
+
+<!--                일반텍스트 + $-->
+            </div>
+        </div>
+    </main>
+</div>
+

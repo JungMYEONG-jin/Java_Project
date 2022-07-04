@@ -24,10 +24,10 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/")
-    public String index(){
-        return "index2";
-    }
+//    @GetMapping("/")
+//    public String index(){
+//        return "index2";
+//    }
 
     @GetMapping("/user/{pageUserID}")
     public String profile(@PathVariable int pageUserID, Model model, @AuthenticationPrincipal PrincipalDetails principalDetails){
