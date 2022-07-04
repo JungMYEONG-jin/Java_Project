@@ -117,3 +117,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 - userInfoEndpoint : 로그인 성공 이후 사용자 정보를 가져올 때의 설정 담당.
 - userService : 로그인 성공 시 후속 조치를 진행할 service 인터페이스 구현체를 등록하는 부분.
 - 리소스 서버에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시할 수 있음.
+
+> Entity 는 직렬화 기능을 넣지 않는게 좋다. 다른 Entity와 언제 관계를 형성할 지 모르고 성능 저하를 일으킬 수 있기 때문이다.
+
