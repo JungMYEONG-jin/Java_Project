@@ -1,5 +1,6 @@
 package com.instagram.dto.signup;
 
+import com.instagram.entity.User;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -18,6 +19,10 @@ public class SignupDto {
     private String email;
     @NotBlank
     private String name;
+
+    public User toEntity(){
+        return User.builder().username(username).password(password).email(email).name(name).build();
+    }
 
 
 }
