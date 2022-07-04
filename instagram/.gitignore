@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### private info ###
-application-oauth.properties
+!**/src/main/resources/application-oauth.properties
