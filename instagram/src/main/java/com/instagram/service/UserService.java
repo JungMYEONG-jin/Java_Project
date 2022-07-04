@@ -150,6 +150,15 @@ public class UserService {
         // 할당 받은 id가 존재함. 즉 pk가 존재하므로 update로 관리됨.
     }
 
+    @Transactional
+    public User update2(Long id, String username){
+        Optional<User> optionalUser = userRepository.findById(id);
+        User user = optionalUser.get();
+        user.setUsername(username); // 영속성 관리중이라 set만 해도 알아서 update 됨
+        // 할당 받은 id가 존재함. 즉 pk가 존재하므로 update로 관리됨.
+        return userRepository.save(user);
+    }
+
 
     private void encodePassword(User user) {
         String password = user.getPassword();

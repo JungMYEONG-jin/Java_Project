@@ -46,14 +46,14 @@ public class UserController {
         return "user/update";
     }
 
-    @PostConstruct
-    public void insert(){
-        User user = User.builder().username("kim").password("aaa123").email("gotmail.com").name("sunghhon").profileImageUrl("aaa").build();
-        User user2 = User.builder().username("kang").password("kang##@").email("hotm.com").name("amy").build();
-        User user3 = User.builder().username("song").password("song232##@").email("coldaa.com").name("kjje").build();
-
-        userService.join(user);
-        userService.join(user2);
-        userService.join(user3);
-    }
+//    @PostConstruct
+//    public void insert(){
+//        User user = User.builder().username("kim").password("aaa123").email("gotmail.com").name("sunghhon").profileImageUrl("aaa").build();
+//        User user2 = User.builder().username("kang").password("kang##@").email("hotm.com").name("amy").build();
+//        User user3 = User.builder().username("song").password("song232##@").email("coldaa.com").name("kjje").build();
+//
+//        userService.join(user);
+//        userService.join(user2);
+//        userService.join(user3);
+//    }
 }
