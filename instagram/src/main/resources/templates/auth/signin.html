@@ -1,10 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>테스트그램</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{https://pro.fontawesome.com/releases/v5.10.0/css/all.css}"
+          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 </head>
 <body>
+<div class="container">
+    <main class="loginMain">
+        <section class="login">
+            <article class="login__form__container">
+                <div class="login__form">
+                    <h1><img th:src="@{/images/logo.jpg}" alt=""/> </h1>
 
+                    <!--                    login input-->
+                    <form class="login__input" th:action="@{/auth/signin}" method="post">
+                        <input type="text" name="userename" placeholder="사용자 이름" required="required"/>
+                        <input type="password" name="password" placeholder="비밀번호" required="required"/>
+                        <button>Login</button>
+                    </form>
+
+                    <div class="login__horizon">
+                        <div class="br"></div>
+                        <div class="or">또는</div>
+                        <div  class="br"/>
+                    </div>
+
+                    <!--                    oauth login-->
+                    <div class="login_google">
+                        <button onclick="javascript:location.href='/oauth2/authorization/google'">
+                            <i class="fab fa-google-square"/>
+                            <span>Google으로 로그인</span>
+                        </button>
+                    </div>
+
+                    <!--                    oauth login end-->
+
+                    <div class="login__horizon">
+                        <div class="or" style=" height: 40px; widht: 500px">
+                            비밀번호를 잊으셨나요?
+                        </div>
+                    </div>
+                </div>
+
+                <!--                계정이 없으신가요-->
+                <div class="login__regisiter">
+                    <span>계정이 없으신가요?</span>
+                    <a href="/auth/signup"><b>가입하기</b></a>
+                </div>
+            </article>
+        </section>
+    </main>
+</div>
 </body>
 </html>
