@@ -10,11 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.awt.print.Pageable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,6 +45,11 @@ public class ImageService {
         //DB 저장
         Image image = imageUploadDto.toImage(fileName, principalDetails.getUser());
         imageRepository.save(image);
+    }
+
+    @Transactional
+    public Image findOne(long id){
+        return imageRepository.findById(id).get();
     }
 
     /**
