@@ -29,7 +29,7 @@ public class PrincipalDetailsService implements UserDetailsService {
         List<User> result = userRepository.findByUsername(username);
         log.info("username={}", username);
         if(result.isEmpty()){
-            return null;
+            throw new UsernameNotFoundException("Username not found. Your input value is "+username);
         }else{
             return new PrincipalDetails(result.get(0));
         }
