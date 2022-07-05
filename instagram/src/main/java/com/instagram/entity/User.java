@@ -1,10 +1,7 @@
 package com.instagram.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
@@ -17,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
+@ToString(exclude = {"likes", "images", "comments"})
 public class User extends BaseTimeEntity{
 
     @Id

@@ -47,7 +47,7 @@ public class ImageService {
         imageRepository.save(image);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Image findOne(long id){
         return imageRepository.findById(id).get();
     }

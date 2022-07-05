@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Clone Instagram</title>
 </head>
-<script type="text/javascript" th:src="@{/js/update.js}"></script>
+<script type="text/javascript" src="/js/update.js"></script>
 <!--프로필셋팅 메인-->
 <main class="main">
     <!--프로필셋팅 섹션-->
@@ -15,7 +15,7 @@
             <!--프로필셋팅 아이디영역-->
             <div class="content-item__01">
                 <div class="item__img">
-                    <img src="#" onerror="this.src='/images/person.jpeg'"/>
+                    <img src="#" onerror="this.src='/images/person.jpeg'" th:width="300" th:height="300"/>
                 </div>
                 <div class="item__username">
                     <h2 th:text="${#authentication.getPrincipal().user.username}"></h2>

@@ -13,7 +13,7 @@
                 <form id="userProfileImageForm">
                     <input type="file" name="profileImageFile" style="display: none;" id="userProfileImageInput"/>
                 </form>
-                <img class="profile-image"  th:src="|/upload/${userDto.user.profileImageUrl}|" onerror="this.src='/images/person.jpeg'" id="userProfileImage"/>
+                <img class="profile-image"  th:src="|/upload/${userDto.user.profileImageUrl}|" onerror="this.src='/images/person.jpeg'" id="userProfileImage" th:width="300", th:height="300"/>
             </div>
         </div>
     </div>
