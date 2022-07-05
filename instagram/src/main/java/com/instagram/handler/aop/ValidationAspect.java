@@ -62,4 +62,12 @@ public class ValidationAspect {
         }
         return joinPoint.proceed();
     }
+
+    @Around("execution(* com.instagram.config.auth.*..*(..))")
+    public Object doPrincipalCheck(ProceedingJoinPoint joinPoint) throws Throwable{
+        String simpleName = joinPoint.getSignature().getClass().getSimpleName();
+        log.info("class simplename {}", simpleName);
+        log.info("object {}", joinPoint.getSignature());
+        return joinPoint.proceed();
+    }
 }
