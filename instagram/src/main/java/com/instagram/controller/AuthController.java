@@ -38,12 +38,12 @@ public class AuthController {
     }
 
     @PostMapping("/auth/signup")
-    public String signup(@ModelAttribute("signupDto") SignupDto signupDto, BindingResult bindingResult){
+    public String signup(@ModelAttribute SignupDto signupDto, BindingResult bindingResult){
 
         User user = signupDto.toEntity();
 
         if (!ValidUtils.isValidEmail(user.getEmail())){
-            bindingResult.addError(new FieldError("signupDto", "email", "잘못된 이메일 형식입니다."));
+            bindingResult.addError(new FieldError("signupDto", "email", user.getEmail(), false, null, null,"잘못된 이메일 형식입니다."));
         }
 
         if (bindingResult.hasErrors()){
