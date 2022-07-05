@@ -20,6 +20,11 @@ public class SubscribeService {
 
     private final SubscribeRepository subscribeRepository;
 
+    @Transactional
+    public Subscribe findOne(long id){
+        return subscribeRepository.findById(id).get();
+    }
+
     // 구독
     @Transactional
     public void subscribe(User fromUser, User toUser){
