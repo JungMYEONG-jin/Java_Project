@@ -61,7 +61,7 @@
 <!--                items-->
                 <th:block th:each="image : ${userDto.user.images}">
                     <div class="img-box">
-                        <a href="/image/image"><img th:src="/upload/${image.postImageUrl}"></a>
+                        <a href="/image/image"><img th:src="|/upload/${image.postImageUrl}|"></a>
                         <div class="comment">
                             <a href="/image/image" class=""><i class="fas fa-heart"/><span th:text="${image.likeCnt}"></span> </a>
                         </div>
@@ -75,11 +75,11 @@
 
 
 <!--logout and info change-->
-<div class="modal-info" th:onclick="modalInfo()">
+<div class="modal-info" onclick="modalInfo()">
     <div class="modal">
-        <button th:onclick="location.href eq '/user/1/update'">프로필 변경</button>
-        <button th:onclick="location.href eq '/logout'">로그아웃</button>
-        <button th:onclick="closePopup('.modal-info')">취소</button>
+        <button onclick="location.href='/user/1/update'">프로필 변경</button>
+        <button onclick="location.href='/logout'">로그아웃</button>
+        <button onclick="closePopup('.modal-info')">취소</button>
     </div>
 </div>
 

@@ -15,10 +15,10 @@
             <!--프로필셋팅 아이디영역-->
             <div class="content-item__01">
                 <div class="item__img">
-                    <img src="#" th:onerror="this.src eq '/images/person.jpeg'"/>
+                    <img src="#" onerror="this.src='/images/person.jpeg'"/>
                 </div>
                 <div class="item__username">
-                    <h2 th:text="${principal.user.username}"></h2>
+                    <h2 th:text="${#authentication.getPrincipal().user.username}"></h2>
                 </div>
             </div>
             <!--프로필셋팅 아이디영역end-->
@@ -29,14 +29,14 @@
                     <div class="item__title">이름</div>
                     <div class="item__input">
                         <input type="text" name="name" placeholder="이름"
-                               th:value="${principal.user.name}" required/>
+                               th:value="${#authentication.getPrincipal().user.name}" required/>
                     </div>
                 </div>
                 <div class="content-item__03">
                     <div class="item__title">아이디</div>
                     <div class="item__input">
                         <input type="text" name="username" placeholder="유저네임"
-                               th:value="${principal.user.username}" readonly="readonly"/>
+                               th:value="${#authentication.getPrincipal().user.username}" readonly="readonly"/>
                     </div>
                 </div>
                 <div class="content-item__04">
@@ -49,13 +49,13 @@
                     <div class="item__title">웹사이트</div>
                     <div class="item__input">
                         <input type="text" name="website" placeholder="웹 사이트"
-                               th:value="${principal.user.website}"/>
+                               th:value="${#authentication.getPrincipal().user.website}"/>
                     </div>
                 </div>
                 <div class="content-item__06">
                     <div class="item__title">소개</div>
                     <div class="item__input">
-                        <textarea name="bio" id="" rows="3" th:text="${principal.user.bio}"></textarea>
+                        <textarea name="bio" id="" rows="3" th:text="${#authentication.getPrincipal().user.bio}"></textarea>
                     </div>
                 </div>
                 <div class="content-item__07">
@@ -69,20 +69,20 @@
                     <div class="item__title">이메일</div>
                     <div class="item__input">
                         <input type="text" name="email" placeholder="이메일"
-                               th:value="${principal.user.email}" readonly="readonly"/>
+                               th:value="${#authentication.getPrincipal().user.email}" readonly="readonly"/>
                     </div>
                 </div>
                 <div class="content-item__09">
                     <div class="item__title">전회번호</div>
                     <div class="item__input">
                         <input type="text" name="phone" placeholder="전화번호"
-                               th:value="${principal.user.phone}"/>
+                               th:value="${#authentication.getPrincipal().user.phone}"/>
                     </div>
                 </div>
                 <div class="content-item__10">
                     <div class="item__title">성별</div>
                     <div class="item__input">
-                        <input type="text" name="gender" th:value="${principal.user.gender}"/>
+                        <input type="text" name="gender" th:value="${#authentication.getPrincipal().user.gender}"/>
                     </div>
                 </div>
 
