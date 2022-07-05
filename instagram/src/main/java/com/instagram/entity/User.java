@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class User extends BaseTimeEntity{
     private Long id;
     @Column
     private String bio;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
     @Column
     private String gender;
@@ -34,7 +35,7 @@ public class User extends BaseTimeEntity{
     private String phone;
     @Column
     private String role;
-    @Column(length = 100)
+    @Column(length = 100)// nickname 중복은 불가함..
     private String username; // nickname
     @Column
     private String website;

@@ -18,18 +18,19 @@
     <link rel="stylesheet" th:href="@{/css/update.css}">
     <link rel="shortcut icon" th:href="@{/images/insta.svg}">
 <!--    font-->
-    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
 <!--    fonts-->
-    <link rel="stylesheet" th:href="@{https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap">
     <sec:authorize access="isAuthenticated()">
         <sec:authentication property="principal" var="principal"></sec:authentication>
     </sec:authorize>
 </head>
 
+
 <body>
 <!--input principalID-->
 <div th:fragment="headerFragment">
-    <input type="hidden" id="principalId" th:value="${principal.user.id}"/>
+    <input type="hidden" id="principalId" th:value="${#authentication.getPrincipal().user.id}"/>
     <header class="header">
         <div class="container">
             <a href="/" class="logo">
@@ -48,7 +49,7 @@
                         </a>
                     </li>
                     <li class="navi-item">
-                        <a th:href="|/user/${principal.user.id}|">
+                        <a th:href="|/user/${#authentication.getPrincipal().user.id}|">
                             <i class="far fa-user"></i>
                         </a>
                     </li>

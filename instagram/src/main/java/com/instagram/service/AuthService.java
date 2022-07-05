@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -24,11 +26,11 @@ public class AuthService {
      */
     @Transactional
     public User join(User user){
-            String rawPassword = user.getPassword();
-            String encodedPassword = passwordEncoder.encode(rawPassword);
-            user.setPassword(encodedPassword);
-            user.setRole("Normal_USER");
-            User savedUser = userRepository.save(user);
-            return savedUser;
+        String rawPassword = user.getPassword();
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+        user.setPassword(encodedPassword);
+        user.setRole("Normal_USER");
+        User savedUser = userRepository.save(user);
+        return savedUser;
     }
 }
