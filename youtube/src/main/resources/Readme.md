@@ -10,3 +10,9 @@ brew services stop mongodb-community
 # 모든 설치가 끝나고 mongo 정상 실행시 설치 완료
 mongo
 ```
+
+> 스택 구조
+- Frontend : Angular FrameWork
+- Backend : SpringBoot
+- DB : MongoDB
+
