@@ -16,3 +16,15 @@ mongo
 - Backend : SpringBoot
 - DB : MongoDB
 
+
+> Angular CLI install
+
+```shell
+# intellij terminal 
+npm install -g @angular/cli
+
+ng new youtube-clone-ui --directory
+
+# 실행
+ng serve
+```
