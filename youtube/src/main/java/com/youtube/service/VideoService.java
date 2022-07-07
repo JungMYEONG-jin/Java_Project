@@ -70,6 +70,50 @@ public class VideoService {
         videoRepository.save(savedVideo);
     }
 
+    public VideoDto likeVideo(String videoId) {
+        Video savedVideo = getVideoById(videoId);
+
+        if(userService.ifLikedVideo(videoId)){
+            savedVideo.decrementLikes();
+            userService.removeFromLikedVideos(videoId);
+        }else if(userService.ifDisLikedVideo(videoId)){
+            savedVideo.decrementDisLikes();
+            userService.removeFromDislikedVideos(videoId);
+            savedVideo.incrementLikes();
+            userService.addToLikesVideos(videoId);
+        }else{
+            savedVideo.incrementLikes();
+            userService.addToLikesVideos(videoId);
+        }
+
+        videoRepository.save(savedVideo);
+        return mapToVideoDto(savedVideo);
+    }
+
+    public VideoDto disLikeVideo(String videoId){
+
+        Video savedVideo = getVideoById(videoId);
+        if(userService.ifDisLikedVideo(videoId)){
+            savedVideo.decrementDisLikes();
+            userService.removeFromDislikedVideos(videoId);
+        }else if(userService.ifLikedVideo(videoId)){
+            savedVideo.decrementLikes();
+            userService.removeFromLikedVideos(videoId);
+            savedVideo.incrementDisLikes();
+            userService.addToDisLikedVideos(videoId);
+        }else{
+            savedVideo.incrementDisLikes();
+            userService.addToDisLikedVideos(videoId);
+        }
+
+        videoRepository.save(savedVideo);
+        return mapToVideoDto(savedVideo);
+
+
+    }
+
+
+
     private VideoDto mapToVideoDto(Video savedVideo) {
         VideoDto videoDto = new VideoDto();
         videoDto.setVideoUrl(savedVideo.getVideoUrl());
@@ -111,5 +155,6 @@ public class VideoService {
     public List<VideoDto> getAllVideos(){
         return videoRepository.findAll().stream().map(this::mapToVideoDto).collect(Collectors.toList());
     }
+
 
 }
