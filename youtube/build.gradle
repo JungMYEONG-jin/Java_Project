@@ -21,6 +21,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'io.awspring.cloud:spring-cloud-aws-context:2.3.1'
 	implementation 'io.awspring.cloud:spring-cloud-aws-autoconfigure:2.3.1'
