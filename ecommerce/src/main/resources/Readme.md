@@ -19,6 +19,14 @@ show tables;
 create database {name};
 use {database_name};
 desc {table_name};
+
+
+
+# describe all 
+SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, COLUMN_TYPE, COLUMN_COMMENT, ORDINAL_POSITION
+ FROM information_schema.columns
+  WHERE table_schema = 'ecommerce'
+   ORDER BY TABLE_NAME, ORDINAL_POSITION
 ```
 
 
@@ -28,4 +36,8 @@ CascadeType.REMOVE를 사용하면
 연관된 건수만큼 쿼리가 실행된다.
 즉 n개면 쿼리가 n번 실행됨. 하지만 onDelete 쿼리의 경우 한번만 실행이됨.
 그리고 onDelete는 스키마상 제약조건이 들어감.
+
+
+
+> xToOne은 deafult eager임 lazy로 바꾸자...!!
 
