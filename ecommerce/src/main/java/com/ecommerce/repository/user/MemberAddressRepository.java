@@ -14,4 +14,5 @@ public interface MemberAddressRepository extends JpaRepository<MemberAddress, Lo
         Optional<MemberAddress> findByUserIdAndMain(Long userId, boolean main);
 
 
+
 }
