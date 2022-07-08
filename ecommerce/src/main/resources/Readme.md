@@ -41,3 +41,9 @@ CascadeType.REMOVE를 사용하면
 
 > xToOne은 deafult eager임 lazy로 바꾸자...!!
 
+
+### EntityGraph
+> EntityGraph 란 무엇인가?
+> EntityGraph는 연관된 entity들을 SQL 한번에 조회하는 기능이다.
+> 사실상 fetch join 의 간편 버전
+> left outer join 으로 실행됨.

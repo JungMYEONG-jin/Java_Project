@@ -2,6 +2,7 @@ package com.ecommerce.entity.user;
 
 import com.ecommerce.base.BaseTimeEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
@@ -16,6 +17,7 @@ import static org.hibernate.annotations.CascadeType.ALL;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class User extends BaseTimeEntity {
 
     @Id
