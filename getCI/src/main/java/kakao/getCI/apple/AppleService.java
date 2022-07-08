@@ -30,17 +30,23 @@ public class AppleService {
     public static final String keyPath = "../resources/static/apple/AuthKey_7JL62P566N.p8";
     public static String appId = "357484932";
 
-    public String getAppInfos(String jwt) throws MalformedURLException {
-        System.out.println("jwt = " + jwt);
+    public String getAppVersions(String jwt, String id) throws MalformedURLException {
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps"+"/"+ id +"/appStoreVersions"); // 버전 업데이트날짜
+        return getConnectResult(jwt, id, url);
+    }
+
+    public String getAppTitle(String jwt, String id) throws MalformedURLException{
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id); // 이름
+        return getConnectResult(jwt, id, url);
+    }
+
+    private String getConnectResult(String jwt, String id, URL url) throws MalformedURLException {
         String result = "";
-//        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps"+"/"+appId+"/appStoreVersions"); // 버전 업데이트날짜
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+appId); // 이름
-//        appId = "id357484932";
         try{
             HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
 
             urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty("Authorization", "Bearer "+jwt);
+            urlConnection.setRequestProperty("Authorization", "Bearer "+ jwt);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
@@ -57,13 +63,14 @@ public class AppleService {
             System.out.println("res = " + res);
             result = res;
 
+            urlConnection.disconnect();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         return result;
     }
-
-
 
 
     public String createJWT( )
