@@ -25,16 +25,17 @@ import java.util.Date;
 @Service
 public class AppleService {
 
-    public static final String issuer_Id = "?";
-    public static final String keyId = "FXNMXR3KNH";
-    public static final String keyPath = "static/apple/AuthKey_FXNMXR3KNH.p8";
-    public static String appId;
+    public static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
+    public static final String keyId = "7JL62P566N";
+    public static final String keyPath = "../resources/static/apple/AuthKey_7JL62P566N.p8";
+    public static String appId = "357484932";
 
     public String getAppInfos(String jwt) throws MalformedURLException {
         System.out.println("jwt = " + jwt);
         String result = "";
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps");
-
+//        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps"+"/"+appId+"/appStoreVersions"); // 버전 업데이트날짜
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+appId); // 이름
+//        appId = "id357484932";
         try{
             HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
 
@@ -73,9 +74,9 @@ public class AppleService {
         Date now = new Date();
         claimsSet.setIssuer(issuer_Id);
         claimsSet.setIssueTime(now);
-        claimsSet.setExpirationTime(new Date(now.getTime()+3600000));
+        claimsSet.setExpirationTime(new Date(now.getTime()+900000)); // exp 15 minutes
         claimsSet.setAudience("appstoreconnect-v1");
-        claimsSet.setClaim("scope", "GET /v1/apps/"+appId+"/appInfos");
+//        claimsSet.setClaim("scope", "GET /v1/apps/"+appId+"/appInfos");
 
         SignedJWT jwt = new SignedJWT(header,claimsSet);
 
@@ -109,7 +110,7 @@ public class AppleService {
 
         }catch(IOException e)
         {
-
+            e.printStackTrace();
         }
         return content;
     }
