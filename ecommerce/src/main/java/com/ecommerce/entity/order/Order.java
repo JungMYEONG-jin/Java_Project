@@ -21,6 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "orders")
 public class Order extends BaseTimeEntity {
 
     @Id

@@ -10,22 +10,12 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-public class Coupon extends BaseTimeEntity {
+public class Coupon {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private boolean condition;
     private double saleRate;
-
-    @CreatedDate
-    @Column(updatable = false)
     private LocalDateTime expiredDate;
 
 
