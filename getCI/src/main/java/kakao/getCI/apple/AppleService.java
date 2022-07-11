@@ -6,6 +6,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -59,10 +60,6 @@ public class AppleService {
             urlConnection.setRequestProperty("Authorization", "Bearer "+ jwt);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-
-            int responseCode = urlConnection.getResponseCode();
-            System.out.println("responseCode = " + responseCode);
-
             String line = "";
             String res = "";
             while((line=br.readLine())!=null)
@@ -74,7 +71,7 @@ public class AppleService {
             urlConnection.disconnect();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("An Error Occurred. IO failed... " + e);
         }
         return result;
     }
@@ -101,10 +98,10 @@ public class AppleService {
 
         }catch(InvalidKeyException e)
         {
-            e.printStackTrace();
+            throw new RuntimeException("Key Format is invalid!! " + e);
         }catch (JOSEException e)
         {
-            e.printStackTrace();
+            throw new RuntimeException("JWT Transformation failed! "+e);
         }
 
         return jwt.serialize();
@@ -132,6 +129,13 @@ public class AppleService {
         return map;
     }
 
+    public CrawlingResultData getCrawlingResult(String id) throws MalformedURLException, ParseException {
+        Map<String, String> crawlingInfo = getCrawlingInfo(id);
+        return new CrawlingResultData(id, "지정", crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));
+    }
+
+
+
     private byte[] readPrivateKey(String keyPath)
     {
         Resource resource = new ClassPathResource(keyPath);
@@ -145,7 +149,7 @@ public class AppleService {
 
         }catch(IOException e)
         {
-            e.printStackTrace();
+            throw new RuntimeException("Private Key read Failed... " + e);
         }
         return content;
     }

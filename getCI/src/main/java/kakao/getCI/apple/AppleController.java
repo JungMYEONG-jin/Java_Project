@@ -35,6 +35,10 @@ public class AppleController {
         return "apple/appinfo";
     }
 
+
+
+
+
     @GetMapping("/apple/builds/{id}")
     public String getAppBuildInfo(@PathVariable String id, Model model) throws MalformedURLException {
         String jwt = appleService.createJWT();

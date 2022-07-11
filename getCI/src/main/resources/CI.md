@@ -29,8 +29,6 @@ Content-type: application/x-www-form-urlencoded;charset=utf-8
 
 
 
-
-
 >Apple App store Connect API 사용하기
 
 
