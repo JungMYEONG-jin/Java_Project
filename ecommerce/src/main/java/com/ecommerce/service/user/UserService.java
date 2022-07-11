@@ -21,7 +21,6 @@ import javax.servlet.http.HttpSession;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
 
     public boolean checkEmailDuplicate(String email){
         return userRepository.findByEmail(email).isPresent();
@@ -34,7 +33,7 @@ public class UserService {
 
         User user = ModelMapperUtils.getModelMapper().map(signUpDto, User.class);
         Authority authority = new Authority();
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         authority.setUser(user);
         authority.setAuthority("ROLE_USER");
         user.getAuthorities().add(authority);
@@ -65,7 +64,7 @@ public class UserService {
 
     public void changePassword(Principal principal, PasswordChangeDto dto){
         User user = userRepository.findById(principal.getUser().getId()).orElseThrow(() -> new RuntimeException("not exist user"));
-        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        user.setPassword(new BCryptPasswordEncoder().encode(dto.getNewPassword()));
         userRepository.save(user);
         principal.setUser(user);
     }

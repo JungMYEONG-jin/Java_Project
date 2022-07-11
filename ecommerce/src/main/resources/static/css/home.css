@@ -1,0 +1,86 @@
+html, body {
+  height: 100%;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+
+#main img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.grid-container {
+  text-align: center;
+  max-width: 1024px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  /*grid-template-rows: 1fr 1fr 1fr;*/
+}
+
+.grid-item {
+  border: 1px solid #ccc;
+  margin: 1%;
+  display: inline-block;
+}
+
+.vew-product {
+  color: #333;
+  width: 100%;
+  display: block;
+  margin: 0;
+}
+
+.view-product * {
+  color: #333;
+}
+
+#main {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+span:hover {
+  cursor: pointer;
+}
+
+#pagination {
+  position: fixed;
+  bottom: 5vw;
+  width: 500px;
+  justify-content: space-around;
+  display: flex;
+  left: calc(50% - 150px);
+  background-color: #888888;
+  font-weight: 600;
+}
+
+.selected-num {
+  color: #0074e9;
+  background-color: yellow;
+}
+
+span {
+  user-select: none;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+a:link {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}

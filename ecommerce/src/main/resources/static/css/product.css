@@ -1,0 +1,98 @@
+#categoryTrack {
+  height: auto;
+  display: inline-block;
+  width: 980px;
+  min-height: 40px;
+  padding-top: 8px;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+#categoryTrack li {
+  list-style: none;
+  float: left;
+  position: relative;
+  font-size: 11px;
+  padding: 0 6px 0 3px;
+  height: 28px;
+  line-height: 28px;
+}
+
+#categoryTrack li a {
+  display: inline;
+}
+
+.prod-image {
+  position: relative;
+  float: left;
+  width: 490px;
+  text-align: center;
+}
+
+.prod-preview-image img{
+  display: block;
+  width: 100%;
+  height: 100%;
+  vertical-align: top;
+  padding: 0;
+}
+
+.prod-image-item {
+  float: left;
+  width: 50px;
+  margin-right: 10px;
+  min-height: 1px;
+}
+
+.prod-image-details {
+  float: left;
+  width: 410px;
+  height: 410px;
+  vertical-align: top;
+}
+
+.active-preview {
+  border: 2px solid #0074e9;
+}
+
+.prod-buy {
+  position: relative;
+  float: right;
+  width: 400px;
+  font-size: 12px;
+}
+
+.product-details {
+  min-height: 500px;
+}
+
+.other-prod-company {
+  min-height: 300px;
+}
+
+.details-page-url {
+  width: 100%;
+}
+
+.company-product-container {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.company-product {
+  width: 150px;
+  margin-right: 45px;
+  float: left;
+  position: relative;
+}
+
+.priceasc-price-ASC, .pricedesc-price-DESC,
+.salesrate-salesRate-DESC, .updateat-updatedAt-DESC {
+  color: #0074e9 !important;
+  font-weight: bold;
+}
+
+.cart-item-box {
+  width: 300px;
+}
