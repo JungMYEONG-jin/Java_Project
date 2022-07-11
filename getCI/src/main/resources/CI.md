@@ -29,7 +29,11 @@ Content-type: application/x-www-form-urlencoded;charset=utf-8
 
 
 
+
+
 >Apple App store Connect API 사용하기
+
+
 
 Apple App store Connect API를 사용하려면 private key를 발급 받아야 한다.
 이는 1번 다운로드가 가능하여 잘 보관해야함..
@@ -64,11 +68,10 @@ payload는 다음과 같은 필드로 구성된다.
 }
 ```
 apple 공식 사이트에서 확인하면 대략 이런식으로 payload를 작성하면 된다함.
-아래는 실제 작성한 코드. 회사에서 크롤링을 위해 구현하였음.
+아래는 실제 작성한 JWT 토큰 작성법.
 
 ```java
-public String createJWT( )
-        {
+public String createJWT( ){
         JWSHeader header=new JWSHeader.Builder(JWSAlgorithm.ES256).keyID(keyId).type(JOSEObjectType.JWT).build();
 
         JWTClaimsSet claimsSet=new JWTClaimsSet();
@@ -92,15 +95,13 @@ public String createJWT( )
         {
         e.printStackTrace();
         }
-
+        
         return jwt.serialize();
-
-    }
-
+}
 
 
-    private byte[] readPrivateKey(String keyPath)
-        {
+
+private byte[] readPrivateKey(String keyPath){
         Resource resource = new ClassPathResource(keyPath);
         byte[] content = null;
 
@@ -115,8 +116,7 @@ public String createJWT( )
         e.printStackTrace();
         }
         return content;
-        }
-
+}
 ```
 
 필요한 라이브러리
@@ -125,3 +125,4 @@ public String createJWT( )
 implementation 'com.nimbusds:nimbus-jose-jwt:3.10'
 ```
 
+실제로 API 호출 부분도 필요하다면 댓글 남겨주세요.
