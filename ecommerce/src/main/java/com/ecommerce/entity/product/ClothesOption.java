@@ -1,8 +1,6 @@
 package com.ecommerce.entity.product;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.aop.support.NameMatchMethodPointcut;
@@ -10,7 +8,8 @@ import org.springframework.aop.support.NameMatchMethodPointcut;
 import javax.naming.Name;
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor

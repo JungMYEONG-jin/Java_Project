@@ -14,6 +14,9 @@ xmlns:sec="htt[://www.thymeleaf.org/extras/spring-security">
                 <img class="logo" src="/image/logo.png" onclick="location.href='/'">
                 <input class="sign-input" name="username" type="text" placeholder="email" required>
                 <input class="sign-input" name="password" type="password" placeholder="비밀번호" required>
+                <span th:if="${error}">
+                    <p id="invalid" class="alert alert-danger" th:text="${exception}"></p>
+                </span>
                 <button type="submit" class="sign-in-button">로그인</button>
             </form>
             <hr>

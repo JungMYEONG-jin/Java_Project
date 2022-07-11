@@ -4,13 +4,12 @@ import com.ecommerce.base.BaseTimeEntity;
 import com.ecommerce.entity.product.Product;
 import com.ecommerce.entity.product.ProductOption;
 import com.ecommerce.entity.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

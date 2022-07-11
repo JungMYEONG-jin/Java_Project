@@ -6,14 +6,16 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-
+@Slf4j
 @NoArgsConstructor
 @Getter
 @Setter
@@ -27,12 +29,12 @@ public class Principal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collection = new HashSet<>();
-        Set<Authority> authorities = user.getAuthorities();
-        for (Authority authority : authorities) {
-            collection.add((GrantedAuthority) authority);
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        Set<Authority> auth = user.getAuthorities();
+        for (Authority authority : auth) {
+            authorities.add(new SimpleGrantedAuthority(authority.getAuthority()));
         }
-        return collection;
+        return authorities;
     }
 
     @Override

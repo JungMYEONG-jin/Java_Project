@@ -47,3 +47,9 @@ CascadeType.REMOVE를 사용하면
 > EntityGraph는 연관된 entity들을 SQL 한번에 조회하는 기능이다.
 > 사실상 fetch join 의 간편 버전
 > left outer join 으로 실행됨.
+
+
+### Spring Security Form Login
+- permitAll() : 해당 경로는 인증을 요구하지 않고 접근가능해짐. 로그인 페이지나 상품정보 보기 등등
+- loginPage() : 인증이 필요할 때 이동하는 페이지를 설정하는 uri
+- defaultSuccessUrl() : 인증 성공시 default로 이동할 url을 지정.

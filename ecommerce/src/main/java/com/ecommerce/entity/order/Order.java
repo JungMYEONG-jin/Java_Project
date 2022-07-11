@@ -5,9 +5,7 @@ import com.ecommerce.entity.user.MemberAddress;
 import com.ecommerce.entity.user.Place;
 import com.ecommerce.entity.user.User;
 import com.fasterxml.jackson.databind.ser.Serializers;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Formula;
 
@@ -17,7 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

@@ -1,10 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Clone Coupang</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+<main id="signup-form">
+    <div class="sign-wrapper">
+        <div class="sign-box">
+            <img class="logo" src="/image/logo.png" onclick="location.href='/'">
+            <div>회원 정보를 입력하세요.</div>
+            <form method="post" th:action="@{/signup}" th:object="${user}" novalidate>
+                <input class="sign-input form-control" name="email" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" type="text" placeholder="아이디" required>
+                <p class="error-message" th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}"/>
+                <input class="sign-input form-control" name="password" type="password" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" placeholder="비밀번호" required>
+                <p class="error-message" th:if="${#fields.hasErrors('password')}" th:errorclass="error" th:errors="*{password}"/>
+                <input class="sign-input form-control" name="passwordCheck" type="password" th:classappend="${#fields.hasErrors('passwordCheck')} ? 'is-invalid'" placeholder="비밀번호 확인" required>
+                <p class="error-message" th:if="${#fields.hasErrors('passwordCheck')}" th:errorclass="error" th:errors="*{passwordCheck}"/>
+                <input class="sign-input form-control" name="username" type="text" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'" placeholder="이름" required>
+                <p class="error-message" th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}"/>
+                <input class="sign-input form-control" name="phoneNumber" type="text" th:classappend="${#fields.hasErrors('phoneNumber')} ? 'is-invalid'" placeholder="휴대폰 번호" required>
+                <p class="error-message" th:if="${#fields.hasErrors('phoneNumber')}" th:errorclass="error" th:errors="*{phoneNumber}"/>
+                <button class="sign-up-button" type="submit">가입</button>
+            </form>
+        </div>
+    </div>
+</main>
 
 </body>
 </html>

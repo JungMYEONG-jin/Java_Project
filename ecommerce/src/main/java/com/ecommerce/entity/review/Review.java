@@ -3,15 +3,14 @@ package com.ecommerce.entity.review;
 import com.ecommerce.base.BaseTimeEntity;
 import com.ecommerce.entity.product.Product;
 import com.ecommerce.entity.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

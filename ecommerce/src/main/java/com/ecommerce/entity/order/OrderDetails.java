@@ -2,14 +2,13 @@ package com.ecommerce.entity.order;
 
 import com.ecommerce.base.BaseTimeEntity;
 import com.ecommerce.entity.product.Product;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
