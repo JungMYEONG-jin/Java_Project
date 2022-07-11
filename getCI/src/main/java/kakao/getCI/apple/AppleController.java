@@ -30,32 +30,19 @@ public class AppleController {
 
     @GetMapping("/apple/{id}")
     public String getAppInfoByJsonParsing(@PathVariable String id, Model model) throws MalformedURLException, ParseException {
-        String jwt = appleService.createJWT();
-        String appVersions = appleService.getAppVersions(jwt, id);
-
-        JSONObject obj = parseStrToJson(appVersions);
-        JSONArray data = (JSONArray)obj.get("data");
-        JSONObject temp = (JSONObject) data.get(0);
-        JSONObject attributes = (JSONObject)temp.get("attributes");
-
-        Map<String, String> map = new HashMap<>(attributes);
-
-        String appTitle = appleService.getAppTitle(jwt, id);
-
-        JSONObject obj2 = parseStrToJson(appTitle);
-        JSONObject data1 = (JSONObject)obj2.get("data");
-        JSONObject attributes1 = (JSONObject)data1.get("attributes");
-
-        map.put("name", attributes1.get("name").toString());
+        Map<String, String> map = appleService.getCrawlingInfo(id);
         model.addAttribute("map", map); // version name ceratedDate
-
         return "apple/appinfo";
     }
 
-    private JSONObject parseStrToJson(String str) throws ParseException {
-        JSONParser parser = new JSONParser();
-        JSONObject obj = (JSONObject) parser.parse(str);
-        return obj;
+    @GetMapping("/apple/builds/{id}")
+    public String getAppBuildInfo(@PathVariable String id, Model model) throws MalformedURLException {
+        String jwt = appleService.createJWT();
+        String buildInfo = appleService.getBuildInfo(jwt, id);
+        System.out.println("buildInfo = " + buildInfo);
+        model.addAttribute("build", buildInfo);
+        return "apple/build";
     }
+
 
 }

@@ -6,6 +6,10 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,8 @@ import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.interfaces.ECPrivateKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class AppleService {
@@ -40,6 +46,10 @@ public class AppleService {
         return getConnectResult(jwt, id, url);
     }
 
+    public String getBuildInfo(String jwt, String id) throws MalformedURLException{
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id+"/builds?limit=1"); // 이름
+        return getConnectResult(jwt, id, url);
+    }
     private String getConnectResult(String jwt, String id, URL url) throws MalformedURLException {
         String result = "";
         try{
@@ -101,6 +111,27 @@ public class AppleService {
 
     }
 
+    public Map<String, String> getCrawlingInfo(String id) throws MalformedURLException, ParseException {
+        String jwt = createJWT();
+        String appVersions = getAppVersions(jwt, id);
+
+        JSONObject obj = parseStrToJson(appVersions);
+        JSONArray data = (JSONArray)obj.get("data");
+        JSONObject temp = (JSONObject) data.get(0);
+        JSONObject attributes = (JSONObject)temp.get("attributes");
+
+        Map<String, String> map = new HashMap<>(attributes);
+
+        String appTitle = getAppTitle(jwt, id);
+
+        JSONObject obj2 = parseStrToJson(appTitle);
+        JSONObject data1 = (JSONObject)obj2.get("data");
+        JSONObject attributes1 = (JSONObject)data1.get("attributes");
+
+        map.put("name", attributes1.get("name").toString());
+        return map;
+    }
+
     private byte[] readPrivateKey(String keyPath)
     {
         Resource resource = new ClassPathResource(keyPath);
@@ -117,5 +148,12 @@ public class AppleService {
             e.printStackTrace();
         }
         return content;
+    }
+
+
+    private JSONObject parseStrToJson(String str) throws ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject obj = (JSONObject) parser.parse(str);
+        return obj;
     }
 }
