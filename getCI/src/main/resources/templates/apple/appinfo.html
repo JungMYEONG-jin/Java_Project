@@ -2,9 +2,15 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Apple</title>
 </head>
 <body>
-Page is loading.....
+<li th:text="|버전 ${map.get('versionString')}|">appVersion</li>
+<br>
+<br>
+<li th:text="|이름 ${map.get('name')}|">appTitle</li>
+<br>
+<br>
+<li th:text="|업데이트일 ${map.get('createdDate')}|">createdDate</li>
 </body>
 </html>

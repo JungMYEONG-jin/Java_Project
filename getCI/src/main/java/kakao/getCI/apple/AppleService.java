@@ -31,7 +31,7 @@ public class AppleService {
     public static String appId = "357484932";
 
     public String getAppVersions(String jwt, String id) throws MalformedURLException {
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps"+"/"+ id +"/appStoreVersions"); // 버전 업데이트날짜
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps"+"/"+ id +"/appStoreVersions"+"?limit=1"); // 버전 업데이트날짜
         return getConnectResult(jwt, id, url);
     }
 
@@ -60,11 +60,8 @@ public class AppleService {
                 res+=line;
             }
 
-            System.out.println("res = " + res);
             result = res;
-
             urlConnection.disconnect();
-
 
         } catch (IOException e) {
             e.printStackTrace();
