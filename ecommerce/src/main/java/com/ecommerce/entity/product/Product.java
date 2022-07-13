@@ -39,11 +39,11 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product")
     private List<ProductImage> thumbnailUrls = new ArrayList<>();
 
-    String title;
-    Integer price;
-    boolean goldBox;
-    boolean rocketShipping; // rocket ㅂㅐ송  물품인지
-    String detailsPageUrl;
+    private String title;
+    private Integer price;
+    private boolean goldBox;
+    private boolean rocketShipping; // rocket ㅂㅐ송  물품인지
+    private String detailsPageUrl;
 
 
 }
