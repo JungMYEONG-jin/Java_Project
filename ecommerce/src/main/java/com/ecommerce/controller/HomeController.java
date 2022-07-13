@@ -2,6 +2,8 @@ package com.ecommerce.controller;
 
 import com.ecommerce.entity.user.auth.Principal;
 import com.ecommerce.entity.user.dto.UserResDto;
+import com.ecommerce.service.product.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
+
+    private final ProductService productService;
 
 
     @GetMapping("/")
@@ -22,6 +27,7 @@ public class HomeController {
         if (principal != null){
             model.addAttribute("user", UserResDto.of(principal.getUser()));
         }
+        model.addAttribute("productPage", productService.getAllProductPage(pageable));
         return "home";
     }
 }

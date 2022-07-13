@@ -30,5 +30,5 @@ public class Review extends BaseTimeEntity {
     private Product product;
 
     private String message;
-    private int start; // 평점
+    private int star; // 평점
 }
