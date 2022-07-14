@@ -34,7 +34,7 @@ public class Cart extends BaseTimeEntity {
 
     private String color;
     private String size;
-    private boolean selected;
+    private boolean selected; //선택여부
     private int count;
 
     public void addCount(int num){
