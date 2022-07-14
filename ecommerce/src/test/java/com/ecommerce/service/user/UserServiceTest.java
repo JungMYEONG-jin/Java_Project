@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -24,6 +26,9 @@ class UserServiceTest {
         userReqDto.setPasswordCheck("aaa123");
         userReqDto.setPhoneNumber("01046740554");
         userService.createUser(userReqDto);
+
+        System.out.println(LocalDateTime.now().plusDays(1).withHour(6));
+
     }
 
     @Test
