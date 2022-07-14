@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="fragment-nav(user)">
+    <div id="container" class="nav-bar">
+        <div class="nav-top">
+            <div style="width: 1020px; margin: 0 auto;">
+                <div class="nav-menu-top">
+                    <th:block th:if="${user == null}">
+                        <li id="login"><a href="/login">로그인</a></li>
+                        <li id="signup"><a href="/signup">회원가입</a></li>
+                    </th:block>
+                    <th:block th:unless="${user == null}">
+                        <li id="username"><a href="/order/list" th:text="${user.username} + ' 님'"></a></li>
+                        <li id="logout"><a href="/logout">로그아웃</a></li>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+        <div class="nav-bottom">
+            <div class="category-btn">
+            </div>
+            <div class="nav-menu">
+                <div class="nav-menu-top">
+                    <img class="nav-logo" src="/image/logo.png" onclick="location.href='/'">
+                    <div class="search-container nav-box">
+                        <input autocomplete="off" class="nav-box" type="text" id="nav-search" placeholder="상품을 검색해보세요!" onkeydown="if (event.keyCode==13){search();}">
+                        <i class="fas fa-search" id="nav-search-icon" onclick="search()"></i>
+                    </div>
+                    <div class="nav-icon">
+                        <div class="nav-mycoupang" onclick="location.href='/order/list'">
+                            <i class="far fa-user fa-2x nav-mycoupang-icon"></i>
+                            <span class="nav-icon-title">마이쿠팡</span>
+                        </div>
+                        <div class="nav-cart" onclick="location.href='/cart'">
+                            <i class="fas fa-shopping-cart fa-2x nav-cart-icon"></i>
+                            <span class="nav-icon-title">장바구니</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-menu-bottom">
+
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    function search(){
+        window.location.href = "/search?page=0&sort=price&direction=asc&keyword=" + $("#nav-search").val();
+    }
+</script>
+</div>
+</html>
