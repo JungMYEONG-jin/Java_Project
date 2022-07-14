@@ -62,7 +62,7 @@ public class Crawling {
 				return null;
 			}
 			
-			// 현재 jsoup 안됨.
+			// ???? jsoup ???.
 //			Document doc2 = Jsoup.connect("https://play.google.com/store/apps/details?id=com.shinhan.sbanking").post();
 			Document doc = Jsoup.parse(retHtmlString);
 		
@@ -80,7 +80,6 @@ public class Crawling {
 			
 			String date = selectNode(doc, dateNode); 
 
-			// appVersion 예외처리
 			String appVer = parseAppVersion(doc, crawlingData.getVersionNode());
 			
 			if(appVer == null || appVer.isEmpty()){
@@ -104,7 +103,6 @@ public class Crawling {
 			String ret = null;
 			
 			if (node != null) {
-				//[first://]가 node안에 있으면 가장 첫번째 노드로 검색한다.
 				if (node.contains("[first://]")) {
 					node = node.replace("[first://]", "");
 					ret = doc.select(node).first().text();
@@ -143,7 +141,6 @@ public class Crawling {
 			if(appVersion == null || appVersion.isEmpty()) {
 				try {
 					if (appVersion != null) {
-						//[first://]가 node안에 있으면 가장 첫번째 노드로 검색한다.
 						if (appVersion.contains("[first://]")) {
 							appVersion = appVersion.replace("[first://]", "");
 							appVersion = doc.select(appVersion).first().text();
@@ -227,7 +224,7 @@ public class Crawling {
 			HttpRequest request = null;
 			String responseBody = null;
 			/**
-			 * 호출 후 OUTPUT
+			 * ??? ?? OUTPUT
 			 */
 			// Time Out
 			response = httpClient.execute(http);

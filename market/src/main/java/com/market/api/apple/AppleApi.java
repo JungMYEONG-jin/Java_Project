@@ -6,6 +6,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.json.simple.JSONArray;
@@ -35,7 +36,7 @@ public class AppleApi {
 
     public static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
     public static final String keyId = "7JL62P566N";
-    public static final String keyPath = "../resources/static/apple/AuthKey_7JL62P566N.p8";
+    public static final String keyPath = "static/apple/AuthKey_7JL62P566N.p8";
     public static String appId = "357484932";
 
     public String getAppVersions(String jwt, String id) throws MalformedURLException {

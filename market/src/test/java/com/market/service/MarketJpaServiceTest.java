@@ -17,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -55,6 +57,10 @@ class MarketJpaServiceTest {
 
     @Test
     void insertTest() throws Exception {
+
+//        String keyPath = "static/apple/AuthKey_7JL62P566N.p8";
+//        Resource resource = new ClassPathResource(keyPath);
+//        System.out.println("resource " + resource.getURI().toString());
 
         Crawling crawling = new Crawling();
         List<SendInfo> sendInfos = marketRepository.GET_SEND_INFO_LIST();
