@@ -1,14 +1,15 @@
 package com.market.daemon.dao;
 
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.modelmapper.ModelMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MarketInfoMapper implements ParameterizedRowMapper<MarketInfo> {
-	@Override
+public class MarketInfoMapper{
+
+
 	public MarketInfo mapRow(ResultSet rs, int rowNum) throws SQLException
-	{		
+	{
 		MarketInfo sendInfo = new MarketInfo(
 				rs.getString("SEQ"),
 				rs.getString("APP_ID"),
@@ -22,8 +23,6 @@ public class MarketInfoMapper implements ParameterizedRowMapper<MarketInfo> {
 				rs.getString("UPT_DT"),
 				rs.getString("METHOD_TYPE")
 				);
-		
-		
 		return sendInfo;
 	}	
 }

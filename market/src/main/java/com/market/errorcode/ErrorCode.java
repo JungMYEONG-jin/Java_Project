@@ -1,6 +1,6 @@
 package com.market.errorcode;
 
-import com.shinhan.market.util.UtilString;
+import com.market.util.UtilString;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;

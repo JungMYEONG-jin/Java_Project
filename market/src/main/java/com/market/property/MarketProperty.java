@@ -1,7 +1,9 @@
 package com.market.property;
 
 import org.apache.log4j.Logger;
-	
+import org.springframework.stereotype.Component;
+
+@Component
 public class MarketProperty {
 	
 	public static final int INIT_VALUE = -1;

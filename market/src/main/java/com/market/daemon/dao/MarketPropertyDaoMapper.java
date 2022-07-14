@@ -1,12 +1,11 @@
 package com.market.daemon.dao;
 
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MarketPropertyDaoMapper implements ParameterizedRowMapper<MarketPropertyDao> {
-	@Override
+public class MarketPropertyDaoMapper {
+
 	public MarketPropertyDao mapRow(ResultSet rs, int rowNum) throws SQLException
 	{		
 		MarketPropertyDao propertyDao = new MarketPropertyDao();

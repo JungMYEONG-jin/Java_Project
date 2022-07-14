@@ -1,5 +1,6 @@
 package com.market.entity;
 
+import com.market.base.BaseTime;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Market {
+public class Market extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,10 +33,6 @@ public class Market {
     private String versionNode;
     @Column(name = "UPDATE_NODE")
     private String updateNode;
-    @Column(name = "REG_DT")
-    private String regDt;
-    @Column(name = "UPT_DT")
-    private String uptDt;
     @Column(name = "ETC1_NODE")
     private String etc1Node;
     @Column(name = "ETC2_NODE")

@@ -1,12 +1,11 @@
 package com.market.daemon.dto;
 
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SendInfoMapper implements ParameterizedRowMapper<SendInfo> {
-	@Override
+public class SendInfoMapper{
+
 	public SendInfo mapRow(ResultSet rs, int rowNum) throws SQLException
 	{		
 		SendInfo sendInfo = new SendInfo(

@@ -1,6 +1,7 @@
 package com.market.daemon.dao;
 
-import com.shinhan.market.util.TimeCheker;
+
+import com.market.util.TimeCheker;
 
 /**
  * @author parkyk

@@ -5,12 +5,14 @@ import com.market.repository.MarketRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
+
 @Service
-public class MarketService {
+public class MarketJpaService {
 
     private final MarketRepository marketRepository;
 
-    public MarketService(MarketRepository marketRepository) {
+    public MarketJpaService(MarketRepository marketRepository) {
         this.marketRepository = marketRepository;
     }
 
@@ -22,4 +24,6 @@ public class MarketService {
     public void delete(Market market){
         marketRepository.deleteById(market.getId());
     }
+
+
 }

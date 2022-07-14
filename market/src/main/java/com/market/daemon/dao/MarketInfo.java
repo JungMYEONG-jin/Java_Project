@@ -1,6 +1,7 @@
 package com.market.daemon.dao;
 
-import com.shinhan.market.crawling.data.CrawlingData;
+
+import com.market.crawling.data.CrawlingData;
 
 /**
  * @author parkyk

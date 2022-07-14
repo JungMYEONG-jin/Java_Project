@@ -1,15 +1,19 @@
 package com.market.daemon;
 
-import com.shinhan.market.daemon.dao.MarketPropertyDao;
-import com.shinhan.market.daemon.sender.MarketSender;
-import com.shinhan.market.daemon.service.MarketService;
-import com.shinhan.market.errorcode.ErrorCode;
-import com.shinhan.market.property.MarketProperty;
-import com.shinhan.market.util.TimeCheker;
-import com.shinhan.market.util.XMLParser;
+
+import com.market.daemon.dao.MarketPropertyDao;
+import com.market.daemon.sender.MarketSender;
+import com.market.daemon.service.MarketService;
+import com.market.errorcode.ErrorCode;
+import com.market.property.MarketProperty;
+import com.market.util.TimeCheker;
+import com.market.util.XMLParser;
 import org.apache.log4j.Logger;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPathExpressionException;
@@ -18,14 +22,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
+@Component
 public class MarketDaemon implements Runnable {
 
 	public static final boolean DEV = true;
 	
 	public Logger m_log = Logger.getLogger(getClass());
-	
-	private MarketProperty propertyMarket = null;
-	private MarketService serviceMarket = null;
+
+	@Autowired
+	MarketProperty propertyMarket;
+
+	@Autowired
+	MarketService serviceMarket;
 	
 	private MarketSender senderThread = null;
 
@@ -117,10 +125,10 @@ public class MarketDaemon implements Runnable {
 
 	private void insertMarketSendInfo() {
 		try {
-			serviceMarket.insertPeriodMarketSendInfo();
+//			serviceMarket.insertPeriodMarketSendInfo();
 		} catch (Exception e) {
 			ErrorCode.LogError(getClass(), "A1003",e);
-		}			
+		}
 	}
 
 	private void resetDateTime()  {
@@ -198,7 +206,7 @@ public class MarketDaemon implements Runnable {
 
 	/**
 	 * @author parkyk
-	 * @param delay_time
+	 * @param
 	 * 
 	 * ���� üũ 
 	 * @throws InterruptedException 
@@ -242,24 +250,25 @@ public class MarketDaemon implements Runnable {
 
 	private boolean isChangeSettingInfo() {
 		try {
-			MarketPropertyDao newPropertyDAO = serviceMarket.getPropertyInfo();
-			if(propertyDAO == null){
-				// ������ ��ϵǾ��ִ� property ������ ����. ��������.
-				setPropertyInfo(newPropertyDAO);
-				return true;
-				
-			} else {
-				
-				// ��ϵǾ��ִ� property������ �ִ�. ������.
-				if(propertyDAO.isChangeValue(newPropertyDAO)){
-					System.out.println("444 -1 ");
-					setPropertyInfo(newPropertyDAO);
-					System.out.println("555 - 1");
-					return true;
-				}
-				System.out.println("77777777777777777777");
-			}	
-			System.out.println("88888888888888888888");
+			return true;
+//			MarketPropertyDao newPropertyDAO = serviceMarket.getPropertyInfo();
+//			if(propertyDAO == null){
+//				// ������ ��ϵǾ��ִ� property ������ ����. ��������.
+//				setPropertyInfo(newPropertyDAO);
+//				return true;
+//
+//			} else {
+//
+//				// ��ϵǾ��ִ� property������ �ִ�. ������.
+//				if(propertyDAO.isChangeValue(newPropertyDAO)){
+//					System.out.println("444 -1 ");
+//					setPropertyInfo(newPropertyDAO);
+//					System.out.println("555 - 1");
+//					return true;
+//				}
+//				System.out.println("77777777777777777777");
+//			}
+//			System.out.println("88888888888888888888");
 		} catch (Exception e) {
 			System.out.println("000");
 			ErrorCode.LogError(getClass(), "A1007", e);
@@ -273,7 +282,7 @@ public class MarketDaemon implements Runnable {
 		
 		String xmlSettingData = newPropertyDAO.getPropertyData();
 		if(xmlSettingData != null && xmlSettingData.isEmpty() == false){
-			Document doc = Jsoup.parse(xmlSettingData);		
+			Document doc = Jsoup.parse(xmlSettingData);
 			
 			// marketDaemonSleepTime Set
 			int retTime = setSleepTime(doc,"market_daemon_sleep_sec");

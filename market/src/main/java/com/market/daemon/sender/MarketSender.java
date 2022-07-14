@@ -1,16 +1,16 @@
 package com.market.daemon.sender;
 
-import com.shinhan.market.api.apple.AppleApi;
-import com.shinhan.market.crawling.Crawling;
-import com.shinhan.market.crawling.data.CrawlingResultData;
-import com.shinhan.market.daemon.dto.SendInfo;
-import com.shinhan.market.daemon.service.MarketService;
-import com.shinhan.market.errorcode.ErrorCode;
-import com.shinhan.market.exception.CrawlingException;
-import com.shinhan.market.exception.CreateFileException;
-import com.shinhan.market.exception.GetSendInfoListException;
-import com.shinhan.market.exception.SendInfoListException;
-import com.shinhan.market.property.MarketProperty;
+import com.market.api.apple.AppleApi;
+import com.market.crawling.Crawling;
+import com.market.crawling.data.CrawlingResultData;
+import com.market.daemon.dto.SendInfo;
+import com.market.daemon.service.MarketService;
+import com.market.errorcode.ErrorCode;
+import com.market.exception.CrawlingException;
+import com.market.exception.CreateFileException;
+import com.market.exception.GetSendInfoListException;
+import com.market.exception.SendInfoListException;
+import com.market.property.MarketProperty;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,7 +37,7 @@ import java.util.List;
 public class MarketSender extends Thread {
 
 	public Logger m_log = Logger.getLogger(getClass());
-	
+
 	private MarketProperty propertyMarket = null;
 	private MarketService serviceMarket = null;
 	
@@ -60,10 +60,10 @@ public class MarketSender extends Thread {
 	
 	public MarketSender(MarketService dbManager, MarketProperty marketProperty) {
 		super();
-		
+
 		propertyMarket = marketProperty;
 		serviceMarket = dbManager;
-		
+
 		if(propertyMarket == null){
 			throw new NullPointerException("Market Property�� ���� Null�Դϴ�. MarketProperty�� Ȯ���Y �ּ���.");
 		}
@@ -185,7 +185,7 @@ public class MarketSender extends Thread {
 
 
 								if (ret != null) {
-									m_log.info("Crawling ���� : "
+									m_log.info("Crawling 시작 : "
 											+ ret.toString());
 
 									mapResCrawling.put(ret.getAppId(), ret);
@@ -205,7 +205,7 @@ public class MarketSender extends Thread {
 
 									if (nArraySendSeqCnt >= m_nMaxArraySendSeqCnt) {
 
-										updateSendInfoArray(arraySendSeq);
+//										updateSendInfoArray(arraySendSeq);
 										nArraySendSeqCnt = 0;
 										arraySendSeq = "";
 									}
@@ -251,7 +251,7 @@ public class MarketSender extends Thread {
 					 */
 					if (nArraySendSeqCnt > 0 && !arraySendSeq.equals("")) {
 						// ����!
-						updateSendInfoArray(arraySendSeq);
+//						updateSendInfoArray(arraySendSeq);
 						sendInfoList.clear();
 					}
 				}
@@ -268,9 +268,9 @@ public class MarketSender extends Thread {
 			serviceMarket.updateSendInfo(sendInfo);
 		}			
 		
-		// TODO 
-		serviceMarket.insertSendHistArray(sendInfo, arraySendSeq);
-		serviceMarket.deleteSendInfoArray(arraySendSeq);
+//		// TODO
+//		serviceMarket.insertSendHistArray(sendInfo, arraySendSeq);
+//		serviceMarket.deleteSendInfoArray(arraySendSeq);
 	}
 
 	private boolean createFile(HashMap<String, CrawlingResultData> mapResCrawling) {
@@ -313,15 +313,15 @@ public class MarketSender extends Thread {
 		return false;
 	}
 
-	public void updateSendInfoArray(String arraySendSeq) {
-		serviceMarket.insertSendHistArray(arraySendSeq);
-		serviceMarket.deleteSendInfoArray(arraySendSeq);			
-	}
-	
-	public void deleteSendInfoArray(String arraySendSeq) {
-		m_log.debug("arraySendSeq ==> "+arraySendSeq);
-		serviceMarket.deleteSendInfoArray(arraySendSeq);		
-	}
+//	public void updateSendInfoArray(String arraySendSeq) {
+//		serviceMarket.insertSendHistArray(arraySendSeq);
+//		serviceMarket.deleteSendInfoArray(arraySendSeq);
+//	}
+//
+//	public void deleteSendInfoArray(String arraySendSeq) {
+//		m_log.debug("arraySendSeq ==> "+arraySendSeq);
+//		serviceMarket.deleteSendInfoArray(arraySendSeq);
+//	}
 	
 	private Crawling getCrawling() {
 		if(crawling == null){

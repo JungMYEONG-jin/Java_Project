@@ -1,10 +1,10 @@
 package com.market.crawling;
 
-import com.shinhan.market.crawling.data.CrawlingData;
-import com.shinhan.market.crawling.data.CrawlingResultData;
-import com.shinhan.market.errorcode.ErrorCode;
-import com.shinhan.market.exception.CrawlingException;
-import org.apache.commons.httpclient.params.HttpConnectionParams;
+
+import com.market.crawling.data.CrawlingData;
+import com.market.crawling.data.CrawlingResultData;
+import com.market.errorcode.ErrorCode;
+import com.market.exception.CrawlingException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -204,7 +204,7 @@ public class Crawling {
 			Scheme sch = new Scheme("https", 443, socketFactory);
 			httpClient.getConnectionManager().getSchemeRegistry().register(sch);
 			
-			HttpParams httpParam = httpClient.getParams();		
+			HttpParams httpParam = httpClient.getParams();
 			org.apache.http.params.HttpConnectionParams.setConnectionTimeout(httpParam, CONN_TIME_OUT);
 			org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
 			

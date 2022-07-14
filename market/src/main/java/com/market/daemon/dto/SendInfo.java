@@ -1,6 +1,9 @@
 package com.market.daemon.dto;
 
-import com.shinhan.market.crawling.data.CrawlingData;
+
+import com.market.crawling.data.CrawlingData;
+import com.market.entity.Market;
+import com.market.entity.Send;
 
 import java.util.HashMap;
 
@@ -64,7 +67,21 @@ public class SendInfo implements CrawlingData {
 		this.uptDt = uptDt;
 		this.setMethodType(methodType);
 	}
-	
+
+	public SendInfo(Market market, Send send) {
+		this.seq = send.getId().toString();
+		this.appId = market.getAppId();
+		this.sendStatus = send.getSendStatus();
+		this.userId = send.getUserId();
+		this.regDt = send.getRegDt();
+		this.appPkg = market.getAppPkg();
+		this.osType = market.getOsType();
+		this.storeUrl = market.getStoreUrl();
+		this.titleNode = market.getTitleNode();
+		this.versionNode = market.getVersionNode();
+		this.methodType = market.getEtc3Node();
+	}
+
 	public String getSeq() {
 		return seq;
 	}

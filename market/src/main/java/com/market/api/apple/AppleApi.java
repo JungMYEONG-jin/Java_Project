@@ -1,11 +1,11 @@
 package com.market.api.apple;
 
+import com.market.crawling.data.CrawlingResultData;
+import com.market.daemon.dao.MarketInfo;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.shinhan.market.crawling.data.CrawlingResultData;
-import com.shinhan.market.daemon.dao.MarketInfo;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.json.simple.JSONArray;
