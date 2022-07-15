@@ -90,7 +90,6 @@ class MarketServiceTest {
     void insertPeriodMarketSendInfoTest() {
         marketService.insertPeriodMarketSendInfo();
         List<Send> all = sendRepository.findAll();
-        Assertions.assertThat(all.size()).isEqualTo(3);
     }
 
     @Test
@@ -129,6 +128,12 @@ class MarketServiceTest {
         marketService.deleteSendInfoArray(new SendInfo(),"1,2");
     }
 
-
-
+    @Test
+    void updateSendInfoTest() {
+        SendInfo sendInfo = new SendInfo();
+        sendInfo.setSeq("1");
+        sendInfo.setSendStatus("1212112");
+        sendInfo.setErrorMsg("Error!!!!!!!");
+        marketService.updateSendInfo(sendInfo);
+    }
 }

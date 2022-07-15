@@ -26,10 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MarketService {
@@ -64,8 +61,7 @@ public class MarketService {
 
 	public List<MarketInfo> getSendMarketInfoList() throws Exception {
 
-		List<MarketInfo> appInfoList = null;
-
+		List<MarketInfo> appInfoList = new ArrayList<MarketInfo>();
 		try {
 
 			List<Market> markets = marketRepository.findAll();
@@ -76,7 +72,7 @@ public class MarketService {
 		} catch(Exception e) {
 			m_log.error("", e);
 			System.out.println(e.getMessage());
-			throw new AppDataException("SEND_MARKET_INFO LIST SELECT Exception�� �߻��߽��ϴ�.", e);
+			throw new AppDataException("SEND_MARKET_INFO LIST SELECT Exception.", e);
 		}
 
 		return appInfoList;
@@ -145,7 +141,7 @@ public class MarketService {
 		MarketPropertyDao propertyInfo = null;
 
 		try {
-			MarketPropertyEntity property = marketPropertyRepository.getFirstByRegDt();
+			MarketPropertyEntity property = marketPropertyRepository.findFirstByOrderByRegDt();
 			if (property == null){
 				throw new RuntimeException("프로퍼티 정보가 존재하지 않습니다.");
 			}
@@ -243,28 +239,16 @@ public class MarketService {
 		}
 	}
 
-//	public String getQueryString(String QueryString) {
-//		String returnString = commSqlBean.getProps().get(QueryString);
-//		return returnString;
-//	}
-
 	// TODO parkyk
 	public void updateSendInfo(SendInfo sendInfo) {
 		try {
-			Map<String,String> whereMap = sendInfo.toInsertMap();
-			whereMap.put("SEND_STATUS", sendInfo.getSendStatus());
-			String errmsg = sendInfo.getErrorMsg();
-			if(errmsg == null){
-				errmsg = "";
-			}
-			whereMap.put("ERROR_MSG", errmsg);
-			whereMap.put("SEQ", sendInfo.getSeq());
 
-			m_log.info("whereMap.toString(): "+ whereMap.toString());
-
-
+			Send findSendInfo = sendRepository.getById(Long.parseLong(sendInfo.getSeq()));
+			findSendInfo.setSendStatus(sendInfo.getSendStatus());
+			findSendInfo.setErrorMsg(sendInfo.getErrorMsg());
+			sendRepository.save(findSendInfo);
 		} catch(Exception e) {
-			m_log.error("sendInfo update Exception ", e);
+			m_log.error("sendInfo ���̺� �߼۰�� ������Ʈ �� Exception�� �߻��߽��ϴ�.", e);
 		}
 	}
 	

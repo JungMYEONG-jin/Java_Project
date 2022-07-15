@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MarketPropertyRepository extends JpaRepository<MarketPropertyEntity, Long> {
 
-    @Query("select m from MarketPropertyEntity m order by m.regDt")
-    MarketPropertyEntity getFirstByRegDt();
+    MarketPropertyEntity findFirstByOrderByRegDt();
 }
