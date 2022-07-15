@@ -12,6 +12,8 @@ import com.market.exception.GetSendInfoListException;
 import com.market.exception.SendInfoListException;
 import com.market.property.MarketProperty;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -34,16 +36,18 @@ import java.util.List;
  * @author parkyk
  * FILE UPDATE LIMIT MIN���� ������ �߰��� �����ٸ� ���Ϸ� ����.
  */
+@Service
 public class MarketSender extends Thread {
 
 	public Logger m_log = Logger.getLogger(getClass());
 
-	private MarketProperty propertyMarket = null;
-	private MarketService serviceMarket = null;
-	
-	private Crawling crawling = null;
+	private MarketProperty propertyMarket;
 
-	private AppleApi appleApi = new AppleApi();
+	private MarketService serviceMarket;
+
+	private AppleApi appleApi;
+
+	private Crawling crawling;
 
 	private long regTime = MarketProperty.INIT_VALUE;
 	
@@ -58,11 +62,13 @@ public class MarketSender extends Thread {
 		initialize();		
 	}
 	
-	public MarketSender(MarketService dbManager, MarketProperty marketProperty) {
+	public MarketSender(MarketService dbManager, MarketProperty marketProperty, AppleApi appleApi, Crawling crawling) {
 		super();
 
-		propertyMarket = marketProperty;
-		serviceMarket = dbManager;
+		this.propertyMarket = marketProperty;
+		this.serviceMarket = dbManager;
+		this.appleApi = appleApi;
+		this.crawling = crawling;
 
 		if(propertyMarket == null){
 			throw new NullPointerException("Market Property�� ���� Null�Դϴ�. MarketProperty�� Ȯ���Y �ּ���.");

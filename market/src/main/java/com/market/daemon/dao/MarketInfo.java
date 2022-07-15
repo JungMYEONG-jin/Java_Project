@@ -2,6 +2,9 @@ package com.market.daemon.dao;
 
 
 import com.market.crawling.data.CrawlingData;
+import com.market.entity.Market;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 
 /**
  * @author parkyk
@@ -43,6 +46,21 @@ public class MarketInfo implements CrawlingData {
 		this.regDt = regDt;
 		this.uptDt = uptDt;
 	}
+
+	public MarketInfo(Market market){
+		this.seq = market.getId().toString();
+		this.appId = market.getAppId();
+		this.appPkg = market.getAppPkg();
+		this.osType = market.getOsType();
+		this.storeUrl = market.getStoreUrl();
+		this.titleNode = market.getTitleNode();
+		this.versionNode = market.getVersionNode();
+		this.updateNode = market.getUpdateNode();
+		this.regDt = market.getRegDt();
+		this.uptDt = market.getUptDt();
+	}
+
+
 	public String getAppId() {
 		return appId;
 	}

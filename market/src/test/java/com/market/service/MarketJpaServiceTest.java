@@ -35,7 +35,6 @@ class MarketJpaServiceTest {
     SendRepository sendRepository;
     @Autowired
     AppleApi appleApi;
-
     @BeforeEach
     void init() {
         Market smailvn_ios = Market.builder().appId("smailvn_ios").appPkg("1016762804").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();

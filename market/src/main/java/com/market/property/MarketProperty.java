@@ -1,6 +1,7 @@
 package com.market.property;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,9 +22,12 @@ public class MarketProperty {
 	public Logger log = Logger.getLogger(getClass());	
 	
 	public boolean bReal = false;
-	
-	public String daemon_code = null;			// Daemon �� 
-	public String output_xml_path = null;			// ���� ��� �ð�
+
+	@Value("${daemon_code}")
+	public String daemon_code = null;
+	@Value("${output_xml_path}")// Daemon ��
+	public String output_xml_path = null;
+	@Value("${output_xml_file_name}")// ���� ��� �ð�
 	public String output_xml_file_name = null;
 	
 	/******************* Setter/Getter **********************/

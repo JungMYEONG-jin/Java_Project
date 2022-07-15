@@ -53,7 +53,17 @@ public class SendInfo implements CrawlingData {
 
 	public SendInfo() {
 	}
-	
+
+
+	public Send of(SendInfo sendInfo){
+		Send send = new Send();
+		send.setAppId(sendInfo.getAppId());
+		send.setSendStatus(sendInfo.getSendStatus());
+		send.setErrorMsg(sendInfo.getErrorMsg());
+		send.setUserId(sendInfo.getReqUserId());
+		return send;
+	}
+
 	public SendInfo(String seq, String appId, String appPkg, String osType, String storeUrl, String titleNode, String versionNode, String updateNode, String regDt, String uptDt, String methodType) {
 		this.seq = seq;
 		this.appId = appId;

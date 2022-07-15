@@ -21,4 +21,17 @@ public class Send extends BaseTime {
     private String sendStatus;
     private String errorMsg;
     private String userId;
+
+
+    // 원래는 안좋은 방법인데 그냥 사용
+    public SendHistory of(){
+        SendHistory sendHistory = new SendHistory();
+        sendHistory.setId(this.id);
+        sendHistory.setAppId(this.appId);
+        sendHistory.setSendStatus(this.sendStatus);
+        sendHistory.setErrorMsg(this.errorMsg);
+        sendHistory.setUserId(this.userId);
+        sendHistory.setRegDt(this.getRegDt());
+        return sendHistory;
+    }
 }

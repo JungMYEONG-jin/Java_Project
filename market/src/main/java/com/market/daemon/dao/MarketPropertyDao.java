@@ -1,6 +1,7 @@
 package com.market.daemon.dao;
 
 
+import com.market.entity.MarketPropertyEntity;
 import com.market.util.TimeCheker;
 
 /**
@@ -113,6 +114,7 @@ public class MarketPropertyDao {
 	private String etc1;
 	private String etc2;
 	private String etc3;
+
 	
 	public boolean isChangeValue(MarketPropertyDao newMarketPropertyDao){
 		if(newMarketPropertyDao == null){

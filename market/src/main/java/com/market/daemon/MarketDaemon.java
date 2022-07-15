@@ -1,6 +1,8 @@
 package com.market.daemon;
 
 
+import com.market.api.apple.AppleApi;
+import com.market.crawling.Crawling;
 import com.market.daemon.dao.MarketPropertyDao;
 import com.market.daemon.sender.MarketSender;
 import com.market.daemon.service.MarketService;
@@ -29,37 +31,25 @@ public class MarketDaemon implements Runnable {
 	
 	public Logger m_log = Logger.getLogger(getClass());
 
-	@Autowired
-	MarketProperty propertyMarket;
+	private MarketSender senderThread;
 
-	@Autowired
-	MarketService serviceMarket;
-	
-	private MarketSender senderThread = null;
+	public MarketDaemon(MarketSender senderThread) {
+		this.senderThread = senderThread;
+	}
 
 	private LinkedList<TimeCheker> listDateTime = new LinkedList<TimeCheker>();
 	private XMLParser xmlParser = new XMLParser();
 
 	private String xmlSettingData;
 
-	public void setMarketProperty(MarketProperty marketProperty) {
-		this.propertyMarket = marketProperty;
-	}
-	
-	public void setMarketDBService(MarketService dbService){
-		this.serviceMarket = dbService;
-	}
 	
 	public void initialize() {
 		m_log.info("Thread initialize OK..");
-
 		// Sender Daemon �ʱ�ȭ
 		if(senderThread != null){
 			senderThread.interrupt();
 			senderThread = null;
 		}
-
-		senderThread = new MarketSender(serviceMarket, propertyMarket);		
 		senderThread.start();
 	}
 
