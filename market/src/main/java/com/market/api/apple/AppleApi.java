@@ -13,15 +13,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import sun.security.ec.ECPrivateKeyImpl;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class AppleApi {
 
@@ -141,12 +140,17 @@ public class AppleApi {
     private byte[] readPrivateKey(String keyPath)
     {
         Resource resource = new ClassPathResource(keyPath);
+        if (resource.exists())
+            System.out.println("exist");
+        else
+            System.out.println("not exist");
         byte[] content = null;
-
         try
         {
-            FileReader keyReader = new FileReader(resource.getFile());
-            PemReader pemReader = new PemReader(keyReader);
+            InputStream inputStream = resource.getInputStream();
+//            FileReader keyReader = new FileReader(resource.getFile());
+//            FileReader keyReader = new FileReader(inputStream);
+            PemReader pemReader = new PemReader(new InputStreamReader(inputStream)); // jar 배포시 getFile은 에러 발생 가능성 높음. inputstream으로 읽어오기
             PemObject pemObject = pemReader.readPemObject();
             content = pemObject.getContent();
 

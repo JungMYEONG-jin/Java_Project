@@ -33,14 +33,8 @@ class MarketJpaServiceTest {
 
     @Autowired
     SendRepository sendRepository;
-
     @Autowired
-    MarketService marketService;
-    @Autowired
-    MarketDaemon marketDaemon;
-
-    AppleApi appleApi = new AppleApi();
-    MarketSender marketSender = new MarketSender();
+    AppleApi appleApi;
 
     @BeforeEach
     void init() {
