@@ -251,33 +251,47 @@ public class MarketService {
 			m_log.error("sendInfo ���̺� �߼۰�� ������Ʈ �� Exception�� �߻��߽��ϴ�.", e);
 		}
 	}
-	
+
+
+	//미사용
 //	public void insertSendHistArray(String sendSt, String errorMsg, String arraySendSeq) {
-//		
-//	}		
-	
-//	public void testInsertMarketData(String appid, String appPkg){
-//		try {
-//			Map<String,String> whereMap = new HashMap<String, String>();
-//			String query = getQueryString("TEST_INSERT_MARKET_INFO_LIST");
-//			whereMap.put("APP_ID", appid);
-//			whereMap.put("APP_PACKAGE", appPkg);
-//			simpleJdbcTemplate.update(query, whereMap);
-//		} catch(Exception e) {
-//			m_log.error("���� �߼� ���̺� �߼۰�� ������Ʈ �� Exception�� �߻��߽��ϴ�.", e);
-//		}
-//	}
 //
-//	public void testInsertMarketDataIOS(String appid, String appPkg){
-//		try {
-//			Map<String,String> whereMap = new HashMap<String, String>();
-//			String query = getQueryString("TEST_INSERT_MARKET_INFO_LIST_IOS");
-//			whereMap.put("APP_ID", appid);
-//			whereMap.put("APP_PACKAGE", appPkg);
-//			simpleJdbcTemplate.update(query, whereMap);
-//		} catch(Exception e) {
-//			m_log.error("���� �߼� ���̺� �߼۰�� ������Ʈ �� Exception�� �߻��߽��ϴ�.", e);
-//		}
 //	}
+
+	public void testInsertMarketData(String appid, String appPkg){
+		try {
+			Market market = new Market();
+			market.setAppId(appid);
+			market.setAppPkg(appPkg);
+			market.setOsType("1");
+			market.setStoreUrl("https://play.google.com/store/apps/details?id=");
+			market.setTitleNode("div.id-app-title");
+			market.setVersionNode("div.details-section-contents div.meta-info\n" +
+					"\t\t\tdiv[itemprop=softwareVersion]");
+			market.setUpdateNode("div.details-section-contents\n" +
+					"\t\t\tdiv.meta-info\n" +
+					"\t\t\tdiv[itemprop=datePublished]");
+			marketRepository.save(market);
+		} catch(Exception e) {
+			m_log.error("testInsertMarketData EXCEPTION", e);
+		}
+	}
+
+	public void testInsertMarketDataIOS(String appid, String appPkg){
+		try {
+			Market market = new Market();
+			market.setAppId(appid);
+			market.setAppPkg(appPkg);
+			market.setOsType("2");
+			market.setStoreUrl("https://itunes.apple.com/kr/app/id");
+			market.setTitleNode("div#title div.left h1");
+			market.setVersionNode("div#left-stack div ul li span[itemprop=softwareVersion]");
+			market.setUpdateNode("div#left-stack div ul li.release-date\n" +
+					"\t\tspan[itemprop=datePublished]");
+			marketRepository.save(market);
+		} catch(Exception e) {
+			m_log.error("testInsertMarketDataIOS EXCEPTION", e);
+		}
+	}
 	
 }

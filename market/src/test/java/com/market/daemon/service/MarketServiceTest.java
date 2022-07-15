@@ -136,4 +136,9 @@ class MarketServiceTest {
         sendInfo.setErrorMsg("Error!!!!!!!");
         marketService.updateSendInfo(sendInfo);
     }
+
+    @Test
+    void testInsertMarketDataTest() {
+        marketService.testInsertMarketData("com.shinhan.com", "310392813");
+    }
 }
