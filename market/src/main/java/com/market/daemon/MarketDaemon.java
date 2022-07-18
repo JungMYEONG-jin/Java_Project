@@ -8,6 +8,7 @@ import com.market.daemon.sender.MarketSender;
 import com.market.daemon.service.MarketService;
 import com.market.errorcode.ErrorCode;
 import com.market.property.MarketProperty;
+import com.market.provider.ApplicationContextProvider;
 import com.market.util.TimeCheker;
 import com.market.util.XMLParser;
 import org.apache.log4j.Logger;
@@ -17,6 +18,7 @@ import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.NodeList;
+import org.yaml.snakeyaml.error.Mark;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.util.Calendar;
@@ -31,10 +33,10 @@ public class MarketDaemon implements Runnable {
 
 	public Logger m_log = Logger.getLogger(getClass());
 
-	private MarketProperty propertyMarket = null;
-	private MarketService serviceMarket = null;
+	private MarketProperty propertyMarket;
+	private MarketService serviceMarket;
 
-	private MarketSender senderThread = null;
+	private MarketSender senderThread;
 
 	private LinkedList<TimeCheker> listDateTime = new LinkedList<TimeCheker>();
 	private XMLParser xmlParser = new XMLParser();
@@ -57,8 +59,10 @@ public class MarketDaemon implements Runnable {
 			senderThread.interrupt();
 			senderThread = null;
 		}
+		this.serviceMarket = ApplicationContextProvider.getBean(MarketService.class);
+		this.propertyMarket = ApplicationContextProvider.getBean(MarketProperty.class);
 
-		senderThread = new MarketSender(serviceMarket, propertyMarket);
+		senderThread = new MarketSender(); // 수동 주입
 		senderThread.start();
 	}
 

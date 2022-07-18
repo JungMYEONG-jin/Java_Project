@@ -16,7 +16,9 @@ import com.market.repository.MarketRepository;
 import com.market.repository.SendHistoryRepository;
 import com.market.repository.SendRepository;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+
 
 import java.util.*;
 

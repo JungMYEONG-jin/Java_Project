@@ -1,7 +1,6 @@
 package com.market.daemon.sender;
 
 import com.market.daemon.MarketDaemon;
-import com.market.daemon.MarketDaemonNoThread;
 import com.market.daemon.dao.MarketInfo;
 import com.market.daemon.dto.SendInfo;
 import com.market.daemon.service.MarketService;
@@ -25,8 +24,7 @@ import java.util.List;
 @SpringBootTest
 class MarketSenderTest {
 
-    @Autowired
-    MarketSender marketSender;
+
     @Autowired
     MarketRepository marketRepository;
     @Autowired
@@ -37,10 +35,6 @@ class MarketSenderTest {
     MarketService marketService;
     @Autowired
     MarketProperty marketProperty;
-    @Autowired
-    MarketSenderNoThread marketSenderNoThread;
-    @Autowired
-    MarketDaemonNoThread marketDaemonNoThread;
     @Autowired
     MarketPropertyRepository marketPropertyRepository;
 
@@ -66,13 +60,14 @@ class MarketSenderTest {
     }
 
     @Test
-    void initTest() throws GetSendInfoListException, SendInfoListException {
-        List<SendInfo> sendInfoList = marketService.getSendInfoList();
-        marketSenderNoThread.processSendInfoList(sendInfoList);
+    void senderRun() {
+        MarketSender marketSender = new MarketSender();
+        marketSender.createTest();
     }
 
     @Test
-    void initTestThread() {
-        marketDaemonNoThread.run();
+    void daemonTest() {
+        Thread threadDaemon = new Thread(daemon);
+        threadDaemon.start();
     }
 }

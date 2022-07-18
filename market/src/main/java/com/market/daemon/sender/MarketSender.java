@@ -11,6 +11,7 @@ import com.market.exception.CreateFileException;
 import com.market.exception.GetSendInfoListException;
 import com.market.exception.SendInfoListException;
 import com.market.property.MarketProperty;
+import com.market.provider.ApplicationContextProvider;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -36,7 +37,6 @@ import java.util.List;
  * @author parkyk
  * FILE UPDATE LIMIT MIN���� ������ �߰��� �����ٸ� ���Ϸ� ����.
  */
-@Service
 public class MarketSender extends Thread {
 
 	public Logger m_log = Logger.getLogger(getClass());
@@ -58,49 +58,20 @@ public class MarketSender extends Thread {
 	private int mCheckCnt;
 
 	public MarketSender() {
-		super();
-		initialize();		
-	}
-
-	//	public MarketSender(MarketService dbManager, MarketProperty marketProperty, AppleApi appleApi, Crawling crawling) {
 //		super();
-//
-//		this.propertyMarket = marketProperty;
-//		this.serviceMarket = dbManager;
-//		this.appleApi = appleApi;
-//		this.crawling = crawling;
-//
-//		if(propertyMarket == null){
-//			throw new NullPointerException("Market Property�� ���� Null�Դϴ�. MarketProperty�� Ȯ���Y �ּ���.");
-//		}
-//
-//		if(serviceMarket == null){
-//			throw new NullPointerException("MarketService�� Null�Դϴ�. Market Service�� Ȯ�����ּ���.");
-//		}
-//
-//		initialize();
-//	}
-	public MarketSender(MarketService dbManager, MarketProperty marketProperty) {
-		super();
-
-		this.propertyMarket = marketProperty;
-		this.serviceMarket = dbManager;
-
-		if(propertyMarket == null){
-			throw new NullPointerException("Market Property EXCEPTION.");
-		}
-
-		if(serviceMarket == null){
-			throw new NullPointerException("MarketService EXCEPTION");
-		}
-		
+		this.propertyMarket = (MarketProperty)ApplicationContextProvider.getBean(MarketProperty.class);
+		this.serviceMarket = (MarketService)ApplicationContextProvider.getBean(MarketService.class);
 		initialize();		
 	}
-	
+
 	private void initialize() {
 		m_log.info("PushDBSender Thread initialize OK..");
 	}
-	
+
+	public void createTest(){
+		System.out.println("create success");
+	}
+
 	public void run() {
 
 		try {
