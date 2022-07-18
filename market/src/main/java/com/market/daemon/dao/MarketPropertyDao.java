@@ -130,6 +130,8 @@ public class MarketPropertyDao {
 
 		System.out.println("22222");
 		// ��Ͻð� üũ
+		System.out.println(newMarketPropertyDao.getRegDt());
+		System.out.println("regDt = " + getRegDt());
 		TimeCheker timeCheckerNewRegDt = new TimeCheker(newMarketPropertyDao.getRegDt());
 		TimeCheker timeCheckerRegDt = new TimeCheker(getRegDt());
 		

@@ -20,7 +20,7 @@ public class TimeCheker {
 		super();
 		
 		//CheckTime HHmmSS
-		
+		checkTime = checkTime.replaceAll("[- :/]","");
 		if(checkTime.length() == 14){
 			// yyyyMMddHHmmss
 			try {

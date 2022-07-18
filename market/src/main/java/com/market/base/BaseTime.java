@@ -21,13 +21,13 @@ public class BaseTime {
 
     @PrePersist
     public void onPrePersist(){
-        this.regDt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+        this.regDt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         this.uptDt = this.regDt;
     }
 
     @PreUpdate
     public void onPreUpdate(){
-        this.uptDt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+        this.uptDt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     }
 
 
