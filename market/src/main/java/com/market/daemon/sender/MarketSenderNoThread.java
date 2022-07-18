@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.lang.model.SourceVersion;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,69 +31,44 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * @author parkyk
- * FILE UPDATE LIMIT MIN���� ������ �߰��� �����ٸ� ���Ϸ� ����.
- */
 @Service
-public class MarketSender extends Thread {
+public class MarketSenderNoThread {
 
 	public Logger m_log = Logger.getLogger(getClass());
 
-	private MarketProperty propertyMarket;
+	private final MarketProperty propertyMarket;
 
-	private MarketService serviceMarket;
+	private final MarketService serviceMarket;
 
-	private AppleApi appleApi;
+	private final AppleApi appleApi;
 
-	private Crawling crawling;
+	private final Crawling crawling;
 
 	private long regTime = MarketProperty.INIT_VALUE;
-	
+
 	private int m_nMaxArraySendSeqCnt = 500;
 
 	private HashMap<String, CrawlingResultData> mapResCrawling = new HashMap<String, CrawlingResultData>();
 
 	private int mCheckCnt;
 
-	public MarketSender() {
-		super();
-		initialize();		
-	}
-
-	//	public MarketSender(MarketService dbManager, MarketProperty marketProperty, AppleApi appleApi, Crawling crawling) {
-//		super();
-//
-//		this.propertyMarket = marketProperty;
-//		this.serviceMarket = dbManager;
-//		this.appleApi = appleApi;
-//		this.crawling = crawling;
-//
-//		if(propertyMarket == null){
-//			throw new NullPointerException("Market Property�� ���� Null�Դϴ�. MarketProperty�� Ȯ���Y �ּ���.");
-//		}
-//
-//		if(serviceMarket == null){
-//			throw new NullPointerException("MarketService�� Null�Դϴ�. Market Service�� Ȯ�����ּ���.");
-//		}
-//
-//		initialize();
-//	}
-	public MarketSender(MarketService dbManager, MarketProperty marketProperty) {
+	public MarketSenderNoThread(MarketService dbManager, MarketProperty marketProperty, AppleApi appleApi, Crawling crawling) {
 		super();
 
 		this.propertyMarket = marketProperty;
 		this.serviceMarket = dbManager;
+		this.appleApi = appleApi;
+		this.crawling = crawling;
 
 		if(propertyMarket == null){
-			throw new NullPointerException("Market Property EXCEPTION.");
+			throw new NullPointerException("Market Property is null");
 		}
 
 		if(serviceMarket == null){
-			throw new NullPointerException("MarketService EXCEPTION");
+			throw new NullPointerException("MarketService is null");
 		}
-		
-		initialize();		
+
+		initialize();
 	}
 	
 	private void initialize() {
@@ -105,7 +79,7 @@ public class MarketSender extends Thread {
 
 		try {
 			while (true) {
-				System.out.println("start");
+				System.out.println("ssssstttart");
 
 				if(mCheckCnt > 60){
 					mCheckCnt = 0;
@@ -182,7 +156,6 @@ public class MarketSender extends Thread {
 			synchronized (sendInfoList) {
 				if (sendInfoList.isEmpty() == false) {
 					Crawling crawling = getCrawling();
-					appleApi = getAppleApi();
 					Date date = new Date(System.currentTimeMillis());
 					SimpleDateFormat sdf = new SimpleDateFormat(
 							"yyyyMMddHHmmSS");
@@ -215,7 +188,7 @@ public class MarketSender extends Thread {
 											+ ret.toString());
 
 									mapResCrawling.put(ret.getAppId(), ret);
-
+									System.out.println("ret = " + ret);
 									// Max Seqence üũ
 
 									// TODO parkyk
@@ -302,7 +275,6 @@ public class MarketSender extends Thread {
 	private boolean createFile(HashMap<String, CrawlingResultData> mapResCrawling) {
 		
 		m_log.info("Create File Start");
-		System.out.println("Create File Start");
 		
 		Document doc = null;
 		try {
@@ -351,16 +323,7 @@ public class MarketSender extends Thread {
 	}
 	
 	private Crawling getCrawling() {
-		if(crawling == null){
-			crawling = new Crawling();
-		}
 		return crawling;
-	}
-
-	private AppleApi getAppleApi(){
-		if(appleApi == null)
-			appleApi = new AppleApi();
-		return appleApi;
 	}
 	
 	private static Document createDocumentOutputXML(HashMap<String, CrawlingResultData> mapResult) throws ParserConfigurationException {
@@ -414,7 +377,7 @@ public class MarketSender extends Thread {
 	 * @author parkyk
 	 * @param
 	 * 
-	 * ���� üũ
+	 * ���� üũ 
 	 * @throws InterruptedException 
 	 * 
 	 */

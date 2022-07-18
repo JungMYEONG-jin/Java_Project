@@ -20,9 +20,9 @@ public class MarketProperty {
 	public static int FILE_UPDATE_LIMIT_SEC = DEFAULT_FILE_UPDATE_LIMIT_SEC;
 	
 	public Logger log = Logger.getLogger(getClass());	
-	
-	public boolean bReal = false;
 
+	@Value("${bReal}")
+	public boolean bReal = false;
 	@Value("${daemon_code}")
 	public String daemon_code = null;
 	@Value("${output_xml_path}")// Daemon ��

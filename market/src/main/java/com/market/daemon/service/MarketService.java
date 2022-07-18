@@ -3,9 +3,7 @@ package com.market.daemon.service;
 
 import com.market.daemon.dao.MarketInfo;
 import com.market.daemon.dao.MarketPropertyDao;
-import com.market.daemon.dao.MarketPropertyDaoMapper;
 import com.market.daemon.dto.SendInfo;
-import com.market.daemon.dto.SendInfoMapper;
 import com.market.entity.Market;
 import com.market.entity.MarketPropertyEntity;
 import com.market.entity.Send;
@@ -17,14 +15,8 @@ import com.market.repository.MarketPropertyRepository;
 import com.market.repository.MarketRepository;
 import com.market.repository.SendHistoryRepository;
 import com.market.repository.SendRepository;
-import com.market.service.MarketJpaService;
-import com.market.util.ControllerPropertyBean;
 import org.apache.log4j.Logger;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
 

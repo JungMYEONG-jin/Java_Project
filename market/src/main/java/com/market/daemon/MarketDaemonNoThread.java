@@ -1,20 +1,17 @@
 package com.market.daemon;
 
 
-import com.market.api.apple.AppleApi;
-import com.market.crawling.Crawling;
 import com.market.daemon.dao.MarketPropertyDao;
 import com.market.daemon.sender.MarketSender;
+import com.market.daemon.sender.MarketSenderNoThread;
 import com.market.daemon.service.MarketService;
 import com.market.errorcode.ErrorCode;
 import com.market.property.MarketProperty;
 import com.market.util.TimeCheker;
 import com.market.util.XMLParser;
 import org.apache.log4j.Logger;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.NodeList;
 
@@ -25,44 +22,34 @@ import java.util.Comparator;
 import java.util.LinkedList;
 
 @Component
-public class MarketDaemon implements Runnable {
+public class MarketDaemonNoThread {
 
 	public static final boolean DEV = true;
 
 	public Logger m_log = Logger.getLogger(getClass());
 
-	private MarketProperty propertyMarket = null;
-	private MarketService serviceMarket = null;
-
-	private MarketSender senderThread = null;
+	private final MarketProperty propertyMarket;
+	private final MarketService serviceMarket;
+	private final MarketSenderNoThread senderThread;
+	MarketPropertyDao propertyDAO = null;
 
 	private LinkedList<TimeCheker> listDateTime = new LinkedList<TimeCheker>();
 	private XMLParser xmlParser = new XMLParser();
 
 	private String xmlSettingData;
 
-	public void setMarketProperty(MarketProperty marketProperty) {
-		this.propertyMarket = marketProperty;
-	}
-
-	public void setMarketDBService(MarketService dbService){
-		this.serviceMarket = dbService;
+	public MarketDaemonNoThread(MarketProperty propertyMarket, MarketService serviceMarket, MarketSenderNoThread senderThread) {
+		this.propertyMarket = propertyMarket;
+		this.serviceMarket = serviceMarket;
+		this.senderThread = senderThread;
 	}
 
 	public void initialize() {
 		m_log.info("Thread initialize OK..");
-
-		// Sender Daemon �ʱ�ȭ
-		if(senderThread != null){
-			senderThread.interrupt();
-			senderThread = null;
-		}
-
-		senderThread = new MarketSender(serviceMarket, propertyMarket);
-		senderThread.start();
+		senderThread.run();
 	}
 
-	@Override
+
 	public void run() {
 		initialize();
 
@@ -215,6 +202,7 @@ public class MarketDaemon implements Runnable {
 
 		if(xmlSettingData == null || xmlSettingData.isEmpty()){
 			ErrorCode.LogError(getClass(), "A1000");
+			System.out.println("property is null");
 		}
 
 		try {
@@ -233,7 +221,7 @@ public class MarketDaemon implements Runnable {
 
 	}
 
-	MarketPropertyDao propertyDAO = null;
+
 
 	public MarketPropertyDao getPropertyInfo() {
 		return propertyDAO;
@@ -245,6 +233,7 @@ public class MarketDaemon implements Runnable {
 			if(propertyDAO == null){
 				setPropertyInfo(newPropertyDAO);
 				return true;
+
 			} else {
 
 				if(propertyDAO.isChangeValue(newPropertyDAO)){
