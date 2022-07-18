@@ -168,7 +168,7 @@ public class MarketSender extends Thread {
 			synchronized (sendInfoList) {
 				if (sendInfoList.isEmpty() == false) {
 					Crawling crawling = getCrawling();
-					appleApi = getAppleApi();
+					AppleApi appleApi = getAppleApi();
 					Date date = new Date(System.currentTimeMillis());
 					SimpleDateFormat sdf = new SimpleDateFormat(
 							"yyyyMMddHHmmSS");
@@ -196,7 +196,7 @@ public class MarketSender extends Thread {
 									ret = crawling.crawling(sendInfo);
 								}
 
-
+								System.out.println("ret = " + ret);
 								if (ret != null) {
 									m_log.info("Crawling 시작 : "
 											+ ret.toString());

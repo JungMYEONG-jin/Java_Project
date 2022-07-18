@@ -66,13 +66,7 @@ class MarketSenderTest {
 
     @Test
     void daemonTest() throws Exception {
-
         daemon.run();
-
-//        daemon.setMarketProperty(marketProperty);
-//        daemon.setMarketDBService(marketService);
-//        Thread threadDaemon = new Thread(daemon);
-//        threadDaemon.start();
     }
 
 }

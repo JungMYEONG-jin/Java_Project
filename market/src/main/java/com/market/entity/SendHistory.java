@@ -24,6 +24,7 @@ public class SendHistory{
 
     private String appId;
     private String sendStatus;
+    @Column(length = 1000)
     private String errorMsg;
     private String userId;
     private String regDt;

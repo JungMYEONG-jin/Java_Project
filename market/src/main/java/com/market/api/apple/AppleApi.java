@@ -141,10 +141,9 @@ public class AppleApi {
     private byte[] readPrivateKey(String keyPath)
     {
         Resource resource = new ClassPathResource(keyPath);
-        if (resource.exists())
-            System.out.println("exist");
-        else
-            System.out.println("not exist");
+
+
+
         byte[] content = null;
         try
         {

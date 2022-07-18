@@ -19,6 +19,7 @@ public class Send extends BaseTime {
 
     private String appId;
     private String sendStatus;
+    @Column(length = 1000)
     private String errorMsg;
     private String userId;
 
