@@ -10,6 +10,7 @@ import com.market.entity.Send;
 import com.market.exception.GetSendInfoListException;
 import com.market.exception.SendInfoListException;
 import com.market.property.MarketProperty;
+import com.market.provider.ApplicationContextProvider;
 import com.market.repository.MarketPropertyRepository;
 import com.market.repository.MarketRepository;
 import com.market.repository.SendRepository;
@@ -17,12 +18,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 
 @SpringBootTest
 class MarketSenderTest {
+
+
 
 
     @Autowired
@@ -32,11 +36,11 @@ class MarketSenderTest {
     @Autowired
     SendRepository sendRepository;
     @Autowired
-    MarketService marketService;
-    @Autowired
-    MarketProperty marketProperty;
-    @Autowired
     MarketPropertyRepository marketPropertyRepository;
+    @Autowired
+    MarketService marketService;
+//    @Autowired
+//    MarketProperty marketProperty;
 
     @BeforeEach
     void init(){
@@ -48,7 +52,6 @@ class MarketSenderTest {
         Send smailvn_ios_send = Send.builder().appId("smailvn_ios").sendStatus("0").userId("1111").errorMsg("").build();
         sendRepository.save(sbank_ios);
         sendRepository.save(smailvn_ios_send);
-
         MarketPropertyEntity marketProperty = new MarketPropertyEntity();
         marketProperty.setPropertyVersion("1.0.1");
         marketProperty.setPropertyStatus("0");
@@ -59,15 +62,19 @@ class MarketSenderTest {
         marketPropertyRepository.save(marketProperty);
     }
 
-    @Test
-    void senderRun() {
-        MarketSender marketSender = new MarketSender();
-        marketSender.createTest();
-    }
+
 
     @Test
-    void daemonTest() {
-        Thread threadDaemon = new Thread(daemon);
-        threadDaemon.start();
+    void daemonTest() throws Exception {
+
+        daemon.run();
+
+//        daemon.setMarketProperty(marketProperty);
+//        daemon.setMarketDBService(marketService);
+//        Thread threadDaemon = new Thread(daemon);
+//        threadDaemon.start();
     }
+
+
+
 }

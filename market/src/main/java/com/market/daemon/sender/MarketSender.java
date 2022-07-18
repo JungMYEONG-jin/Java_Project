@@ -57,11 +57,19 @@ public class MarketSender extends Thread {
 
 	private int mCheckCnt;
 
-	public MarketSender() {
-//		super();
-		this.propertyMarket = (MarketProperty)ApplicationContextProvider.getBean(MarketProperty.class);
-		this.serviceMarket = (MarketService)ApplicationContextProvider.getBean(MarketService.class);
-		initialize();		
+//	public MarketSender() {
+////		super();
+//		System.out.println("market sender get bean manually");
+//		this.propertyMarket = ApplicationContextProvider.getBean(MarketProperty.class);
+//		this.serviceMarket = ApplicationContextProvider.getBean(MarketService.class);
+//		initialize();
+//	}
+	public MarketSender(MarketService marketService, MarketProperty marketProperty){
+		super();
+		System.out.println("market sender get bean manually");
+		this.propertyMarket = marketProperty;
+		this.serviceMarket = marketService;
+		initialize();
 	}
 
 	private void initialize() {
@@ -81,6 +89,7 @@ public class MarketSender extends Thread {
 				if(mCheckCnt > 60){
 					mCheckCnt = 0;
 					m_log.info("================ SEND_DAEMON ================");
+					System.out.println("================ SEND_DAEMON ================");
 				
 				}
 
@@ -91,12 +100,16 @@ public class MarketSender extends Thread {
 					isCheckCreateFile();
 					
 				} catch (GetSendInfoListException e){
+					System.out.println("GetSendInfoListException");
 					m_log.info("GetSendInfoListException : " + e.getMessage());
 				} catch (SendInfoListException e) {
+					System.out.println("SendInfoListException");
 					m_log.info("SendInfoListException : " + e.getMessage());
 				} catch (CreateFileException e) {
+					System.out.println("CreateFileException");
 					m_log.info("CreateFileException : " + e.getMessage());
 				} catch (Exception e) {
+					System.out.println("EXCEPTION");
 					m_log.info("Send Message Exception : "+ e.getMessage());
 				}
 				
@@ -110,9 +123,11 @@ public class MarketSender extends Thread {
 			}
 			
 		} catch(Exception ex) {
+			System.out.println("B1000 error");
 			ErrorCode.LogError(getClass(), "B1000", ex);
 			serviceMarket.exceptionDBSaveAndAdminappPushSend(ex);			
 		} finally {
+			System.out.println("create file...");
 			if(mapResCrawling != null && mapResCrawling.isEmpty() == false){
 				createFile(mapResCrawling);
 			}
@@ -121,7 +136,7 @@ public class MarketSender extends Thread {
 	
 	private void isCheckCreateFile() throws CreateFileException {
 		try {
-			// FILE UPDATE LIMIT MIN���� ������ add�� �����ٸ� ���Ϸ� ����.
+
 			if (regTime != MarketProperty.INIT_VALUE) {
 				long diffTIme = ((System.currentTimeMillis() - regTime));
 
@@ -165,6 +180,7 @@ public class MarketSender extends Thread {
 					String arraySendSeq = "";
 
 					m_log.info("Crawling Start");
+					System.out.println("Crawling Start");
 					for (SendInfo sendInfo : sendInfoList) {
 
 						try {

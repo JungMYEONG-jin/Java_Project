@@ -1,24 +1,20 @@
 package com.market.daemon;
 
 
-import com.market.api.apple.AppleApi;
-import com.market.crawling.Crawling;
 import com.market.daemon.dao.MarketPropertyDao;
 import com.market.daemon.sender.MarketSender;
 import com.market.daemon.service.MarketService;
 import com.market.errorcode.ErrorCode;
 import com.market.property.MarketProperty;
-import com.market.provider.ApplicationContextProvider;
 import com.market.util.TimeCheker;
 import com.market.util.XMLParser;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.NodeList;
-import org.yaml.snakeyaml.error.Mark;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.util.Calendar;
@@ -26,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
+@Slf4j
 @Component
 public class MarketDaemon implements Runnable {
 
@@ -33,8 +30,8 @@ public class MarketDaemon implements Runnable {
 
 	public Logger m_log = Logger.getLogger(getClass());
 
-	private MarketProperty propertyMarket;
-	private MarketService serviceMarket;
+	@Autowired MarketProperty propertyMarket;
+	@Autowired MarketService serviceMarket;
 
 	private MarketSender senderThread;
 
@@ -51,18 +48,22 @@ public class MarketDaemon implements Runnable {
 		this.serviceMarket = dbService;
 	}
 
+	public MarketService getServiceMarket() {
+		return serviceMarket;
+	}
+
 	public void initialize() {
 		m_log.info("Thread initialize OK..");
 
-		// Sender Daemon �ʱ�ȭ
+		System.out.println("market daemon init");
 		if(senderThread != null){
+			System.out.println("sender thread is not null");
 			senderThread.interrupt();
 			senderThread = null;
 		}
-		this.serviceMarket = ApplicationContextProvider.getBean(MarketService.class);
-		this.propertyMarket = ApplicationContextProvider.getBean(MarketProperty.class);
-
-		senderThread = new MarketSender(); // 수동 주입
+		System.out.println("sender thread is null... get bean manually");
+//		senderThread = new MarketSender(); // 수동 주입
+		senderThread = new MarketSender(serviceMarket, propertyMarket);
 		senderThread.start();
 	}
 
@@ -74,41 +75,43 @@ public class MarketDaemon implements Runnable {
 
 			try {
 
-				// ���� ���� ���� ���� Ȯ��
 				if(isChangeSettingInfo()){
-					// ���� �����Ͱ� �ִٸ� �������� ����
+
 					m_log.info("init Setting Start");
+					System.out.println("init Setting Start");
 
 					initSetting();
 
 					m_log.info("init Setting End");
+					System.out.println("init setting end");
 
 				}
 
 				if(listDateTime.isEmpty()){
 					m_log.info("Reset time start");
+					System.out.println("Reset time start");
 
 					resetDateTime();
 
 					m_log.info("Reset time End");
+					System.out.println("Reset time End");
 
 					if(DEV){
 						for(TimeCheker time : listDateTime){
 							Calendar cal = time.getDateTime();
 
 							m_log.info("reset time : " + String.format("%02d", cal.get(Calendar.HOUR_OF_DAY)) + String.format("%02d", cal.get(Calendar.MINUTE)) + String.format("%02d",cal.get(Calendar.SECOND)));
+							System.out.println("reset time : " + String.format("%02d", cal.get(Calendar.HOUR_OF_DAY)) + String.format("%02d", cal.get(Calendar.MINUTE)) + String.format("%02d",cal.get(Calendar.SECOND)));
 
 						}
 					}
 				}
 
-				// ��Ŷ�� ������ �ϴ��� Ȯ���Ѵ�.
 				boolean isSendPacket = checkSendPacket();
 
 				if(isSendPacket){
 					m_log.info("Market Daemon Send Packet Start");
 
-					// ���� ��Ŷ�����Ͱ� �ִ�.
 					insertMarketSendInfo();
 
 					m_log.info("Market Daemon Send Packet End");
@@ -245,7 +248,9 @@ public class MarketDaemon implements Runnable {
 
 	private boolean isChangeSettingInfo() {
 		try {
+			System.out.println("getPropertyInfo start");
 			MarketPropertyDao newPropertyDAO = serviceMarket.getPropertyInfo();
+			System.out.println("getPropertyInfo end");
 			if(propertyDAO == null){
 				setPropertyInfo(newPropertyDAO);
 				return true;
@@ -261,7 +266,9 @@ public class MarketDaemon implements Runnable {
 			}
 			System.out.println("88888888888888888888");
 		} catch (Exception e) {
-			System.out.println("000");
+			System.out.println("000 error");
+
+			log.error("error : {}" , e);
 			ErrorCode.LogError(getClass(), "A1007", e);
 		}
 		System.out.println("99999999999999999999999999");

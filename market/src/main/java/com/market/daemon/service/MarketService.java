@@ -11,13 +11,17 @@ import com.market.entity.SendHistory;
 import com.market.exception.AppDataException;
 import com.market.exception.GetSendInfoListException;
 import com.market.property.MarketProperty;
+import com.market.provider.ApplicationContextProvider;
 import com.market.repository.MarketPropertyRepository;
 import com.market.repository.MarketRepository;
 import com.market.repository.SendHistoryRepository;
 import com.market.repository.SendRepository;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.*;
@@ -26,11 +30,11 @@ import java.util.*;
 public class MarketService {
 	public Logger m_log = Logger.getLogger(getClass());
 
-	private final MarketRepository marketRepository;
-	private final SendRepository sendRepository;
-	private final SendHistoryRepository sendHistoryRepository;
-	private final MarketPropertyRepository marketPropertyRepository;
-	private final MarketProperty m_pushProperty;
+	final MarketRepository marketRepository;
+	final SendRepository sendRepository;
+	final SendHistoryRepository sendHistoryRepository;
+	final MarketPropertyRepository marketPropertyRepository;
+	final MarketProperty m_pushProperty;
 
 
 	int exception_count = 0;
@@ -43,7 +47,8 @@ public class MarketService {
 		this.m_pushProperty = m_pushProperty;
 	}
 
-	public synchronized void exceptionDBSaveAndAdminappPushSend(Exception e) {
+
+	public void exceptionDBSaveAndAdminappPushSend(Exception e) {
 		try {
 			// Exception �� ���� �ڵ� �߰� �ʿ�..DB or Message
 			m_log.info("EXCEPTION !!! DB MESSAGE at exceptionDBSaveAndAdminappPushSend");
@@ -53,8 +58,8 @@ public class MarketService {
 		}
 	}
 
-	public List<MarketInfo> getSendMarketInfoList() throws Exception {
 
+	public List<MarketInfo> getSendMarketInfoList() throws Exception {
 		List<MarketInfo> appInfoList = new ArrayList<MarketInfo>();
 		try {
 
@@ -71,12 +76,12 @@ public class MarketService {
 
 		return appInfoList;
 	}
-	
+
 	public List<SendInfo> getSendInfoList() throws GetSendInfoListException {
 		
 		List<SendInfo> sendInfoList = null;
-		
 		try {
+
 			sendInfoList = marketRepository.GET_SEND_INFO_LIST();
 		} catch(Exception e) {
 			throw new GetSendInfoListException("SEND_INFO LIST SELECT Exception Occurred.", e);
@@ -84,10 +89,10 @@ public class MarketService {
 		
 		return sendInfoList;		
 	}
-	
+
+	@Transactional
 	public synchronized void insertSendInfo(SendInfo sendInfo) {
 		try {
-
 			Send mappedSend = new SendInfo().of(sendInfo);
 			sendRepository.save(mappedSend);
 		} catch(Exception e) {
@@ -95,9 +100,7 @@ public class MarketService {
 		}
 	}
 
-
-
-
+	@Transactional
 	public synchronized void insertPeriodMarketSendInfo() {
 		try {
 			Send send = new Send();
@@ -111,6 +114,7 @@ public class MarketService {
 		}
 	}
 
+	@Transactional
 	public synchronized void insertSendHistoryInfo(SendInfo sendInfo) {
 		try {
 			Map<String,String> whereMap = sendInfo.toInsertMap();
@@ -129,14 +133,19 @@ public class MarketService {
 	}
 
 
-
 	public MarketPropertyDao getPropertyInfo() throws Exception {
 
+		System.out.println("getPropertyInfo of MarketService start");
 		MarketPropertyDao propertyInfo = null;
 
 		try {
+			System.out.println("findFirstByOrderByRegDt start");
 			MarketPropertyEntity property = marketPropertyRepository.findFirstByOrderByRegDt();
+			String userId = property.getUserId();
+			String regDt = property.getRegDt();
+			System.out.println("findFirstByOrderByRegDt end");
 			if (property == null){
+				System.out.println("findFirstByOrderByRegDt result is null");
 				throw new RuntimeException("프로퍼티 정보가 존재하지 않습니다.");
 			}
 			// MarketPropertyDao 로 변환
@@ -149,11 +158,12 @@ public class MarketService {
 	}
 
 	// 미사용인듯?
-	public synchronized void createPushTable() throws AppDataException {
+	public void createPushTable() throws AppDataException {
 //		simpleJdbcTemplate.update(getQueryString("CARETE_PUSH_TABLE"));
 
 	}
 
+	@Transactional
 	public synchronized void insertSendHistArray(SendInfo sendInfo, String arraySendSeq) {
 		try {
 
@@ -179,6 +189,7 @@ public class MarketService {
 
 	}
 
+	@Transactional
 	public synchronized void insertSendHistArray(String arraySendSeq) {
 
 		try {
@@ -199,7 +210,7 @@ public class MarketService {
 		}
 	}
 
-
+	@Transactional
 	public synchronized void deleteSendInfoArray(String arraySendSeq) {
 
 		try {
@@ -214,6 +225,7 @@ public class MarketService {
 		}
 	}
 
+	@Transactional
 	public synchronized void deleteSendInfoArray(SendInfo sendInfo, String arraySendSeq) {
 
 		try {
@@ -234,6 +246,7 @@ public class MarketService {
 	}
 
 	// TODO parkyk
+	@Transactional
 	public void updateSendInfo(SendInfo sendInfo) {
 		try {
 
@@ -251,7 +264,7 @@ public class MarketService {
 //	public void insertSendHistArray(String sendSt, String errorMsg, String arraySendSeq) {
 //
 //	}
-
+	@Transactional
 	public void testInsertMarketData(String appid, String appPkg){
 		try {
 			Market market = new Market();
@@ -271,6 +284,7 @@ public class MarketService {
 		}
 	}
 
+	@Transactional
 	public void testInsertMarketDataIOS(String appid, String appPkg){
 		try {
 			Market market = new Market();
