@@ -102,8 +102,6 @@ public class MarketDaemon implements Runnable {
 							Calendar cal = time.getDateTime();
 
 							m_log.info("reset time : " + String.format("%02d", cal.get(Calendar.HOUR_OF_DAY)) + String.format("%02d", cal.get(Calendar.MINUTE)) + String.format("%02d",cal.get(Calendar.SECOND)));
-							System.out.println("reset time : " + String.format("%02d", cal.get(Calendar.HOUR_OF_DAY)) + String.format("%02d", cal.get(Calendar.MINUTE)) + String.format("%02d",cal.get(Calendar.SECOND)));
-
 						}
 					}
 				}
@@ -112,23 +110,18 @@ public class MarketDaemon implements Runnable {
 
 				if(isSendPacket){
 					m_log.info("Market Daemon Send Packet Start");
-					log.info("Market Daemon Send Packet Start {}", isSendPacket);
 					insertMarketSendInfo();
-
 					m_log.info("Market Daemon Send Packet End");
-					log.info("Market Daemon Send Packet End {}", isSendPacket);
 
 				}
 			} catch (Exception e){
 				ErrorCode.LogError(getClass(), "A1006",e);
-				log.error("A1006 {} {}", getClass(), e);
 			}
 
 			try {
 				processSleep();
 			} catch (InterruptedException e) {
 				ErrorCode.LogError(getClass(), "A1004",e);
-				log.error("A1004 {} {}", getClass(), e);
 			}
 		}
 	}
@@ -236,7 +229,6 @@ public class MarketDaemon implements Runnable {
 			ErrorCode.LogError(getClass(), "A1001", e);
 		}
 
-		// Ÿ�Ӽ��� Ŭ����
 		if(listDateTime != null){
 			listDateTime.clear();
 		} else {

@@ -1,5 +1,6 @@
 package com.market.daemon.sender;
 
+import com.market.api.apple.AppleAppId;
 import com.market.daemon.MarketDaemon;
 import com.market.daemon.dao.MarketInfo;
 import com.market.daemon.dto.SendInfo;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,19 +46,16 @@ class MarketSenderTest {
 
     @BeforeEach
     void init(){
-        Market smailvn_ios = Market.builder().appId("smailvn_ios").appPkg("1016762804").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
-        Market sbank = Market.builder().appId("sbank_ios").appPkg("357484932").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
-        marketRepository.save(sbank);
-        marketRepository.save(smailvn_ios);
-        Send sbank_ios = Send.builder().appId("sbank_ios").sendStatus("0").userId("1111").errorMsg("").build();
-        Send smailvn_ios_send = Send.builder().appId("smailvn_ios").sendStatus("0").userId("1111").errorMsg("").build();
-        sendRepository.save(sbank_ios);
-        sendRepository.save(smailvn_ios_send);
+        // market insert
+        insertMarketList();
+        // send insert
+        insertSendList();
+
+        // property setting for xml save
         MarketPropertyEntity marketProperty = new MarketPropertyEntity();
         marketProperty.setPropertyVersion("1.0.1");
         marketProperty.setPropertyStatus("0");
         marketProperty.setDataType("1");
-//        marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
         marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
                 "<items>\n" +
                 "\t<item>\n" +
@@ -75,11 +74,26 @@ class MarketSenderTest {
         marketPropertyRepository.save(marketProperty);
     }
 
-
-
     @Test
     void daemonTest() throws Exception {
         daemon.run();
     }
+
+    private void insertMarketList(){
+        List<Market> marketList = new ArrayList<Market>();
+        for(AppleAppId value : AppleAppId.values()){
+            marketList.add(Market.builder().appId(value.name()).appPkg(value.getAppPkg()).osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build());
+        }
+        marketRepository.saveAll(marketList);
+    }
+
+    private void insertSendList(){
+        List<Send> sendList = new ArrayList<Send>();
+        for(AppleAppId value : AppleAppId.values()){
+            sendList.add(Send.builder().appId(value.name()).sendStatus("0").userId("1111").errorMsg("").build());
+        }
+        sendRepository.saveAll(sendList);
+    }
+
 
 }

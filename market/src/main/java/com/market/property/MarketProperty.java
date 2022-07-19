@@ -18,6 +18,7 @@ public class MarketProperty {
 	public static int SEND_DAEMON_SLEEP_TIME = DEFAULT_SEND_DAEMON_SLEEP_TIME;
 	public static int SEND_DAEMON_MARKET_SEND_DELAY_SEC = DEFAULT_SEND_DAEMON_MARKET_SEND_DELAY_SEC;
 	public static int FILE_UPDATE_LIMIT_SEC = DEFAULT_FILE_UPDATE_LIMIT_SEC;
+	public static int FILE_UPDATE_LIMIT_SEC_FOR_TEST = 1000 * 30 ;
 	
 	public Logger log = Logger.getLogger(getClass());	
 

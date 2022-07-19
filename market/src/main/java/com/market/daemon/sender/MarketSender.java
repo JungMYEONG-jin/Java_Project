@@ -52,7 +52,7 @@ public class MarketSender extends Thread {
 	private Crawling crawling;
 
 	private long regTime = MarketProperty.INIT_VALUE;
-	
+
 	private int m_nMaxArraySendSeqCnt = 500;
 
 	private HashMap<String, CrawlingResultData> mapResCrawling = new HashMap<String, CrawlingResultData>();
@@ -82,19 +82,16 @@ public class MarketSender extends Thread {
 			while (true) {
 				System.out.println("start");
 
-				if(mCheckCnt > 20){
+				if(mCheckCnt > 60){
 					mCheckCnt = 0;
 					m_log.info("================ SEND_DAEMON ================");
-					System.out.println("================ SEND_DAEMON ================");
-				
 				}
 
 				try {
 					List<SendInfo> sendInfoList = serviceMarket.getSendInfoList();
-					System.out.println("sendInfoList = " + sendInfoList.size());
 					processSendInfoList(sendInfoList);
 					isCheckCreateFile();
-					
+
 				} catch (GetSendInfoListException e){
 					System.out.println("GetSendInfoListException");
 					m_log.info("GetSendInfoListException : " + e.getMessage());
@@ -108,20 +105,20 @@ public class MarketSender extends Thread {
 					System.out.println("EXCEPTION");
 					m_log.info("Send Message Exception : "+ e.getMessage());
 				}
-				
+
 				try {
 					processSleep();
 				} catch (InterruptedException e) {
 					ErrorCode.LogError(getClass(), "B1003", e);
 				}
-				
+
 				mCheckCnt++;
 			}
-			
+
 		} catch(Exception ex) {
 			System.out.println("B1000 error");
 			ErrorCode.LogError(getClass(), "B1000", ex);
-			serviceMarket.exceptionDBSaveAndAdminappPushSend(ex);			
+			serviceMarket.exceptionDBSaveAndAdminappPushSend(ex);
 		} finally {
 			System.out.println("create file...");
 			if(mapResCrawling != null && mapResCrawling.isEmpty() == false){
@@ -129,10 +126,11 @@ public class MarketSender extends Thread {
 			}
 		}
 	}
-	
+
 	private void isCheckCreateFile() throws CreateFileException {
 		try {
-
+			String sss = "isCheckCreateFile";
+			log.info("isCheckCreateFile start");
 			if (regTime != MarketProperty.INIT_VALUE) {
 				long diffTIme = ((System.currentTimeMillis() - regTime));
 
@@ -140,8 +138,10 @@ public class MarketSender extends Thread {
 						+ MarketProperty.FILE_UPDATE_LIMIT_SEC);
 				log.info("DiffTime : {}  limitTime : {}" ,diffTIme ,MarketProperty.FILE_UPDATE_LIMIT_SEC);
 
-				if (diffTIme > MarketProperty.FILE_UPDATE_LIMIT_SEC) {
-
+				// 한번에 결과를 작성하려고 이렇게 만든듯 해보임..
+				// 원래 FILE_UPDATE_LIMIT_SEC임
+				if (diffTIme > MarketProperty.FILE_UPDATE_LIMIT_SEC_FOR_TEST) {
+					log.info("create file start!!");
 					createFile(mapResCrawling);
 
 					// reset
@@ -150,19 +150,20 @@ public class MarketSender extends Thread {
 					if (mapResCrawling != null) {
 						mapResCrawling.clear();
 					} else {
+						log.info("create file initiate... difftime not greater than MarketProperty value...");
 						mapResCrawling = new HashMap<String, CrawlingResultData>();
 					}
 				}
 			}
 		} catch (Exception e) {
-			throw new CreateFileException("XML��� ���� ������ ������ �߻��Ͽ����ϴ�.", e);
+			throw new CreateFileException("XML CreateFileException.", e);
 		}
 	}
 
 	public void processSendInfoList(List<SendInfo> sendInfoList) throws SendInfoListException {
-		
+
 		try {
-			synchronized (sendInfoList) {
+			// 여기 synchronized(sendInfoList)
 				if (sendInfoList.isEmpty() == false) {
 					Crawling crawling = getCrawling();
 					AppleApi appleApi = getAppleApi();
@@ -265,17 +266,17 @@ public class MarketSender extends Thread {
 					 * HIST ���̺�� �ű�� ���� �ϱ�
 					 */
 					if (nArraySendSeqCnt > 0 && !arraySendSeq.equals("")) {
-						// ����!
+						log.info("sendinfoList clear");
 						updateSendInfoArray(arraySendSeq);
 						sendInfoList.clear();
 					}
 				}
-			}
+
 		} catch (Exception e) {
-			
+
 			throw new SendInfoListException("processSendInfoList EXCEPTION", e);
 		}
-	}	
+	}
 	
 	private void updateSendInfoError(SendInfo sendInfo, String arraySendSeq) {
 		// TODO 
@@ -291,7 +292,7 @@ public class MarketSender extends Thread {
 	private boolean createFile(HashMap<String, CrawlingResultData> mapResCrawling) {
 		
 		m_log.info("Create File Start");
-		System.out.println("Create File Start");
+		log.info("Create File Start!!! private boolean createFile(HashMap<String, CrawlingResultData> mapResCrawling)");
 		
 		Document doc = null;
 		try {

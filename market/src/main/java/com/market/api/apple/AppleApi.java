@@ -133,7 +133,9 @@ public class AppleApi {
 
     public CrawlingResultData getCrawlingResult(String id) throws MalformedURLException, ParseException {
         Map<String, String> crawlingInfo = getCrawlingInfo(id);
-        return new CrawlingResultData(id, MarketInfo.OS_TYPE_IOS_API, crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));
+        String realAppID = getRealAppID(id);
+        return new CrawlingResultData(realAppID, id, crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));
+//        return new CrawlingResultData(id, MarketInfo.OS_TYPE_IOS_API, crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));
     }
 
 
@@ -166,5 +168,13 @@ public class AppleApi {
         JSONParser parser = new JSONParser();
         JSONObject obj = (JSONObject) parser.parse(str);
         return obj;
+    }
+
+    private String getRealAppID(String appPkg){
+        for(AppleAppId value : AppleAppId.values()){
+            if(appPkg.equals(value.getAppPkg()))
+                return value.toString();
+        }
+        return "존재하지 않는 패키지입니다.";
     }
 }
