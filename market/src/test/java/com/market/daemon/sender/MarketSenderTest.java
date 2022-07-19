@@ -46,33 +46,20 @@ class MarketSenderTest {
 
     @BeforeEach
     void init(){
-        // market insert
         insertMarketList();
-        // send insert
         insertSendList();
 
+//        Market sbank_android = Market.builder().appId("sbank_android").appPkg("com.shinhan.sbanking").osType(MarketInfo.OS_TYPE_AND).storeUrl("https://play.google.com/store/apps/details?id=").titleNode("[first://]div[class=sIskre] c-wiz[jsrenderer=vVnOi]")
+//                .versionNode("div[class=xyOfqd] div[class=hAyfc]:nth-child(4)").updateNode("[first://]div[class=xyOfqd] div[class=hAyfc]:nth-child(1) div:nth-child(2)").build();
+//        marketRepository.save(sbank_android);
+//        Send sbank_android1 = Send.builder().appId("sbank_android").sendStatus("0").userId("1111").errorMsg("").build();
+//        sendRepository.save(sbank_android1);
+
+
         // property setting for xml save
-        MarketPropertyEntity marketProperty = new MarketPropertyEntity();
-        marketProperty.setPropertyVersion("1.0.1");
-        marketProperty.setPropertyStatus("0");
-        marketProperty.setDataType("1");
-        marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-                "<items>\n" +
-                "\t<item>\n" +
-                "\t\t<setting_time_list>\n" +
-                "\t\t\t<time_info>\n" +
-                "\t\t\t\t<checktime>070000</checktime>\n" +
-                "\t\t\t</time_info>\n" +
-                "\t\t\t<time_info>\n" +
-                "\t\t\t\t<checktime>150000</checktime>\n" +
-                "\t\t\t</time_info>\n" +
-                "\t\t</setting_time_list>\n" +
-                "\t</item>\n" +
-                "</items>");
-        marketProperty.setUserId("21111008");
-        marketProperty.setIsSetting("N");
-        marketPropertyRepository.save(marketProperty);
+        setMarketProperty();
     }
+
 
     @Test
     void daemonTest() throws Exception {
@@ -93,6 +80,29 @@ class MarketSenderTest {
             sendList.add(Send.builder().appId(value.name()).sendStatus("0").userId("1111").errorMsg("").build());
         }
         sendRepository.saveAll(sendList);
+    }
+
+    private void setMarketProperty() {
+        MarketPropertyEntity marketProperty = new MarketPropertyEntity();
+        marketProperty.setPropertyVersion("1.0.1");
+        marketProperty.setPropertyStatus("0");
+        marketProperty.setDataType("1");
+        marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
+                "<items>\n" +
+                "\t<item>\n" +
+                "\t\t<setting_time_list>\n" +
+                "\t\t\t<time_info>\n" +
+                "\t\t\t\t<checktime>070000</checktime>\n" +
+                "\t\t\t</time_info>\n" +
+                "\t\t\t<time_info>\n" +
+                "\t\t\t\t<checktime>150000</checktime>\n" +
+                "\t\t\t</time_info>\n" +
+                "\t\t</setting_time_list>\n" +
+                "\t</item>\n" +
+                "</items>");
+        marketProperty.setUserId("21111008");
+        marketProperty.setIsSetting("N");
+        marketPropertyRepository.save(marketProperty);
     }
 
 
