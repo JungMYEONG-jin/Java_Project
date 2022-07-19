@@ -34,3 +34,20 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 }
 
 ```
+
+
+> JPA Entity use defualt lock setting vs Java Synchronized
+> JPA는 기본적으로 영속성 Lock을 제공한다. 해당 기능만 써도 충분하므로 굳이 synchronized를 사용할 필요는 없다.
+
+
+
+## 작동원리
+1. daemon init을 한다.
+2. daemon init시 sender도 init
+3. db에서 sendList를 가져와 크롤링을 시작한다.
+4. 크롤링이 끝난후 MarketProperty에서 설정한 FILE_UPDATE_LIMIT_SEC 만큼 기다린다.
+5. 해당 시간 초과후 결과를 xml로 지정한 경로에 저장한다.
+6. 값을 -1로 init 시킨다.
+7. 끝
+
+
