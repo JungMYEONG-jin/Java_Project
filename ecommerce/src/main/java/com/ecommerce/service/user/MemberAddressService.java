@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MemerAddressService {
+public class MemberAddressService {
 
   private final MemberAddressRepository memberAddressRepository;
 
