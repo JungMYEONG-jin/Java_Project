@@ -16,6 +16,7 @@ import com.market.repository.MarketPropertyRepository;
 import com.market.repository.MarketRepository;
 import com.market.repository.SendHistoryRepository;
 import com.market.repository.SendRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+@Slf4j
 @Service
 public class MarketService {
 	public Logger m_log = Logger.getLogger(getClass());
@@ -91,7 +93,7 @@ public class MarketService {
 	}
 
 	@Transactional
-	public synchronized void insertSendInfo(SendInfo sendInfo) {
+	public void insertSendInfo(SendInfo sendInfo) {
 		try {
 			Send mappedSend = new SendInfo().of(sendInfo);
 			sendRepository.save(mappedSend);
@@ -101,7 +103,7 @@ public class MarketService {
 	}
 
 	@Transactional
-	public synchronized void insertPeriodMarketSendInfo() {
+	public void insertPeriodMarketSendInfo() {
 		try {
 			Send send = new Send();
 			send.setAppId("");
@@ -111,11 +113,12 @@ public class MarketService {
 			sendRepository.save(send);
 		} catch(Exception e) {
 			m_log.error("insertPeriodMarketSendInfo EXCEPTION.", e);
+			log.error("insertPeriodMarketSendInfo EXCEPTION. {}", e);
 		}
 	}
 
 	@Transactional
-	public synchronized void insertSendHistoryInfo(SendInfo sendInfo) {
+	public void insertSendHistoryInfo(SendInfo sendInfo) {
 		try {
 			Map<String,String> whereMap = sendInfo.toInsertMap();
 			whereMap.put("REG_DT", sendInfo.getRegDt());
@@ -139,10 +142,7 @@ public class MarketService {
 		MarketPropertyDao propertyInfo = null;
 
 		try {
-			System.out.println("findFirstByOrderByRegDt start");
 			MarketPropertyEntity property = marketPropertyRepository.findFirstByOrderByRegDt();
-			String userId = property.getUserId();
-			String regDt = property.getRegDt();
 			System.out.println("findFirstByOrderByRegDt end");
 			if (property == null){
 				System.out.println("findFirstByOrderByRegDt result is null");
@@ -164,7 +164,7 @@ public class MarketService {
 	}
 
 	@Transactional
-	public synchronized void insertSendHistArray(SendInfo sendInfo, String arraySendSeq) {
+	public void insertSendHistArray(SendInfo sendInfo, String arraySendSeq) {
 		try {
 
 			// to be saved MBM_MARKET_SEND_HISTORY
@@ -190,7 +190,7 @@ public class MarketService {
 	}
 
 	@Transactional
-	public synchronized void insertSendHistArray(String arraySendSeq) {
+	public void insertSendHistArray(String arraySendSeq) {
 
 		try {
 			List<Long> seqs = new ArrayList<Long>();
@@ -211,7 +211,7 @@ public class MarketService {
 	}
 
 	@Transactional
-	public synchronized void deleteSendInfoArray(String arraySendSeq) {
+	public void deleteSendInfoArray(String arraySendSeq) {
 
 		try {
 			List<Long> seqs = new ArrayList<Long>();
@@ -226,7 +226,7 @@ public class MarketService {
 	}
 
 	@Transactional
-	public synchronized void deleteSendInfoArray(SendInfo sendInfo, String arraySendSeq) {
+	public void deleteSendInfoArray(SendInfo sendInfo, String arraySendSeq) {
 
 		try {
 			if(arraySendSeq.isEmpty()){

@@ -12,6 +12,7 @@ import com.market.exception.GetSendInfoListException;
 import com.market.exception.SendInfoListException;
 import com.market.property.MarketProperty;
 import com.market.provider.ApplicationContextProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -37,6 +38,7 @@ import java.util.List;
  * @author parkyk
  * FILE UPDATE LIMIT MIN���� ������ �߰��� �����ٸ� ���Ϸ� ����.
  */
+@Slf4j
 public class MarketSender extends Thread {
 
 	public Logger m_log = Logger.getLogger(getClass());
@@ -65,8 +67,6 @@ public class MarketSender extends Thread {
 //		initialize();
 //	}
 	public MarketSender(MarketService marketService, MarketProperty marketProperty){
-		super();
-		System.out.println("market sender get bean manually");
 		this.propertyMarket = marketProperty;
 		this.serviceMarket = marketService;
 		initialize();
@@ -76,17 +76,13 @@ public class MarketSender extends Thread {
 		m_log.info("PushDBSender Thread initialize OK..");
 	}
 
-	public void createTest(){
-		System.out.println("create success");
-	}
-
 	public void run() {
 
 		try {
 			while (true) {
 				System.out.println("start");
 
-				if(mCheckCnt > 60){
+				if(mCheckCnt > 20){
 					mCheckCnt = 0;
 					m_log.info("================ SEND_DAEMON ================");
 					System.out.println("================ SEND_DAEMON ================");
@@ -142,6 +138,7 @@ public class MarketSender extends Thread {
 
 				m_log.info("DiffTime : " + diffTIme + " limitTime : "
 						+ MarketProperty.FILE_UPDATE_LIMIT_SEC);
+				log.info("DiffTime : {}  limitTime : {}" ,diffTIme ,MarketProperty.FILE_UPDATE_LIMIT_SEC);
 
 				if (diffTIme > MarketProperty.FILE_UPDATE_LIMIT_SEC) {
 
@@ -175,6 +172,8 @@ public class MarketSender extends Thread {
 					String startTime = sdf.format(date);
 
 					m_log.info("ProcessSendInfo Start Time : " + startTime);
+					log.info("ProcessSendInfo Start Time : {}",startTime);
+
 
 					int nArraySendSeqCnt = 0;
 					String arraySendSeq = "";
@@ -200,8 +199,9 @@ public class MarketSender extends Thread {
 								if (ret != null) {
 									m_log.info("Crawling 시작 : "
 											+ ret.toString());
-
+									log.info("Crawling 시작 : {}", ret);
 									mapResCrawling.put(ret.getAppId(), ret);
+									log.info("mapResCrawling {}", mapResCrawling);
 
 									// Max Seqence üũ
 
@@ -218,7 +218,7 @@ public class MarketSender extends Thread {
 
 									if (nArraySendSeqCnt >= m_nMaxArraySendSeqCnt) {
 
-//										updateSendInfoArray(arraySendSeq);
+										updateSendInfoArray(arraySendSeq);
 										nArraySendSeqCnt = 0;
 										arraySendSeq = "";
 									}
@@ -236,12 +236,14 @@ public class MarketSender extends Thread {
 
 						} catch (CrawlingException e) {
 							ErrorCode.LogError(getClass(), "B1002", e);
+							log.error("processSendInfoList Crawling Exception {}", e);
 							sendInfo.setErrorMsg(e.getMessage());
 							sendInfo.setSendStatus(SendInfo.SEND_RESULT_CRAWLING_FAIL);
 							updateSendInfoError(sendInfo, sendInfo.getSeq());
 
 						} catch (Exception e) {
 							ErrorCode.LogError(getClass(), "B1001", e);
+							log.error("processSendInfoList Exception {}", e);
 							sendInfo.setErrorMsg(e.getMessage());
 							sendInfo.setSendStatus(SendInfo.SEND_RESULT_ERROR);
 							updateSendInfoError(sendInfo, sendInfo.getSeq());
@@ -264,7 +266,7 @@ public class MarketSender extends Thread {
 					 */
 					if (nArraySendSeqCnt > 0 && !arraySendSeq.equals("")) {
 						// ����!
-//						updateSendInfoArray(arraySendSeq);
+						updateSendInfoArray(arraySendSeq);
 						sendInfoList.clear();
 					}
 				}
@@ -315,6 +317,7 @@ public class MarketSender extends Thread {
 			String path = propertyMarket.getOutput_xml_path();
 			String fileName = String.format(propertyMarket.getOutput_xml_file_name(), dateString);
 			m_log.info("XML Output File Path : " + path + fileName);
+			log.info("XML Output File Path : {}",path + fileName);
 			StreamResult res = new StreamResult(new FileOutputStream(new File(path, fileName)));
 			trfomer.transform(source, res);
 			

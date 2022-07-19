@@ -56,7 +56,20 @@ class MarketSenderTest {
         marketProperty.setPropertyVersion("1.0.1");
         marketProperty.setPropertyStatus("0");
         marketProperty.setDataType("1");
-        marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+//        marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+        marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
+                "<items>\n" +
+                "\t<item>\n" +
+                "\t\t<setting_time_list>\n" +
+                "\t\t\t<time_info>\n" +
+                "\t\t\t\t<checktime>070000</checktime>\n" +
+                "\t\t\t</time_info>\n" +
+                "\t\t\t<time_info>\n" +
+                "\t\t\t\t<checktime>150000</checktime>\n" +
+                "\t\t\t</time_info>\n" +
+                "\t\t</setting_time_list>\n" +
+                "\t</item>\n" +
+                "</items>");
         marketProperty.setUserId("21111008");
         marketProperty.setIsSetting("N");
         marketPropertyRepository.save(marketProperty);

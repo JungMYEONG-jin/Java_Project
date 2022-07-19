@@ -112,20 +112,23 @@ public class MarketDaemon implements Runnable {
 
 				if(isSendPacket){
 					m_log.info("Market Daemon Send Packet Start");
-
+					log.info("Market Daemon Send Packet Start {}", isSendPacket);
 					insertMarketSendInfo();
 
 					m_log.info("Market Daemon Send Packet End");
+					log.info("Market Daemon Send Packet End {}", isSendPacket);
 
 				}
 			} catch (Exception e){
 				ErrorCode.LogError(getClass(), "A1006",e);
+				log.error("A1006 {} {}", getClass(), e);
 			}
 
 			try {
 				processSleep();
 			} catch (InterruptedException e) {
 				ErrorCode.LogError(getClass(), "A1004",e);
+				log.error("A1004 {} {}", getClass(), e);
 			}
 		}
 	}
@@ -158,6 +161,7 @@ public class MarketDaemon implements Runnable {
 
 		} catch (XPathExpressionException e) {
 			ErrorCode.LogError(getClass(), "A1002", e);
+			log.error("A1002 {} {}", getClass(), e);
 		}
 
 		// time ����
@@ -167,6 +171,7 @@ public class MarketDaemon implements Runnable {
 		m_log.info("\n\n\n");
 		for(TimeCheker time : listDateTime){
 			m_log.info(time.toString());
+			log.info(time.toString());
 		}
 		m_log.info("\n\n\n");
 	}
@@ -197,9 +202,8 @@ public class MarketDaemon implements Runnable {
 					} else {
 					}
 				} catch (Exception e) {
-					// �ش� ����Ʈ ����.
 					ErrorCode.LogError(getClass(), "A1005", e);
-
+					log.error("A1005 {} {}", getClass(), e);
 					if(listDateTime != null && listDateTime.isEmpty() == false){
 						listDateTime.removeFirst();
 					}
@@ -217,16 +221,17 @@ public class MarketDaemon implements Runnable {
 	}
 
 	private void initSetting() {
-		// ��ƿ ���� ����
 		MarketPropertyDao propertyInfo = getPropertyInfo();
 		xmlSettingData = propertyInfo.getPropertyData();
-
+		log.info("initSetting xmlSettingData {}", xmlSettingData);
 		if(xmlSettingData == null || xmlSettingData.isEmpty()){
 			ErrorCode.LogError(getClass(), "A1000");
+			log.error("A1000 {}", getClass());
 		}
 
 		try {
 			xmlParser.init(xmlSettingData);
+
 		} catch (Exception e) {
 			ErrorCode.LogError(getClass(), "A1001", e);
 		}
