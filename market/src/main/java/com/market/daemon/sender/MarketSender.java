@@ -129,7 +129,6 @@ public class MarketSender extends Thread {
 
 	private void isCheckCreateFile() throws CreateFileException {
 		try {
-			String sss = "isCheckCreateFile";
 			log.info("isCheckCreateFile start");
 			if (regTime != MarketProperty.INIT_VALUE) {
 				long diffTIme = ((System.currentTimeMillis() - regTime));

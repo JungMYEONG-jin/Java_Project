@@ -21,15 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
 @SpringBootTest
 class MarketSenderTest {
-
-
-
 
     @Autowired
     MarketRepository marketRepository;
@@ -46,10 +45,10 @@ class MarketSenderTest {
 
     @BeforeEach
     void init(){
-        insertMarketList();
+//        insertMarketList();
         insertSendList();
         // property setting for xml save
-        setMarketProperty();
+//        setMarketProperty();
 //        Market sbank_android = Market.builder().appId("sbank_android").appPkg("com.shinhan.sbanking").osType(MarketInfo.OS_TYPE_AND).storeUrl("https://play.google.com/store/apps/details?id=").titleNode("[first://]div[class=sIskre] c-wiz[jsrenderer=vVnOi]")
 //                .versionNode("div[class=xyOfqd] div[class=hAyfc]:nth-child(4)").updateNode("[first://]div[class=xyOfqd] div[class=hAyfc]:nth-child(1) div:nth-child(2)").build();
 //        marketRepository.save(sbank_android);
@@ -63,6 +62,24 @@ class MarketSenderTest {
         daemon.run();
     }
 
+    @Test
+    void marketRepoTest() {
+        List<Market> all = marketRepository.findAll(); //매일 업데이트하기 위해...
+        for (Market market : all) {
+            market.setUptDt("1"); // 변경을 줌
+            // enable 모드라 자동으로 trace하여 다시 수정일 setting 됨.
+        }
+        marketRepository.saveAll(all);
+    }
+
+    @Test
+    void timeTest(){
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String formattedDate = formatter.format(now);
+        System.out.println("formattedDate = " + formattedDate);
+    }
+
     private void insertMarketList(){
         List<Market> marketList = new ArrayList<Market>();
         for(AppleAppId value : AppleAppId.values()){
@@ -72,6 +89,7 @@ class MarketSenderTest {
     }
 
     private void insertSendList(){
+        sendRepository.deleteAll(); // 모두 제거 후 새로 삽입
         List<Send> sendList = new ArrayList<Send>();
         for(AppleAppId value : AppleAppId.values()){
             sendList.add(Send.builder().appId(value.name()).sendStatus("0").userId("1111").errorMsg("").build());

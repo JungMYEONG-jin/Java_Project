@@ -51,3 +51,8 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 7. 끝
 
 
+## 고민사항
+1. market 수정일은 수정일 수동 세팅후 다시 자동 추적하여 해결 가능 할 것으로 보임.
+2. send는 작동후 삭제되는데 이를 어떻게 다시 가져오는지 원리가?
+3. 기존 테이블과 어떻게 연결할지..?
+
