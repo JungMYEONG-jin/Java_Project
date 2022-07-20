@@ -38,6 +38,16 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 
 > JPA Entity use defualt lock setting vs Java Synchronized
 > JPA는 기본적으로 영속성 Lock을 제공한다. 해당 기능만 써도 충분하므로 굳이 synchronized를 사용할 필요는 없다.
+> CRUD 에 Transactional 사용하자!
+
+
+## Spring Scheduler
+- fixedDelay : 해당 함수 로직이 끝난후 몇초후에 재시작 할건지
+- fixedRate : 해당 함수 로직 시작후 몇초후에 재시작 할건지
+- cron : linux cron 이랑 같음. 초 
+
+
+
 
 
 
