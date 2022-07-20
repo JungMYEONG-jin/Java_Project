@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="head.html :: fragment-head()"></head>
 <body>
-Coupon Page...
+<div th:replace="nav.html :: fragment-nav(${user})"></div>
+<div class="content-container">
+    <div class="content">
+        <div class="side-content">
+            <nav>
+                <div class="side-menu-box">
+                    <li class="side-menu" onclick="location.href='/order/list'">주문목록/배송조회</li>
+                    <li class="side-menu" onclick="location.href='/membership'">와우 멤버십</li>
+                    <li class="side-menu" onclick="location.href='/coupon'" style="color: #0074e9">할인 쿠폰</li>
+                    <li class="side-menu" onclick="location.href='/address'">배송지 관리</li>
+                    <li class="side-menu" onclick="location.href='/user/modify'">개인정보확인/수정</li>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+<div th:replace="footer.html :: fragment-footer()"></div>
 </body>
 </html>
