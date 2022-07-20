@@ -40,15 +40,11 @@ class MarketSenderTest {
     MarketPropertyRepository marketPropertyRepository;
     @Autowired
     MarketService marketService;
-//    @Autowired
-//    MarketProperty marketProperty;
+
 
     @BeforeEach
     void init(){
 //        insertMarketList();
-        insertSendList();
-        // property setting for xml save
-//        setMarketProperty();
 //        Market sbank_android = Market.builder().appId("sbank_android").appPkg("com.shinhan.sbanking").osType(MarketInfo.OS_TYPE_AND).storeUrl("https://play.google.com/store/apps/details?id=").titleNode("[first://]div[class=sIskre] c-wiz[jsrenderer=vVnOi]")
 //                .versionNode("div[class=xyOfqd] div[class=hAyfc]:nth-child(4)").updateNode("[first://]div[class=xyOfqd] div[class=hAyfc]:nth-child(1) div:nth-child(2)").build();
 //        marketRepository.save(sbank_android);

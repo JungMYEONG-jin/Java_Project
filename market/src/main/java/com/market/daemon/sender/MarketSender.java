@@ -59,7 +59,17 @@ public class MarketSender extends Thread {
 
 	private int mCheckCnt;
 
-//	public MarketSender() {
+	private boolean isExist = false;
+
+	public void setExist(boolean exist) {
+		isExist = exist;
+	}
+
+	public boolean isExist() {
+		return isExist;
+	}
+
+	//	public MarketSender() {
 ////		super();
 //		System.out.println("market sender get bean manually");
 //		this.propertyMarket = ApplicationContextProvider.getBean(MarketProperty.class);
@@ -112,6 +122,9 @@ public class MarketSender extends Thread {
 					ErrorCode.LogError(getClass(), "B1003", e);
 				}
 
+				if(isExist)
+					break;
+
 				mCheckCnt++;
 			}
 
@@ -119,7 +132,7 @@ public class MarketSender extends Thread {
 			System.out.println("B1000 error");
 			ErrorCode.LogError(getClass(), "B1000", ex);
 			serviceMarket.exceptionDBSaveAndAdminappPushSend(ex);
-		} finally {
+		} finally { //최후 에러 상황
 			System.out.println("create file...");
 			if(mapResCrawling != null && mapResCrawling.isEmpty() == false){
 				createFile(mapResCrawling);
@@ -326,7 +339,8 @@ public class MarketSender extends Thread {
 		}
 		
 		m_log.info("Create File End");
-		
+		log.info("Create File End");
+		isExist = true;
 		return false;
 	}
 
