@@ -45,6 +45,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 - fixedDelay : 해당 함수 로직이 끝난후 몇초후에 재시작 할건지
 - fixedRate : 해당 함수 로직 시작후 몇초후에 재시작 할건지
 - cron : linux cron 이랑 같음. 초 
+- 주의할점은 스케줄을 돌릴 메소드는 void 여야 하며 파라미터를 받을 수 없다!!
 
 
 
