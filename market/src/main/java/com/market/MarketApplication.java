@@ -26,8 +26,9 @@ public class MarketApplication {
 	}
 
 	@EventListener(ApplicationReadyEvent.class)
-	@Scheduled(cron = "0 15 6 * * 1-5 ?")// 0초 15분 6시 매일 매월 평일
+	@Scheduled(cron = "0 37 * * * 1-5")// 0초 30분 매시 매일 매월 평일
 	public void init(){
+		System.out.println(" daemon start...." );
 		daemonStarter.run();
 	}
 

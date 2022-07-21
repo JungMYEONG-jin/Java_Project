@@ -102,6 +102,7 @@ public class MarketDaemon implements Runnable {
 							Calendar cal = time.getDateTime();
 
 							m_log.info("reset time : " + String.format("%02d", cal.get(Calendar.HOUR_OF_DAY)) + String.format("%02d", cal.get(Calendar.MINUTE)) + String.format("%02d",cal.get(Calendar.SECOND)));
+							System.out.println("reset time : " + String.format("%02d", cal.get(Calendar.HOUR_OF_DAY)) + String.format("%02d", cal.get(Calendar.MINUTE)) + String.format("%02d",cal.get(Calendar.SECOND)));
 						}
 					}
 				}
