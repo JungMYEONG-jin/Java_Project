@@ -144,11 +144,6 @@ public class AppleApi {
     {
         Resource resource = new ClassPathResource(keyPath);
 
-        if (resource.exists())
-            System.out.println(" key read success " );
-        else
-            System.out.println("key read failed");
-
         byte[] content = null;
         try
         {
