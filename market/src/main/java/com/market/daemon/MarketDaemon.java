@@ -229,6 +229,7 @@ public class MarketDaemon implements Runnable {
 		}
 
 		try {
+			System.out.println("xml parser init start...");
 			xmlParser.init(xmlSettingData);
 
 		} catch (Exception e) {
@@ -254,6 +255,7 @@ public class MarketDaemon implements Runnable {
 		try {
 			System.out.println("getPropertyInfo start");
 			MarketPropertyDao newPropertyDAO = serviceMarket.getPropertyInfo();
+//			System.out.println(newPropertyDAO);
 			System.out.println("getPropertyInfo end");
 			if(propertyDAO == null){
 				setPropertyInfo(newPropertyDAO);

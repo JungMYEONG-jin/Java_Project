@@ -50,7 +50,6 @@ public class DaemonStarter {
 		List<Send> sendList = new ArrayList<Send>();
 		for(AppleAppId value : AppleAppId.values()){
 			sendList.add(Send.builder().appId(value.name()).sendStatus("0").userId("1111").errorMsg("").build());
-			System.out.println(value.name());
 		}
 		sendRepository.saveAll(sendList);
 	}
@@ -59,7 +58,6 @@ public class DaemonStarter {
 	public void updateMarketRepository(){
 		List<Market> all = marketRepository.findAll(); //매일 업데이트하기 위해...
 		for (Market market : all) {
-			System.out.println("market = " + market.getAppId());
 			market.setUptDt("1"); // 변경을 줌
 			// enable 모드라 자동으로 trace하여 다시 수정일 setting 됨.
 		}
