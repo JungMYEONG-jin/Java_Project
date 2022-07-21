@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="head.html :: fragment-head()"></head>
+<body>
+<div th:replace="nav.html :: fragment-nav(${user})"></div>
+<div class="content-container">
+    <div class="content">
+        <div class="side-content">
+            <nav>
+                <div class="side-menu-box">
+                    <li class="side-menu" onclick="location.href='/order/list'">주문목록/배송조회</li>
+                    <li class="side-menu" onclick="location.href='/membership'">와우 멤버쉽</li>
+                    <li class="side-menu" onclick="location.href='/coupon'">할인 쿠폰</li>
+                    <li class="side-menu" onclick="location.href='/address'" style="color: #0074e9">배송지 관리</li>
+                    <li class="side-menu" onclick="location.href='/user/modify'">개인정보확인/수정</li>
+                </div>
+            </nav>
+        </div>
+        <div class="main-content-container">
+            <th:block th:switch="${addressPage}">
+                <th:block th:case="'main'">
+                    <div th:replace="my/address/addressMain.html :: fragment-addressMain(${user},${addressList})"></div>
+                </th:block>
+                <th:block th:case="'edit'">
+                    <div th:replace="my/address/addressEdit.html :: fragment-addressEdit(${user},${address})"></div>
+                </th:block>
+                <th:block th:case="'add'">
+                    <div th:replace="my/address/addressAdd.html :: fragment-addressAdd(${addressDto})"></div>
+                </th:block>
+            </th:block>
+        </div>
+    </div>
+</div>
+<div th:replace="footer.html :: fragment-footer()"></div>
+</body>
+</html>
