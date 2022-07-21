@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="head.html :: fragment-head()"></head>
+<body>
+<div th:replace="nav.html :: fragment-nav(${user})"></div>
+<div class="content-container">
+    <div class="content-container">
+    <h1>회원정보확인</h1>
+    <p th:text="${user.getEmail()} + '님의 정보를 안전하게 보호하기 위해 비밀번호를 다시 확인 합니다.'"></p>
+    <table>
+        <tbdoy>
+            <tr>
+                <th scope="row">아이디(이메일)</th>
+                <td th:text="${user.getEmail()}"></td>
+            </tr>
+            <tr>
+                <th scope="row">비밀번호</th>
+                <td><input id="confirmPassword" type="password" autocomplete="new-password"></td>
+            </tr>
+        </tbdoy>
+    </table>
+    <div class="error-message" id="confirmPasswordError">잘못된 비밀번호 입니다.</div>
+    <button id="confirmPasswordBtn" style="border: none; background-color: #00aeff; color: white;" onclick="confirmPassword()">확인</button>
+</div>
+</div>
+<div class="modal fade" id="secessionModal" tabindex="1" role="dialog" aria-labelledby="secessionModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="secessionModalLabel">Modal 제목</h4>
+            </div>
+            <div class="modal-body">
+                정말 탈퇴하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="secession()">탈퇴</button>
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">취소</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="footer.html :: fragment-footer()"></div>
+<script src="/js/userModify.js"></script>
+</body>
+</html>

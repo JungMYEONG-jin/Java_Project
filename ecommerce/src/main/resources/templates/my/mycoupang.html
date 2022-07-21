@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="head.html :: fragment-head()"></head>
+<body>
+<div th:replace="nav.html :: fragment-nav(${user})"></div>
+<div class="content-container">
+    <th:block th:switch="${myCouponPage}">
+        <th:block th:case="'membership'">
+            <div th:replace="mcWowMembershipTemplate.html :: fragment-mcWowMembership()"></div>
+        </th:block>
+        <th:block th:case="'coupon'">
+            <div th:replace="mcCouponTemplate.html :: fragment-mcCoupon()"></div>
+        </th:block>
+        <th:block th:case="'address'">
+            <div th:replace="address.html :: fragment-mcAddressManage(${user}, ${addressList})"></div>
+        </th:block>
+        <th:block th:case="*">
+            <div th:replace="mcOrderListTemplate.html :: fragment-mcOrderList()"></div>
+        </th:block>
+    </th:block>
+</div>
+<div th:replace="footer.html :: fragment-footer()"></div>
+</body>
+</html>
