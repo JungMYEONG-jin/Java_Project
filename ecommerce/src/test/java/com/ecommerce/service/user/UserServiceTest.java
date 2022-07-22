@@ -1,5 +1,6 @@
 package com.ecommerce.service.user;
 
+import com.ecommerce.entity.user.Place;
 import com.ecommerce.entity.user.dto.UserReqDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -49,5 +50,11 @@ class UserServiceTest {
         userReqDto2.setPhoneNumber("01046740554");
 
         Assertions.assertThrows(IllegalArgumentException.class, ()->userService.createUser(userReqDto2));
+    }
+
+    @Test
+    void enumTest() {
+        for (Place place : Place.values())
+            System.out.println("place = " + place);
     }
 }

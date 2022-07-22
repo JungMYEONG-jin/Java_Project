@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Coupang</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div th:replace="nav.html :: fragment-nav(${user})"></div>
+<div class="content-container">
+    <div class="content">
+        <div class="side-content">
+            <nav>
+                <div class="side-menu-box">
+                    <li class="side-menu" onclick="location.href='/order/list'" style="color: #0074e9">주문/배송조회</li>
+                    <li class="side-menu" onclick="location.href='/membership'">와우 멤버쉽</li>
+                    <li class="side-menu" onclick="location.href='/coupon'">할인 쿠폰</li>
+                    <li class="side-menu" onclick="location.href='/address'">배송지 관리</li>
+                    <li class="side-menu" onclick="location.href='/user/modify'">개인정보화인/수정</li>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+</body>
+</html>
