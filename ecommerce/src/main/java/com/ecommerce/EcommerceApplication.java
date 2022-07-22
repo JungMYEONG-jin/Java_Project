@@ -1,8 +1,10 @@
 package com.ecommerce;
 
 import com.ecommerce.entity.product.Product;
+import com.ecommerce.entity.product.ProductImage;
 import com.ecommerce.entity.review.Review;
 import com.ecommerce.entity.user.User;
+import com.ecommerce.repository.product.ProductImageRepository;
 import com.ecommerce.repository.product.ProductRepository;
 import com.ecommerce.repository.review.ReviewRepository;
 import com.ecommerce.repository.user.UserRepository;
@@ -23,6 +25,9 @@ public class EcommerceApplication {
 	ProductRepository productRepository;
 	@Autowired
 	ReviewRepository reviewRepository;
+	@Autowired
+	ProductImageRepository productImageRepository;
+
 
 
 
@@ -31,7 +36,7 @@ public class EcommerceApplication {
 	}
 
 
-//	@EventListener(ApplicationReadyEvent.class)
+	@EventListener(ApplicationReadyEvent.class)
 	private void init(){
 		User user = User.builder().username("kim").email("abc123@gmail.com").password("aa123").rocketMembership(true).phoneNumber("01203213").build();
 		userRepository.save(user);
@@ -42,6 +47,9 @@ public class EcommerceApplication {
 		Product product = new Product();
 		product.setDetailsPageUrl("abc");
 		product.setTitle("kong");
+		product.setRocketShipping(true);
+		product.setGoldBox(false);
+		product.setPrice(10000000);
 		productRepository.save(product);
 
 		Product product2 = new Product();
@@ -49,6 +57,13 @@ public class EcommerceApplication {
 		product2.setTitle("hosi");
 		product2.setRocketShipping(true);
 		productRepository.save(product2);
+
+		String src = "https://pds.joongang.co.kr/news/FbMetaImage/202202/5d7ea4ce-45f7-4826-b3e0-4f5eab3f4ddb.png";
+		ProductImage aa = new ProductImage();
+		aa.setProduct(product);
+		aa.setThumbnailUrl(src);
+		productImageRepository.save(aa);
+
 
 		Review review = new Review();
 		review.setProduct(product);

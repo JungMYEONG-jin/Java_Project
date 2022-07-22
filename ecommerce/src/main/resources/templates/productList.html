@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="head.html :: fragment-head()"></head>
 <body>
-
+<div th:replace="nav.html :: fragment-nav(${user})"></div>
+<main id="main" class="content-container">
+    <div class="content">
+        <ul id="categoryTrack" th:if="${categoryList != null}">
+            <li><a href="/">쿠팡 홈</a>&nbsp ></li>
+            <li th:each="idx : ${#numbers.sequence(0, categoryList.size() - 1)}">
+                <a th:href="@{/products/categories/{categoryId}(categoryId=${categoryList[idx].id})}"
+                   th:text="${categoryList[idx].name}"></a>
+                <th:block th:if="${idx != categoryList.size() - 1}">&nbsp ></th:block>
+            </li>
+        </ul>
+        <div th:replace="productGrid.html :: fragment-productGrid(${productPage})"></div>
+    </div>
+</main>
+<div th:replace="paginationBar.html :: fragment-paginationBar(${productPage})"></div>
+<div th:replace="footer.html :: fragment-footer()"></div>
 </body>
 </html>
