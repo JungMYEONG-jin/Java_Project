@@ -70,7 +70,7 @@ public class OrderService {
         orderDetails.setVisible(true);
         orderDetails.setCount(count);
         orderDetails.setProduct(product);
-        orderDetails.setArrivedDate(LocalDateTime.now().plusDays(2));
+        orderDetails.setArrivedDate(LocalDateTime.now().plusDays(2).withHour(14));
         int price = (int)(product.getPrice() * 0.95);
         int shippingPrice = 0;
 
@@ -85,5 +85,6 @@ public class OrderService {
         orderDetails.setPrice(shippingPrice + price);
         return orderDetails;
     }
+
 
 }
