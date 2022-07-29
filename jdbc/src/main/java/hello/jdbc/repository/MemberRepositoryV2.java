@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.NoSuchElementException;
 
 /**
- * JDBC DataSource
+ * JDBC Connection Param
  */
 @Slf4j
 public class MemberRepositoryV2 {
@@ -65,6 +65,26 @@ public class MemberRepositoryV2 {
 
     }
 
+    public void update(Connection con, String memberId, int money) throws SQLException {
+        String sql = "update member set money=? where member_id=?";
+        PreparedStatement pstmt = null;
+        try{
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, money);
+            pstmt.setString(2, memberId);
+            int cnt = pstmt.executeUpdate();// run query
+
+            log.info("cnt={}", cnt);
+
+        }catch (SQLException e){
+            log.error("db error", e);
+            throw e;
+        }finally {
+            JdbcUtils.closeStatement(pstmt);
+        }
+
+    }
+
     public void delete(String memberId) throws SQLException {
         String sql = "delete from member where member_id=?";
 
@@ -112,6 +132,36 @@ public class MemberRepositoryV2 {
             throw e;
         }finally {
             close(con, pstmt, res);
+        }
+    }
+
+    public Member findById(Connection con, String memberId) throws SQLException {
+        String sql = "select * from member where member_id = ?";
+        PreparedStatement pstmt = null;
+        ResultSet res = null;
+
+        try{
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+
+            res = pstmt.executeQuery();
+            if (res.next()){
+                Member member = new Member();
+                member.setMemberId(res.getString("member_id"));
+                member.setMoney(res.getInt("money"));
+                return member;
+            }else{
+                throw new NoSuchElementException("member not found memberId="+memberId);
+            }
+
+        }catch (SQLException e){
+            log.error("db error", e);
+            throw e;
+        }finally {
+            // connection 닫으면 안됨!!!!
+            JdbcUtils.closeResultSet(res);
+            JdbcUtils.closeStatement(pstmt);
+
         }
     }
 
