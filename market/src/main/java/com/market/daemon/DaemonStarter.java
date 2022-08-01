@@ -2,6 +2,7 @@ package com.market.daemon;
 
 import com.market.api.apple.AppleAppId;
 import com.market.daemon.dao.MarketInfo;
+import com.market.daemon.dto.SendInfo;
 import com.market.entity.Market;
 import com.market.entity.MarketPropertyEntity;
 import com.market.entity.Send;
@@ -49,7 +50,7 @@ public class DaemonStarter {
 		sendRepository.deleteAll(); // 모두 제거 후 새로 삽입
 		List<Send> sendList = new ArrayList<Send>();
 		for(AppleAppId value : AppleAppId.values()){
-			sendList.add(Send.builder().appId(value.name()).sendStatus("0").userId("1111").errorMsg("").build());
+			sendList.add(Send.builder().appId(value.name()).sendStatus(SendInfo.SEND_RESULT_OK).userId("1111").errorMsg("").build());
 		}
 		sendRepository.saveAll(sendList);
 	}
@@ -88,9 +89,15 @@ public class DaemonStarter {
 		marketPropertyRepository.save(marketProperty);
 	}
 
+
+	/**
+	 * 관리자에서 market, send, property 관리함
+	 * get 해서 값만 가져올 수 있으면 됨.
+	 */
+
 	public void run(){
-		fillSendRepository();
-		updateMarketRepository();
+//		fillSendRepository();
+//		updateMarketRepository();
 //		setMarketProperty();
 		marketDaemon.run();
 	}
