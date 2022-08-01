@@ -122,8 +122,8 @@ public class MarketSender extends Thread {
 					ErrorCode.LogError(getClass(), "B1003", e);
 				}
 
-				if(isExist)
-					break;
+//				if(isExist)
+//					break;
 
 				mCheckCnt++;
 			}
@@ -340,7 +340,7 @@ public class MarketSender extends Thread {
 		
 		m_log.info("Create File End");
 		log.info("Create File End");
-		isExist = true;
+//		isExist = true;
 		return false;
 	}
 

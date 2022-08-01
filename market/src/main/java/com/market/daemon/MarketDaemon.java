@@ -125,11 +125,11 @@ public class MarketDaemon implements Runnable {
 				ErrorCode.LogError(getClass(), "A1004",e);
 			}
 
-			if(senderThread.isExist())
-				break;
+//			if(senderThread.isExist())
+//				break;
 		}
 		
-		senderThread.interrupt();
+//		senderThread.interrupt();
 	}
 
 	private void insertMarketSendInfo() {
