@@ -8,7 +8,6 @@ import com.market.errorcode.ErrorCode;
 import com.market.property.MarketProperty;
 import com.market.util.TimeCheker;
 import com.market.util.XMLParser;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,7 +22,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-@Slf4j
 @Component
 public class MarketDaemon implements Runnable {
 
@@ -160,7 +158,6 @@ public class MarketDaemon implements Runnable {
 
 		} catch (XPathExpressionException e) {
 			ErrorCode.LogError(getClass(), "A1002", e);
-			log.error("A1002 {} {}", getClass(), e);
 		}
 
 		// time ����
@@ -170,7 +167,6 @@ public class MarketDaemon implements Runnable {
 		m_log.info("\n\n\n");
 		for(TimeCheker time : listDateTime){
 			m_log.info(time.toString());
-			log.info(time.toString());
 		}
 		m_log.info("\n\n\n");
 	}
@@ -202,7 +198,6 @@ public class MarketDaemon implements Runnable {
 					}
 				} catch (Exception e) {
 					ErrorCode.LogError(getClass(), "A1005", e);
-					log.error("A1005 {} {}", getClass(), e);
 					if(listDateTime != null && listDateTime.isEmpty() == false){
 						listDateTime.removeFirst();
 					}
@@ -222,10 +217,8 @@ public class MarketDaemon implements Runnable {
 	private void initSetting() {
 		MarketPropertyDao propertyInfo = getPropertyInfo();
 		xmlSettingData = propertyInfo.getPropertyData();
-		log.info("initSetting xmlSettingData {}", xmlSettingData);
 		if(xmlSettingData == null || xmlSettingData.isEmpty()){
 			ErrorCode.LogError(getClass(), "A1000");
-			log.error("A1000 {}", getClass());
 		}
 
 		try {
@@ -274,7 +267,6 @@ public class MarketDaemon implements Runnable {
 		} catch (Exception e) {
 			System.out.println("000 error");
 
-			log.error("error : {}" , e);
 			ErrorCode.LogError(getClass(), "A1007", e);
 		}
 		System.out.println("99999999999999999999999999");

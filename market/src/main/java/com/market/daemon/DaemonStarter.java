@@ -48,11 +48,14 @@ public class DaemonStarter {
 	@Transactional
 	public void fillSendRepository(){
 		sendRepository.deleteAll(); // 모두 제거 후 새로 삽입
-		List<Send> sendList = new ArrayList<Send>();
 		for(AppleAppId value : AppleAppId.values()){
-			sendList.add(Send.builder().appId(value.name()).sendStatus(SendInfo.SEND_RESULT_OK).userId("1111").errorMsg("").build());
+			Send send = new Send();
+			send.setAppId(value.name());
+			send.setSendStatus(SendInfo.SEND_RESULT_OK);
+			send.setUserId("1111");
+			send.setErrorMsg("");
+			sendRepository.save(send);
 		}
-		sendRepository.saveAll(sendList);
 	}
 
 	@Transactional
@@ -61,8 +64,9 @@ public class DaemonStarter {
 		for (Market market : all) {
 			market.setUptDt("1"); // 변경을 줌
 			// enable 모드라 자동으로 trace하여 다시 수정일 setting 됨.
+			marketRepository.save(market);
 		}
-		marketRepository.saveAll(all);
+
 	}
 
 	@Transactional
@@ -96,8 +100,8 @@ public class DaemonStarter {
 	 */
 
 	public void run(){
-//		fillSendRepository();
-//		updateMarketRepository();
+		fillSendRepository();
+		updateMarketRepository();
 //		setMarketProperty();
 		marketDaemon.run();
 	}

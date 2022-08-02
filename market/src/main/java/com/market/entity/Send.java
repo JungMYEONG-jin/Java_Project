@@ -1,16 +1,10 @@
 package com.market.entity;
 
 import com.market.base.BaseTime;
-import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Send extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,5 +28,56 @@ public class Send extends BaseTime {
         sendHistory.setUserId(this.userId);
         sendHistory.setRegDt(this.getRegDt());
         return sendHistory;
+    }
+
+    public Send() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getSendStatus() {
+        return sendStatus;
+    }
+
+    public void setSendStatus(String sendStatus) {
+        this.sendStatus = sendStatus;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public Send(Long id, String appId, String sendStatus, String errorMsg, String userId) {
+        this.id = id;
+        this.appId = appId;
+        this.sendStatus = sendStatus;
+        this.errorMsg = errorMsg;
+        this.userId = userId;
     }
 }

@@ -20,9 +20,15 @@ public class MarketJpaService {
         marketRepository.save(market);
     }
 
+    /**
+     * spring boot 2.xxx deleteById
+     * spring boot 1.xxx delete
+     * @param market
+     */
     @Transactional
     public void delete(Market market){
-        marketRepository.deleteById(market.getId());
+//        marketRepository.deleteById(market.getId());
+        marketRepository.delete(market.getId());
     }
 
 

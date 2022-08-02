@@ -16,7 +16,6 @@ import com.market.repository.MarketPropertyRepository;
 import com.market.repository.MarketRepository;
 import com.market.repository.SendHistoryRepository;
 import com.market.repository.SendRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-@Slf4j
 @Service
 public class MarketService {
 	public Logger m_log = Logger.getLogger(getClass());
@@ -113,7 +111,7 @@ public class MarketService {
 			sendRepository.save(send);
 		} catch(Exception e) {
 			m_log.error("insertPeriodMarketSendInfo EXCEPTION.", e);
-			log.error("insertPeriodMarketSendInfo EXCEPTION. {}", e);
+
 		}
 	}
 
@@ -172,17 +170,29 @@ public class MarketService {
 
 			// 이게 어떤 형식인지??
 			String[] strs = arraySendSeq.split(",");
-			List<Long> seqs = new ArrayList<Long>();
+			List<Send> all = sendRepository.findAll();
+			List<Send> sendByIds = new ArrayList<Send>();
+
 			for (String str : strs) {
-				seqs.add(Long.parseLong(str));
+				Long id = Long.parseLong(str);
+				for(Send send : all){
+					if(send.getId().equals(id)) {
+						sendByIds.add(send);
+						break; // id 는 pk라 한번밖에 일치 못함...
+					}
+				}
 			}
 
-			List<Send> sendByIds = sendRepository.findAllById(seqs);
 			List<SendHistory> sendHistories = new ArrayList<SendHistory>();
 			for (Send send : sendByIds) {
 				sendHistories.add(send.of());
 			}
-			sendHistoryRepository.saveAll(sendHistories);
+
+			// saveAll 못씀...
+			for(SendHistory history : sendHistories){
+				sendHistoryRepository.save(history);
+			}
+
 		} catch(Exception e) {
 			m_log.error("insertSendHistArray EXCEPTION", e);
 		}
@@ -193,17 +203,28 @@ public class MarketService {
 	public void insertSendHistArray(String arraySendSeq) {
 
 		try {
-			List<Long> seqs = new ArrayList<Long>();
 			String[] split = arraySendSeq.split(",");
-			for (String s : split) {
-				seqs.add(Long.parseLong(s));
+			List<Send> all = sendRepository.findAll();
+			List<Send> sendByIds = new ArrayList<Send>();
+			for (String str : split) {
+				Long id = Long.parseLong(str);
+				for(Send send : all){
+					if(send.getId().equals(id)) {
+						sendByIds.add(send);
+						break; // id 는 pk라 한번밖에 일치 못함...
+					}
+				}
 			}
-			List<Send> sendByIds = sendRepository.findAllById(seqs);
+
 			List<SendHistory> sendHistories = new ArrayList<SendHistory>();
 			for (Send send : sendByIds) {
 				sendHistories.add(send.of());
 			}
-			sendHistoryRepository.saveAll(sendHistories);
+
+			// saveAll 못씀...
+			for(SendHistory history : sendHistories){
+				sendHistoryRepository.save(history);
+			}
 
 		} catch(Exception e) {
 			m_log.error("Ǫ�� �߼� ���̺� �߼۰�� ������Ʈ �� Exception�� �߻��߽��ϴ�.", e);
@@ -214,12 +235,11 @@ public class MarketService {
 	public void deleteSendInfoArray(String arraySendSeq) {
 
 		try {
-			List<Long> seqs = new ArrayList<Long>();
 			String[] split = arraySendSeq.split(",");
 			for (String s : split) {
-				seqs.add(Long.parseLong(s));
+				Long id = Long.parseLong(s);
+				sendRepository.delete(id);
 			}
-			sendRepository.deleteAllById(seqs); // seq 포함 다 제거
 		} catch(Exception e) {
 			m_log.error("deleteSendInfoArray EXCEPTION", e);
 		}
@@ -230,14 +250,13 @@ public class MarketService {
 
 		try {
 			if(arraySendSeq.isEmpty()){
-				sendRepository.deleteById(Long.parseLong(sendInfo.getSeq()));
+				sendRepository.delete(Long.parseLong(sendInfo.getSeq()));
 			} else {
-				List<Long> seqs = new ArrayList<Long>();
 				String[] split = arraySendSeq.split(",");
 				for (String s : split) {
-					seqs.add(Long.parseLong(s));
+					Long id = Long.parseLong(s);
+					sendRepository.delete(id);
 				}
-				sendRepository.deleteAllById(seqs); // delete  where seq in seqs
 			}
 
 		} catch(Exception e) {

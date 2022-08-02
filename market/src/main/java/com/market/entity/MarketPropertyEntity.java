@@ -2,16 +2,9 @@ package com.market.entity;
 
 import com.market.base.BaseTime;
 import com.market.daemon.dao.MarketPropertyDao;
-import lombok.*;
-
 import javax.persistence.*;
 
 @Entity
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class MarketPropertyEntity extends BaseTime {
 
     @Id
@@ -49,5 +42,101 @@ public class MarketPropertyEntity extends BaseTime {
         marketPropertyDao.setRegUserId(this.userId);
         marketPropertyDao.setIsSetting(this.isSetting);
         return marketPropertyDao;
+    }
+
+    public MarketPropertyEntity(Long id, String propertyVersion, String propertyStatus, String dataType, String propertyData, String userId, String isSetting, String etc1, String etc2, String etc3) {
+        this.id = id;
+        this.propertyVersion = propertyVersion;
+        this.propertyStatus = propertyStatus;
+        this.dataType = dataType;
+        this.propertyData = propertyData;
+        this.userId = userId;
+        this.isSetting = isSetting;
+        this.etc1 = etc1;
+        this.etc2 = etc2;
+        this.etc3 = etc3;
+    }
+
+    public MarketPropertyEntity() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getPropertyVersion() {
+        return propertyVersion;
+    }
+
+    public void setPropertyVersion(String propertyVersion) {
+        this.propertyVersion = propertyVersion;
+    }
+
+    public String getPropertyStatus() {
+        return propertyStatus;
+    }
+
+    public void setPropertyStatus(String propertyStatus) {
+        this.propertyStatus = propertyStatus;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    public String getPropertyData() {
+        return propertyData;
+    }
+
+    public void setPropertyData(String propertyData) {
+        this.propertyData = propertyData;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getIsSetting() {
+        return isSetting;
+    }
+
+    public void setIsSetting(String isSetting) {
+        this.isSetting = isSetting;
+    }
+
+    public String getEtc1() {
+        return etc1;
+    }
+
+    public void setEtc1(String etc1) {
+        this.etc1 = etc1;
+    }
+
+    public String getEtc2() {
+        return etc2;
+    }
+
+    public void setEtc2(String etc2) {
+        this.etc2 = etc2;
+    }
+
+    public String getEtc3() {
+        return etc3;
+    }
+
+    public void setEtc3(String etc3) {
+        this.etc3 = etc3;
     }
 }

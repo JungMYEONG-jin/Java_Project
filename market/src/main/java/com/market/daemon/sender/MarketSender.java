@@ -12,7 +12,6 @@ import com.market.exception.GetSendInfoListException;
 import com.market.exception.SendInfoListException;
 import com.market.property.MarketProperty;
 import com.market.provider.ApplicationContextProvider;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -38,7 +37,6 @@ import java.util.List;
  * @author parkyk
  * FILE UPDATE LIMIT MIN���� ������ �߰��� �����ٸ� ���Ϸ� ����.
  */
-@Slf4j
 public class MarketSender extends Thread {
 
 	public Logger m_log = Logger.getLogger(getClass());
@@ -142,17 +140,14 @@ public class MarketSender extends Thread {
 
 	private void isCheckCreateFile() throws CreateFileException {
 		try {
-			log.info("isCheckCreateFile start");
 			if (regTime != MarketProperty.INIT_VALUE) {
 				long diffTIme = ((System.currentTimeMillis() - regTime));
 
 				m_log.info("DiffTime : " + diffTIme + " limitTime : "
 						+ MarketProperty.FILE_UPDATE_LIMIT_SEC);
-				log.info("DiffTime : {}  limitTime : {}" ,diffTIme ,MarketProperty.FILE_UPDATE_LIMIT_SEC);
 
 				// 원래 FILE_UPDATE_LIMIT_SEC임
 				if (diffTIme > MarketProperty.FILE_UPDATE_LIMIT_SEC) {
-					log.info("create file start!!");
 					createFile(mapResCrawling);
 
 					// reset
@@ -161,7 +156,6 @@ public class MarketSender extends Thread {
 					if (mapResCrawling != null) {
 						mapResCrawling.clear();
 					} else {
-						log.info("create file initiate... difftime not greater than MarketProperty value...");
 						mapResCrawling = new HashMap<String, CrawlingResultData>();
 					}
 				}
@@ -184,7 +178,6 @@ public class MarketSender extends Thread {
 					String startTime = sdf.format(date);
 
 					m_log.info("ProcessSendInfo Start Time : " + startTime);
-					log.info("ProcessSendInfo Start Time : {}",startTime);
 
 
 					int nArraySendSeqCnt = 0;
@@ -211,9 +204,7 @@ public class MarketSender extends Thread {
 								if (ret != null) {
 									m_log.info("Crawling 시작 : "
 											+ ret.toString());
-									log.info("Crawling 시작 : {}", ret);
 									mapResCrawling.put(ret.getAppId(), ret);
-									log.info("mapResCrawling {}", mapResCrawling);
 
 									// Max Seqence üũ
 
@@ -248,14 +239,12 @@ public class MarketSender extends Thread {
 
 						} catch (CrawlingException e) {
 							ErrorCode.LogError(getClass(), "B1002", e);
-							log.error("processSendInfoList Crawling Exception {}", e);
 							sendInfo.setErrorMsg(e.getMessage());
 							sendInfo.setSendStatus(SendInfo.SEND_RESULT_CRAWLING_FAIL);
 							updateSendInfoError(sendInfo, sendInfo.getSeq());
 
 						} catch (Exception e) {
 							ErrorCode.LogError(getClass(), "B1001", e);
-							log.error("processSendInfoList Exception {}", e);
 							sendInfo.setErrorMsg(e.getMessage());
 							sendInfo.setSendStatus(SendInfo.SEND_RESULT_ERROR);
 							updateSendInfoError(sendInfo, sendInfo.getSeq());
@@ -277,7 +266,6 @@ public class MarketSender extends Thread {
 					 * HIST ���̺�� �ű�� ���� �ϱ�
 					 */
 					if (nArraySendSeqCnt > 0 && !arraySendSeq.equals("")) {
-						log.info("sendinfoList clear");
 						updateSendInfoArray(arraySendSeq);
 						sendInfoList.clear();
 					}
@@ -303,7 +291,6 @@ public class MarketSender extends Thread {
 	private boolean createFile(HashMap<String, CrawlingResultData> mapResCrawling) {
 		
 		m_log.info("Create File Start");
-		log.info("Create File Start!!! private boolean createFile(HashMap<String, CrawlingResultData> mapResCrawling)");
 		
 		Document doc = null;
 		try {
@@ -329,7 +316,6 @@ public class MarketSender extends Thread {
 			String path = propertyMarket.getOutput_xml_path();
 			String fileName = String.format(propertyMarket.getOutput_xml_file_name(), dateString);
 			m_log.info("XML Output File Path : " + path + fileName);
-			log.info("XML Output File Path : {}",path + fileName);
 			StreamResult res = new StreamResult(new FileOutputStream(new File(path, fileName)));
 			trfomer.transform(source, res);
 			
@@ -338,7 +324,6 @@ public class MarketSender extends Thread {
 		}
 		
 		m_log.info("Create File End");
-		log.info("Create File End");
 //		isExist = true;
 		return false;
 	}
