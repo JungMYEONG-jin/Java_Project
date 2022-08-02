@@ -2,10 +2,20 @@ package com.market.api.apple;
 
 import com.market.crawling.data.CrawlingResultData;
 import com.market.daemon.dao.MarketInfo;
+import com.market.exception.CrawlingException;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.*;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.json.simple.JSONArray;
@@ -19,11 +29,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import sun.security.ec.ECPrivateKeyImpl;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.security.interfaces.ECPrivateKey;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,14 +53,16 @@ public class AppleApi {
     public static final String keyPath = "static/apple/AuthKey_7JL62P566N.p8";
     public static String appId = "357484932";
 
-    public String getAppVersions(String jwt, String id) throws MalformedURLException {
+    private int CONN_TIME_OUT = 1000 * 30;
+
+    public String getAppVersions(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps"+"/"+ id +"/appStoreVersions"+"?limit=1"); // 버전 업데이트날짜
-        return getConnectResult(jwt, id, url);
+        return getConnectResultByX509(jwt, id, url);
     }
 
-    public String getAppTitle(String jwt, String id) throws MalformedURLException{
+    public String getAppTitle(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id); // 이름
-        return getConnectResult(jwt, id, url);
+        return getConnectResultByX509(jwt, id, url);
     }
 
     public String getBuildInfo(String jwt, String id) throws MalformedURLException{
@@ -74,6 +92,81 @@ public class AppleApi {
             throw new RuntimeException("An Error Occurred. IO failed... " + e);
         }
         return result;
+    }
+
+    private String getConnectResultByX509(String jwt, String id, URL url) throws MalformedURLException, NoSuchAlgorithmException {
+
+        String result = "";
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        SSLContext sslContext = SSLContext.getInstance("SSL");
+
+        try {
+            X509TrustManager trustManager = new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+                    // LOGGER.debug("checkClientTrusted");
+
+                }
+
+                @Override
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+                    // LOGGER.debug("checkServerTrusted");
+                }
+
+                @Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    // LOGGER.debug("getAcceptedIssuers");
+
+                    return null;
+                }
+            };
+
+            sslContext.init(null, new TrustManager[] { trustManager },
+                    new SecureRandom());
+            SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext,
+                    SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            Scheme sch = new Scheme("https", 443, socketFactory);
+            httpClient.getConnectionManager().getSchemeRegistry().register(sch);
+
+            HttpParams httpParam = httpClient.getParams();
+            org.apache.http.params.HttpConnectionParams.setConnectionTimeout(httpParam, CONN_TIME_OUT);
+            org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
+
+            HttpRequestBase http = null;
+            try {
+                http = new HttpGet(url.toURI());
+                http.setHeader("Authorization", "Bearer "+ jwt);
+            } catch (Exception e) {
+                http = new HttpPost(url.toURI());
+            }
+
+            HttpResponse response = null;
+            HttpEntity entity = null;
+            HttpRequest request = null;
+            String responseBody = null;
+            /**
+             * ??? ?? OUTPUT
+             */
+            // Time Out
+            response = httpClient.execute(http);
+            entity = response.getEntity();
+            responseBody = EntityUtils.toString(entity, "UTF-8");
+
+            result = responseBody;
+            System.out.println("result = " + result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            httpClient.getConnectionManager().shutdown();
+        }
+        return result;
+
+
     }
 
 
@@ -108,7 +201,7 @@ public class AppleApi {
 
     }
 
-    public Map<String, String> getCrawlingInfo(String id) throws MalformedURLException, ParseException {
+    public Map<String, String> getCrawlingInfo(String id) throws MalformedURLException, ParseException, NoSuchAlgorithmException {
         String jwt = createJWT();
         String appVersions = getAppVersions(jwt, id);
 
@@ -129,7 +222,15 @@ public class AppleApi {
         return map;
     }
 
-    public CrawlingResultData getCrawlingResult(String id) throws MalformedURLException, ParseException {
+    /**
+     * ssl 인증 가능한 곳에서 해당 메소드 사용
+     * @param id
+     * @return
+     * @throws MalformedURLException
+     * @throws ParseException
+     * @throws NoSuchAlgorithmException
+     */
+    public CrawlingResultData getCrawlingResult(String id) throws MalformedURLException, ParseException, NoSuchAlgorithmException {
         Map<String, String> crawlingInfo = getCrawlingInfo(id);
         String realAppID = getRealAppID(id);
         return new CrawlingResultData(realAppID, id, crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));
