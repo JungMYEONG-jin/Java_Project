@@ -150,7 +150,6 @@ public class MarketSender extends Thread {
 						+ MarketProperty.FILE_UPDATE_LIMIT_SEC);
 				log.info("DiffTime : {}  limitTime : {}" ,diffTIme ,MarketProperty.FILE_UPDATE_LIMIT_SEC);
 
-				// 한번에 결과를 작성하려고 이렇게 만든듯 해보임..
 				// 원래 FILE_UPDATE_LIMIT_SEC임
 				if (diffTIme > MarketProperty.FILE_UPDATE_LIMIT_SEC) {
 					log.info("create file start!!");

@@ -69,3 +69,62 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 2. send는 작동후 삭제되는데 이를 어떻게 다시 가져오는지 원리가?
 3. 기존 테이블과 어떻게 연결할지..?
 
+
+
+> spring boot 1.5.22로 다운그레이드하기
+> 왜 하는지...?
+> 최대 자바6까지 서버에서 사용할 수 있을것 같음... 7~8로 변경시 기존 프로젝트에 사이드 이펙트 영향 상당해서...
+> 하지만 spring boot 2 이상부터 최소 자바8을 사용해야함
+> 따라서 다운그레이드해야 spring boot 사용이 가능...
+
+우선 버전 확인을 해야한다.
+https://github.com/spring-projects/spring-boot 접속해서
+tag를 비교해 가장 최근 1.5.22 버전으로 하기로 결정
+
+gradle도 버전 변경을 해야함. 자바6을 지원해야 하기 때문...
+
+terminal에 접속해 
+
+```shell
+./gradlew wrapper --gradle-version 4.10
+만약 실패시 gradle/gradle-wrapper.properties 직접 버전 변경
+```
+
+```shell
+// gradle 해당 코드 복사
+
+plugins {
+	id 'org.springframework.boot' version '1.5.22.RELEASE'
+	id 'java'
+}
+
+sourceCompatibility = '1.6'
+
+jar {
+	baseName = 'market'
+	version =  '0.0.1-SNAPSHOT'
+}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+	compile("org.springframework.boot:spring-boot-starter-web")
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('com.googlecode.json-simple:json-simple:1.1.1')
+	compile('com.nimbusds:nimbus-jose-jwt:3.10')
+	compile('commons-dbcp:commons-dbcp:1.4')
+	compile('log4j:log4j:1.2.11')
+	compile('org.jsoup:jsoup:1.10.3')
+	compile('org.apache.httpcomponents:httpclient:4.2.4')
+	compile('org.modelmapper:modelmapper:2.4.4')
+	compile('org.projectlombok:lombok')
+	compileOnly fileTree(dir: 'src/main/resources/lib', include:['*.jar'])
+
+	testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+```
+
+버전 변경 완료
