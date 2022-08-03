@@ -60,13 +60,13 @@ public class DaemonStarter {
 
 	@Transactional
 	public void updateMarketRepository(){
-		for(AppleAppId value : AppleAppId.values()){
-			Market market = new Market();
-			market.setAppId(value.name());
-			market.setAppPkg(value.getAppPkg());
-			market.setOsType(MarketInfo.OS_TYPE_IOS_API);
-			marketRepository.save(market);
-		}
+//		for(AppleAppId value : AppleAppId.values()){
+//			Market market = new Market();
+//			market.setAppId(value.name());
+//			market.setAppPkg(value.getAppPkg());
+//			market.setOsType(MarketInfo.OS_TYPE_IOS_API);
+//			marketRepository.save(market);
+//		}
 
 		List<Market> all = marketRepository.findAll(); //매일 업데이트하기 위해...
 		for (Market market : all) {
@@ -92,10 +92,10 @@ public class DaemonStarter {
 				"        <file_update_limit_sec>30000</file_update_limit_sec>\n" +
 				"        <setting_time_list>\n" +
 				"            <time_info>\n" +
-				"                <checktime>110200</checktime>\n" +
+				"                <checktime>121300</checktime>\n" +
 				"            </time_info>\n" +
 				"            <time_info>\n" +
-				"                <checktime>112000</checktime>\n" +
+				"                <checktime>121700</checktime>\n" +
 				"            </time_info>\n" +
 				"        </setting_time_list>\n" +
 				"    </item>\n" +
@@ -112,9 +112,9 @@ public class DaemonStarter {
 	 */
 
 	public void run(){
-		fillSendRepository();
-		updateMarketRepository();
-		setMarketProperty();
+//		fillSendRepository();
+//		updateMarketRepository();
+//		setMarketProperty();
 		marketDaemon.run();
 	}
 

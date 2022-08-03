@@ -108,14 +108,16 @@ public class MarketService {
 		try {
 
 			List<Market> all = marketRepository.findAll();
+			List<Send> sendList = new ArrayList<Send>();
 			for (Market market : all) {
 				Send send = new Send();
 				send.setAppId(market.getAppId());
 				send.setSendStatus("0");
 				send.setErrorMsg("");
 				send.setUserId("99999999");
-				sendRepository.save(send);
+				sendList.add(send);
 			}
+			sendRepository.save(sendList);
 
 		} catch(Exception e) {
 			m_log.error("insertPeriodMarketSendInfo EXCEPTION.", e);
@@ -196,10 +198,7 @@ public class MarketService {
 				sendHistories.add(send.of());
 			}
 
-			// saveAll 못씀...
-			for(SendHistory history : sendHistories){
-				sendHistoryRepository.save(history);
-			}
+			sendHistoryRepository.save(sendHistories);
 
 		} catch(Exception e) {
 			m_log.error("insertSendHistArray EXCEPTION", e);
@@ -229,10 +228,7 @@ public class MarketService {
 				sendHistories.add(send.of());
 			}
 
-			// saveAll 못씀...
-			for(SendHistory history : sendHistories){
-				sendHistoryRepository.save(history);
-			}
+			sendHistoryRepository.save(sendHistories);
 
 		} catch(Exception e) {
 			m_log.error("Ǫ�� �߼� ���̺� �߼۰�� ������Ʈ �� Exception�� �߻��߽��ϴ�.", e);
@@ -248,6 +244,7 @@ public class MarketService {
 				Long id = Long.parseLong(s);
 				sendRepository.delete(id);
 			}
+
 		} catch(Exception e) {
 			m_log.error("deleteSendInfoArray EXCEPTION", e);
 		}
