@@ -111,9 +111,9 @@ public class DaemonStarter {
 	 * 운영에서 ddl-auto  none만 써야됨!!
 	 */
 	public void run(){
-//		fillSendRepository();
-//		updateMarketRepository();
-//		setMarketProperty();
+		fillSendRepository();
+		updateMarketRepository();
+		setMarketProperty();
 		marketDaemon.run();
 	}
 

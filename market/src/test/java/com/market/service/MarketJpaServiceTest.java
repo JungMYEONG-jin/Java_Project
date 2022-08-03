@@ -35,18 +35,7 @@ class MarketJpaServiceTest {
     SendRepository sendRepository;
     @Autowired
     AppleApi appleApi;
-    @BeforeEach
-    void init() {
-        Market smailvn_ios = Market.builder().appId("smailvn_ios").appPkg("1016762804").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
-        Market sbank = Market.builder().appId("sbank_ios").appPkg("357484932").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
-        marketRepository.save(sbank);
-        marketRepository.save(smailvn_ios);
-        Send sbank_ios = Send.builder().appId("sbank_ios").sendStatus("0").userId("1111").errorMsg("").build();
-        Send smailvn_ios_send = Send.builder().appId("smailvn_ios").sendStatus("0").userId("1111").errorMsg("").build();
-        sendRepository.save(sbank_ios);
-        sendRepository.save(smailvn_ios_send);
 
-    }
 
     @Test
     void insertTest() throws Exception {
