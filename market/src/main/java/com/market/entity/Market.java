@@ -13,30 +13,30 @@ public class Market extends BaseTime {
     @Column(name = "SEQ")
     private Long id;
 
-    @Column(name = "APP_ID")
+    @Column(name = "APP_ID", length = 256, nullable = false)
     private String appId;
-    @Column(name = "APP_PACKAGE")
+    @Column(name = "APP_PACKAGE", length = 512, nullable = false)
     private String appPkg;
 
-    @Column(name = "OS_TYPE")
+    @Column(name = "OS_TYPE", length = 30, nullable = false)
     private String osType;
-    @Column(name = "STORE_URL")
+    @Column(name = "STORE_URL", length = 4000)
     private String storeUrl;
-    @Column(name = "TITLE_NODE")
+    @Column(name = "TITLE_NODE", length = 4000)
     private String titleNode;
-    @Column(name = "VERSION_NODE")
+    @Column(name = "VERSION_NODE", length = 4000)
     private String versionNode;
-    @Column(name = "UPDATE_NODE")
+    @Column(name = "UPDATE_NODE", length = 4000)
     private String updateNode;
-    @Column(name = "ETC1_NODE")
+    @Column(name = "ETC1_NODE", length = 4000)
     private String etc1Node;
-    @Column(name = "ETC2_NODE")
+    @Column(name = "ETC2_NODE", length = 4000)
     private String etc2Node;
-    @Column(name = "ETC3_NODE")
+    @Column(name = "ETC3_NODE", length = 4000)
     private String etc3Node;
-    @Column(name = "ETC4_NODE")
+    @Column(name = "ETC4_NODE", length = 4000)
     private String etc4Node;
-    @Column(name = "ETC5_NODE")
+    @Column(name = "ETC5_NODE", length = 4000)
     private String etc5Node;
 
     public Market() {

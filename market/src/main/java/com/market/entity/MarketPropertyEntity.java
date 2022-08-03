@@ -13,21 +13,24 @@ public class MarketPropertyEntity extends BaseTime {
     @Column(name = "SEQ")
     private Long id;
 
-    @Column(name = "PROPERTY_VERSION")
+    @Column(name = "PROPERTY_VERSION", length = 14, nullable = false)
     private String propertyVersion;
-    @Column(name = "PROPERTY_STATUS")
+    @Column(name = "PROPERTY_STATUS", length = 14, nullable = false)
     private String propertyStatus;
-    @Column(name = "PROPERTY_DATA_TYPE")
+    @Column(name = "PROPERTY_DATA_TYPE", length = 20, nullable = false)
     private String dataType;
-    @Column(name = "PROPERTY_DATA", length = 2000)
+    @Column(name = "PROPERTY_DATA", length = 4000, nullable = false)
     private String propertyData;
     // 생성일, 업데이트일 공통으로 묶음
-    @Column(name = "REG_USER_ID")
+    @Column(name = "REG_USER_ID", length = 20, nullable = false)
     private String userId;
-    @Column(name = "IS_SETTING")
+    @Column(name = "IS_SETTING", length = 20, nullable = false)
     private String isSetting;
+    @Column(name = "ETC1", length = 4000)
     private String etc1;
+    @Column(name = "ETC2", length = 4000)
     private String etc2;
+    @Column(name = "ETC3", length = 4000)
     private String etc3;
 
     // 원래 안좋은거지만 어쩔수없이..

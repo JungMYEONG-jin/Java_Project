@@ -11,14 +11,21 @@ public class SendHistory{
     @Column(name = "SEQ")
     private Long id;
 
+    @Column(name = "APP_ID", length = 256)
     private String appId;
+    @Column(name = "SEND_STATUS", length = 20)
     private String sendStatus;
-    @Column(length = 1000)
+    @Column(name = "ERROR_MSG", length = 4000)
     private String errorMsg;
+    @Column(name = "REG_USER_ID", length = 20)
     private String userId;
+    @Column(name = "REG_DT", length = 14)
     private String regDt;
+    @Column(name = "ETC1", length = 4000)
     private String etc1;
+    @Column(name = "ETC2", length = 4000)
     private String etc2;
+    @Column(name = "ETC3", length = 4000)
     private String etc3;
 
     public SendHistory() {
