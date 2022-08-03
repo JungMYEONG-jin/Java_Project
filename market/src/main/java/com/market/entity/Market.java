@@ -5,6 +5,7 @@ import com.market.base.BaseTime;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "MBM_MARKET_INFO")
 public class Market extends BaseTime {
 
     @Id

@@ -5,6 +5,7 @@ import com.market.daemon.dao.MarketPropertyDao;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "MBM_MARKET_PROPERTY")
 public class MarketPropertyEntity extends BaseTime {
 
     @Id

@@ -5,6 +5,7 @@ import com.market.base.BaseTime;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "MBM_MARKET_SEND_INFO")
 public class Send extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

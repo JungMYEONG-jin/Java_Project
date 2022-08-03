@@ -15,8 +15,7 @@ import com.market.provider.ApplicationContextProvider;
 import com.market.repository.MarketPropertyRepository;
 import com.market.repository.MarketRepository;
 import com.market.repository.SendRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,18 +40,6 @@ class MarketSenderTest {
     @Autowired
     MarketService marketService;
 
-
-    @BeforeEach
-    void init(){
-//        insertMarketList();
-//        Market sbank_android = Market.builder().appId("sbank_android").appPkg("com.shinhan.sbanking").osType(MarketInfo.OS_TYPE_AND).storeUrl("https://play.google.com/store/apps/details?id=").titleNode("[first://]div[class=sIskre] c-wiz[jsrenderer=vVnOi]")
-//                .versionNode("div[class=xyOfqd] div[class=hAyfc]:nth-child(4)").updateNode("[first://]div[class=xyOfqd] div[class=hAyfc]:nth-child(1) div:nth-child(2)").build();
-//        marketRepository.save(sbank_android);
-//        Send sbank_android1 = Send.builder().appId("sbank_android").sendStatus("0").userId("1111").errorMsg("").build();
-//        sendRepository.save(sbank_android1);
-    }
-
-
     @Test
     void daemonTest() throws Exception {
         daemon.run();
@@ -64,8 +51,9 @@ class MarketSenderTest {
         for (Market market : all) {
             market.setUptDt("1"); // 변경을 줌
             // enable 모드라 자동으로 trace하여 다시 수정일 setting 됨.
+            marketRepository.save(market);
         }
-        marketRepository.saveAll(all);
+
     }
 
     @Test
@@ -77,20 +65,29 @@ class MarketSenderTest {
     }
 
     private void insertMarketList(){
-        List<Market> marketList = new ArrayList<Market>();
         for(AppleAppId value : AppleAppId.values()){
-            marketList.add(Market.builder().appId(value.name()).appPkg(value.getAppPkg()).osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build());
+            Market market = new Market();
+            market.setAppId(value.name());
+            market.setAppPkg(value.getAppPkg());
+            market.setOsType(MarketInfo.OS_TYPE_IOS_API);
+            market.setStoreUrl("https://itunes.apple.com/kr/app/id");
+            marketRepository.save(market);
         }
-        marketRepository.saveAll(marketList);
+
     }
 
     private void insertSendList(){
         sendRepository.deleteAll(); // 모두 제거 후 새로 삽입
         List<Send> sendList = new ArrayList<Send>();
         for(AppleAppId value : AppleAppId.values()){
-            sendList.add(Send.builder().appId(value.name()).sendStatus("0").userId("1111").errorMsg("").build());
+            Send send = new Send();
+            send.setAppId(value.name());
+            send.setSendStatus("0");
+            send.setUserId("1111");
+            send.setErrorMsg("");
+            sendList.add(send);
         }
-        sendRepository.saveAll(sendList);
+        sendRepository.save(sendList);
     }
 
     private void setMarketProperty() {

@@ -36,71 +36,71 @@ class MarketServiceTest {
     @Autowired
     MarketPropertyRepository marketPropertyRepository;
 
-    @BeforeEach
-    void init() {
-        Market smailvn_ios = Market.builder().appId("smailvn_ios").appPkg("1016762804").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
-        Market sbank = Market.builder().appId("sbank_ios").appPkg("357484932").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
-        marketRepository.save(sbank);
-        marketRepository.save(smailvn_ios);
-        Send sbank_ios = Send.builder().appId("sbank_ios").sendStatus("0").userId("1111").errorMsg("").build();
-        Send smailvn_ios_send = Send.builder().appId("smailvn_ios").sendStatus("0").userId("1111").errorMsg("").build();
-        sendRepository.save(sbank_ios);
-        sendRepository.save(smailvn_ios_send);
-
-        MarketPropertyEntity marketProperty = new MarketPropertyEntity();
-        marketProperty.setPropertyVersion("1.0.1");
-        marketProperty.setPropertyStatus("0");
-        marketProperty.setDataType("1");
-        marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
-        marketProperty.setUserId("21111008");
-        marketProperty.setIsSetting("N");
-        marketPropertyRepository.save(marketProperty);
-
-    }
-
-    @Test
-    void getSendInfoTest() throws GetSendInfoListException {
-        List<SendInfo> sendInfoList = marketService.getSendInfoList();
-        for (SendInfo sendInfo : sendInfoList) {
-            System.out.println("sendInfo = " + sendInfo);
-        }
-    }
-
-    @Test
-    void getSendMarketInfoList() throws Exception {
-        List<MarketInfo> result = marketService.getSendMarketInfoList();
-        for (MarketInfo marketInfo : result) {
-            System.out.println("marketInfo = " + marketInfo);
-        }
-    }
-
-    @Test
-    void insertSendInfoTest() {
-        Market smailvn_ios = Market.builder().appId("sdas").appPkg("1016762804").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
-        Send sbank_ios = Send.builder().appId("32133").sendStatus("0").userId("1111").errorMsg("").build();
-        marketRepository.save(smailvn_ios);
-        sendRepository.save(sbank_ios);
-        SendInfo sendInfo = new SendInfo(smailvn_ios, sbank_ios);
-        System.out.println("sendInfo = " + sendInfo);
-        marketService.insertSendInfo(sendInfo);
-
-    }
-
-    @Test
-    void insertPeriodMarketSendInfoTest() {
-        marketService.insertPeriodMarketSendInfo();
-        List<Send> all = sendRepository.findAll();
-    }
-
-    @Test
-    void insertSendHistoryInfoTest() {
-        Market smailvn_ios = Market.builder().appId("sdas").appPkg("1016762804").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
-        Send sbank_ios = Send.builder().appId("32133").sendStatus("0").userId("1111").errorMsg("").build();
-        marketRepository.save(smailvn_ios);
-        sendRepository.save(sbank_ios);
-        SendInfo sendInfo = new SendInfo(smailvn_ios, sbank_ios);
-        marketService.insertSendHistoryInfo(sendInfo);
-    }
+//    @BeforeEach
+//    void init() {
+//        Market smailvn_ios = Market.builder().appId("smailvn_ios").appPkg("1016762804").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
+//        Market sbank = Market.builder().appId("sbank_ios").appPkg("357484932").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
+//        marketRepository.save(sbank);
+//        marketRepository.save(smailvn_ios);
+//        Send sbank_ios = Send.builder().appId("sbank_ios").sendStatus("0").userId("1111").errorMsg("").build();
+//        Send smailvn_ios_send = Send.builder().appId("smailvn_ios").sendStatus("0").userId("1111").errorMsg("").build();
+//        sendRepository.save(sbank_ios);
+//        sendRepository.save(smailvn_ios_send);
+//
+//        MarketPropertyEntity marketProperty = new MarketPropertyEntity();
+//        marketProperty.setPropertyVersion("1.0.1");
+//        marketProperty.setPropertyStatus("0");
+//        marketProperty.setDataType("1");
+//        marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+//        marketProperty.setUserId("21111008");
+//        marketProperty.setIsSetting("N");
+//        marketPropertyRepository.save(marketProperty);
+//
+//    }
+//
+//    @Test
+//    void getSendInfoTest() throws GetSendInfoListException {
+//        List<SendInfo> sendInfoList = marketService.getSendInfoList();
+//        for (SendInfo sendInfo : sendInfoList) {
+//            System.out.println("sendInfo = " + sendInfo);
+//        }
+//    }
+//
+//    @Test
+//    void getSendMarketInfoList() throws Exception {
+//        List<MarketInfo> result = marketService.getSendMarketInfoList();
+//        for (MarketInfo marketInfo : result) {
+//            System.out.println("marketInfo = " + marketInfo);
+//        }
+//    }
+//
+//    @Test
+//    void insertSendInfoTest() {
+//        Market smailvn_ios = Market.builder().appId("sdas").appPkg("1016762804").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
+//        Send sbank_ios = Send.builder().appId("32133").sendStatus("0").userId("1111").errorMsg("").build();
+//        marketRepository.save(smailvn_ios);
+//        sendRepository.save(sbank_ios);
+//        SendInfo sendInfo = new SendInfo(smailvn_ios, sbank_ios);
+//        System.out.println("sendInfo = " + sendInfo);
+//        marketService.insertSendInfo(sendInfo);
+//
+//    }
+//
+//    @Test
+//    void insertPeriodMarketSendInfoTest() {
+//        marketService.insertPeriodMarketSendInfo();
+//        List<Send> all = sendRepository.findAll();
+//    }
+//
+//    @Test
+//    void insertSendHistoryInfoTest() {
+//        Market smailvn_ios = Market.builder().appId("sdas").appPkg("1016762804").osType(MarketInfo.OS_TYPE_IOS_API).storeUrl("https://itunes.apple.com/kr/app/id").build();
+//        Send sbank_ios = Send.builder().appId("32133").sendStatus("0").userId("1111").errorMsg("").build();
+//        marketRepository.save(smailvn_ios);
+//        sendRepository.save(sbank_ios);
+//        SendInfo sendInfo = new SendInfo(smailvn_ios, sbank_ios);
+//        marketService.insertSendHistoryInfo(sendInfo);
+//    }
 
     @Test
     void getPropertyInfoTest() throws Exception {
