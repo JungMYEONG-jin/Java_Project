@@ -155,9 +155,7 @@ public class AppleApi {
             response = httpClient.execute(http);
             entity = response.getEntity();
             responseBody = EntityUtils.toString(entity, "UTF-8");
-
-            result = responseBody;
-            System.out.println("result = " + result);
+            result = responseBody; // json 형식
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -208,7 +206,7 @@ public class AppleApi {
         JSONObject obj = parseStrToJson(appVersions);
         JSONArray data = (JSONArray)obj.get("data");
         JSONObject temp = (JSONObject) data.get(0);
-        JSONObject attributes = (JSONObject)temp.get("attributes");
+        JSONObject attributes = (JSONObject)temp.get("attributes"); // 버전 업데이트일
 
         Map<String, String> map = new HashMap<String, String>(attributes);
 
@@ -216,9 +214,9 @@ public class AppleApi {
 
         JSONObject obj2 = parseStrToJson(appTitle);
         JSONObject data1 = (JSONObject)obj2.get("data");
-        JSONObject attributes1 = (JSONObject)data1.get("attributes");
+        JSONObject nameAttributes = (JSONObject)data1.get("attributes"); // 이름
 
-        map.put("name", attributes1.get("name").toString());
+        map.put("name", nameAttributes.get("name").toString());
         return map;
     }
 

@@ -60,6 +60,14 @@ public class DaemonStarter {
 
 	@Transactional
 	public void updateMarketRepository(){
+		for(AppleAppId value : AppleAppId.values()){
+			Market market = new Market();
+			market.setAppId(value.name());
+			market.setAppPkg(value.getAppPkg());
+			market.setOsType(MarketInfo.OS_TYPE_IOS_API);
+			marketRepository.save(market);
+		}
+
 		List<Market> all = marketRepository.findAll(); //매일 업데이트하기 위해...
 		for (Market market : all) {
 			market.setUptDt("1"); // 변경을 줌
@@ -75,18 +83,22 @@ public class DaemonStarter {
 		marketProperty.setPropertyVersion("1.0.1");
 		marketProperty.setPropertyStatus("0");
 		marketProperty.setDataType("1");
-		marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
+		marketProperty.setPropertyData("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
 				"<items>\n" +
-				"\t<item>\n" +
-				"\t\t<setting_time_list>\n" +
-				"\t\t\t<time_info>\n" +
-				"\t\t\t\t<checktime>070000</checktime>\n" +
-				"\t\t\t</time_info>\n" +
-				"\t\t\t<time_info>\n" +
-				"\t\t\t\t<checktime>150000</checktime>\n" +
-				"\t\t\t</time_info>\n" +
-				"\t\t</setting_time_list>\n" +
-				"\t</item>\n" +
+				"    <item>\n" +
+				"        <market_daemon_sleep_sec>2000</market_daemon_sleep_sec>\n" +
+				"        <send_daemon_sleep_sec>1000</send_daemon_sleep_sec>\n" +
+				"        <send_daemon_market_send_delay_sec>1000</send_daemon_market_send_delay_sec>\n" +
+				"        <file_update_limit_sec>30000</file_update_limit_sec>\n" +
+				"        <setting_time_list>\n" +
+				"            <time_info>\n" +
+				"                <checktime>110200</checktime>\n" +
+				"            </time_info>\n" +
+				"            <time_info>\n" +
+				"                <checktime>112000</checktime>\n" +
+				"            </time_info>\n" +
+				"        </setting_time_list>\n" +
+				"    </item>\n" +
 				"</items>");
 		marketProperty.setUserId("21111008");
 		marketProperty.setIsSetting("N");
@@ -102,7 +114,7 @@ public class DaemonStarter {
 	public void run(){
 		fillSendRepository();
 		updateMarketRepository();
-//		setMarketProperty();
+		setMarketProperty();
 		marketDaemon.run();
 	}
 

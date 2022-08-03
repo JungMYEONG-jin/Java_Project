@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<items>
+    <item>
+        <market_daemon_sleep_sec>2000</market_daemon_sleep_sec>
+        <send_daemon_sleep_sec>1000</send_daemon_sleep_sec>
+        <send_daemon_market_send_delay_sec>1000</send_daemon_market_send_delay_sec>
+        <file_update_limit_sec>30000</file_update_limit_sec>
+        <setting_time_list>
+            <time_info>
+                <checktime>142030</checktime>
+            </time_info>
+            <time_info>
+                <checktime>153400</checktime>
+            </time_info>
+        </setting_time_list>
+    </item>
+</items>

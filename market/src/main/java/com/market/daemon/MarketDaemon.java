@@ -167,6 +167,7 @@ public class MarketDaemon implements Runnable {
 		m_log.info("\n\n\n");
 		for(TimeCheker time : listDateTime){
 			m_log.info(time.toString());
+			System.out.println("time = " + time.toString());
 		}
 		m_log.info("\n\n\n");
 	}

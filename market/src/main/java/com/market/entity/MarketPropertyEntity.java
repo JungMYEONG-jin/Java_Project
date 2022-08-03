@@ -18,7 +18,7 @@ public class MarketPropertyEntity extends BaseTime {
     private String propertyStatus;
     @Column(name = "PROPERTY_DATA_TYPE")
     private String dataType;
-    @Column(name = "PROPERTY_DATA")
+    @Column(name = "PROPERTY_DATA", length = 2000)
     private String propertyData;
     // 생성일, 업데이트일 공통으로 묶음
     @Column(name = "REG_USER_ID")

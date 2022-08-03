@@ -100,15 +100,23 @@ public class MarketService {
 		}
 	}
 
+	/**
+	 * 지정 시간에 market에서 다시 send로 보냄
+	 */
 	@Transactional
 	public void insertPeriodMarketSendInfo() {
 		try {
-			Send send = new Send();
-			send.setAppId("");
-			send.setSendStatus("0");
-			send.setErrorMsg("");
-			send.setUserId("99999999");
-			sendRepository.save(send);
+
+			List<Market> all = marketRepository.findAll();
+			for (Market market : all) {
+				Send send = new Send();
+				send.setAppId(market.getAppId());
+				send.setSendStatus("0");
+				send.setErrorMsg("");
+				send.setUserId("99999999");
+				sendRepository.save(send);
+			}
+
 		} catch(Exception e) {
 			m_log.error("insertPeriodMarketSendInfo EXCEPTION.", e);
 
