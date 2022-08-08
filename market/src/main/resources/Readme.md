@@ -88,7 +88,12 @@ terminal에 접속해
 ```shell
 ./gradlew wrapper --gradle-version 4.10
 만약 실패시 gradle/gradle-wrapper.properties 직접 버전 변경
+
+# 3.xx 자바7부터 지원
+# 2.xx는 intellij에서 지원안함...
+# compile level을 java6으로 수정하는 방향으로 가야할듯..?
 ```
+
 
 ```shell
 // gradle 해당 코드 복사
