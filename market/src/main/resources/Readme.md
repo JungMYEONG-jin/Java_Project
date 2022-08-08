@@ -154,3 +154,17 @@ dependencies {
 ext['tomcat.version']='7.0.109' # for java 6
 # 해당 문구 build.gradle에 추가해주자..
 ```
+
+
+> Mac Java6 설치 방법
+
+- 현재 mac에서 지원하는 최소한 버전은 java7 임..
+- java6 설치시 이미 설치된 java가 있다며 거부당함.(기본 java8)
+- brew로 해결이 가능함.. 하지만 결국 작동 불가인듯?
+
+```shell
+brew install cask
+brew info java6 --cask # java6 있는지 확인
+brew install java6 --cask # java6 설치
+# 설치 완료
+```
