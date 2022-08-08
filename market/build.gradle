@@ -13,6 +13,8 @@ jar {
 	version =  '0.0.1-SNAPSHOT'
 }
 
+ext['tomcat.version']='7.0.109' // for java 6
+
 repositories {
 	mavenCentral()
 	mavenLocal()

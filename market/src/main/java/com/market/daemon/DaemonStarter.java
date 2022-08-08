@@ -107,11 +107,11 @@ public class DaemonStarter {
 	 * 관리자에서 market, send, property 관리함
 	 * get 해서 값만 가져올 수 있으면 됨.
 	 * 운영에서 ddl-auto  none만 써야됨!!
+	 * //		fillSendRepository();
+	 * //		updateMarketRepository();
+	 * //		setMarketProperty();
 	 */
 	public void run(){
-//		fillSendRepository();
-//		updateMarketRepository();
-//		setMarketProperty();
 		marketDaemon.run();
 	}
 

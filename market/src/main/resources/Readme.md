@@ -133,3 +133,16 @@ dependencies {
 ```
 
 버전 변경 완료
+
+
+> tomcat 버전 변경하기
+
+- 왜 버전을 변경하는지?
+- 기본 내장 tomcat은 8 이상을 사용.. 
+- java6에서도 사용 가능하려면 7.xx 사용해야함
+- Building Apache Tomcat requires a Java 6 JDK to be installed and optionally a Java 7 JDK installed in parallel with Java 6 one. The Java 7 JDK is only required if you wish to build Tomcat with JSR-356 (Java WebSocket 1.1) support.
+
+```shell
+ext['tomcat.version']='7.0.109' # for java 6
+# 해당 문구 build.gradle에 추가해주자..
+```
