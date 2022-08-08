@@ -104,8 +104,8 @@ plugins {
 }
 
 compileJava {
-	sourceCompatibility = 1.6
-	targetCompatibility = 1.6
+	sourceCompatibility = 1.6 // 해당 프로젝트 소스가 무슨 자바 버전으로 간주할지
+	targetCompatibility = 1.6 // 최소 실행이 가능하게 할 자바 버전
 }
 
 jar {
