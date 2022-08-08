@@ -95,7 +95,7 @@ terminal에 접속해
 ```
 
 
-```shell
+```groovy
 // gradle 해당 코드 복사
 
 plugins {
@@ -103,12 +103,17 @@ plugins {
 	id 'java'
 }
 
-sourceCompatibility = '1.6'
+compileJava {
+	sourceCompatibility = 1.6
+	targetCompatibility = 1.6
+}
 
 jar {
 	baseName = 'market'
 	version =  '0.0.1-SNAPSHOT'
 }
+
+ext['tomcat.version']='7.0.109' // for java 6
 
 repositories {
 	mavenCentral()
@@ -116,8 +121,10 @@ repositories {
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-web")
+//	implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    compile("org.springframework.boot:spring-boot-starter-web")
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-jdbc')
 	compile('com.googlecode.json-simple:json-simple:1.1.1')
 	compile('com.nimbusds:nimbus-jose-jwt:3.10')
 	compile('commons-dbcp:commons-dbcp:1.4')
@@ -125,9 +132,10 @@ dependencies {
 	compile('org.jsoup:jsoup:1.10.3')
 	compile('org.apache.httpcomponents:httpclient:4.2.4')
 	compile('org.modelmapper:modelmapper:2.4.4')
-	compile('org.projectlombok:lombok')
-	compileOnly fileTree(dir: 'src/main/resources/lib', include:['*.jar'])
-
+//	compile('org.projectlombok:lombok:1.18.24')
+//	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	compile fileTree(dir: 'src/main/resources/lib/', include:['*.jar'])
+	compile 'com.h2database:h2:1.4.200'
 	testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 ```
