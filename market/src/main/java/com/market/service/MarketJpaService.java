@@ -5,8 +5,6 @@ import com.market.repository.MarketRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-
 @Service
 public class MarketJpaService {
 

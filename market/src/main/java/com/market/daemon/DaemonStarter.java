@@ -6,8 +6,6 @@ import com.market.daemon.dto.SendInfo;
 import com.market.entity.Market;
 import com.market.entity.MarketPropertyEntity;
 import com.market.entity.Send;
-import com.market.property.MarketProperty;
-import com.market.provider.ApplicationContextProvider;
 import com.market.repository.MarketPropertyRepository;
 import com.market.repository.MarketRepository;
 import com.market.repository.SendRepository;
@@ -111,9 +109,9 @@ public class DaemonStarter {
 	 * 운영에서 ddl-auto  none만 써야됨!!
 	 */
 	public void run(){
-		fillSendRepository();
-		updateMarketRepository();
-		setMarketProperty();
+//		fillSendRepository();
+//		updateMarketRepository();
+//		setMarketProperty();
 		marketDaemon.run();
 	}
 

@@ -3,8 +3,6 @@ package com.market.daemon.dao;
 
 import com.market.crawling.data.CrawlingData;
 import com.market.entity.Market;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 
 /**
  * @author parkyk

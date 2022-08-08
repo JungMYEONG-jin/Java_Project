@@ -1,7 +1,5 @@
 package com.market.daemon.dao;
 
-import org.modelmapper.ModelMapper;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

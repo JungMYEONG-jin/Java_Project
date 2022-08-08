@@ -11,20 +11,17 @@ import com.market.entity.SendHistory;
 import com.market.exception.AppDataException;
 import com.market.exception.GetSendInfoListException;
 import com.market.property.MarketProperty;
-import com.market.provider.ApplicationContextProvider;
 import com.market.repository.MarketPropertyRepository;
 import com.market.repository.MarketRepository;
 import com.market.repository.SendHistoryRepository;
 import com.market.repository.SendRepository;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class MarketService {

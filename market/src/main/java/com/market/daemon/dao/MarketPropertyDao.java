@@ -1,7 +1,6 @@
 package com.market.daemon.dao;
 
 
-import com.market.entity.MarketPropertyEntity;
 import com.market.util.TimeCheker;
 
 /**
