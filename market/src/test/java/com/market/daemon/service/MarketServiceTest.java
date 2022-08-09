@@ -14,8 +14,6 @@ import com.market.repository.SendHistoryRepository;
 import com.market.repository.SendRepository;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -102,43 +100,43 @@ class MarketServiceTest {
 //        marketService.insertSendHistoryInfo(sendInfo);
 //    }
 
-    @Test
-    void getPropertyInfoTest() throws Exception {
-        MarketPropertyDao propertyInfo = marketService.getPropertyInfo();
-        System.out.println("propertyInfo = " + propertyInfo);
-    }
-
-    @Test
-    void insertSendHistArrayTest() {
-        marketService.insertSendHistArray(new SendInfo(), "1,2");
-    }
-
-    @Test
-    void insertSendHistArrayTest2() {
-        marketService.insertSendHistArray("1,2");
-    }
-
-    @Test
-    void deleteSendInfoArrayTest() {
-        marketService.deleteSendInfoArray("1,2");
-    }
-
-    @Test
-    void deleteSendInfoArrayTest2() {
-        marketService.deleteSendInfoArray(new SendInfo(),"1,2");
-    }
-
-    @Test
-    void updateSendInfoTest() {
-        SendInfo sendInfo = new SendInfo();
-        sendInfo.setSeq("1");
-        sendInfo.setSendStatus("1212112");
-        sendInfo.setErrorMsg("Error!!!!!!!");
-        marketService.updateSendInfo(sendInfo);
-    }
-
-    @Test
-    void testInsertMarketDataTest() {
-        marketService.testInsertMarketData("com.shinhan.com", "310392813");
-    }
+//    @Test
+//    void getPropertyInfoTest() throws Exception {
+//        MarketPropertyDao propertyInfo = marketService.getPropertyInfo();
+//        System.out.println("propertyInfo = " + propertyInfo);
+//    }
+//
+//    @Test
+//    void insertSendHistArrayTest() {
+//        marketService.insertSendHistArray(new SendInfo(), "1,2");
+//    }
+//
+//    @Test
+//    void insertSendHistArrayTest2() {
+//        marketService.insertSendHistArray("1,2");
+//    }
+//
+//    @Test
+//    void deleteSendInfoArrayTest() {
+//        marketService.deleteSendInfoArray("1,2");
+//    }
+//
+//    @Test
+//    void deleteSendInfoArrayTest2() {
+//        marketService.deleteSendInfoArray(new SendInfo(),"1,2");
+//    }
+//
+//    @Test
+//    void updateSendInfoTest() {
+//        SendInfo sendInfo = new SendInfo();
+//        sendInfo.setSeq("1");
+//        sendInfo.setSendStatus("1212112");
+//        sendInfo.setErrorMsg("Error!!!!!!!");
+//        marketService.updateSendInfo(sendInfo);
+//    }
+//
+//    @Test
+//    void testInsertMarketDataTest() {
+//        marketService.testInsertMarketData("com.shinhan.com", "310392813");
+//    }
 }
