@@ -1,0 +1,41 @@
+Manifest-Version: 1.0
+Main-Class: com.market.MarketApplication
+Class-Path: junit-platform-commons-1.8.1.jar spring-boot-starter-test-1.
+ 5.22.RELEASE.jar aspectjweaver-1.8.14.jar spring-boot-starter-tomcat-1.
+ 5.22.RELEASE.jar spring-expression-4.3.25.RELEASE.jar json-path-2.2.0.j
+ ar jandex-2.0.0.Final.jar junit-jupiter-api-5.8.1.jar commons-codec-1.1
+ 0.jar javassist-3.21.0-GA.jar slf4j-api-1.7.26.jar spring-webmvc-4.3.25
+ .RELEASE.jar spring-data-commons-1.13.23.RELEASE.jar ojdbc14.jar spring
+ -aop-4.3.25.RELEASE.jar json-smart-1.3.1.jar spring-boot-starter-loggin
+ g-1.5.22.RELEASE.jar validation-api-1.1.0.Final.jar jsoup-1.10.3.jar ja
+ ckson-databind-2.8.11.3.jar tomcat-embed-el-7.0.109.jar spring-boot-1.5
+ .22.RELEASE.jar jul-to-slf4j-1.7.26.jar spring-boot-starter-data-jpa-1.
+ 5.22.RELEASE.jar h2-1.4.200.jar logback-classic-1.1.11.jar junit-jupite
+ r-engine-5.8.1.jar httpcore-4.4.11.jar hibernate-commons-annotations-5.
+ 0.1.Final.jar bcprov-jdk15on-1.52.jar spring-orm-4.3.25.RELEASE.jar jbo
+ ss-logging-3.3.2.Final.jar classmate-1.3.4.jar hibernate-core-5.0.12.Fi
+ nal.jar junit-jupiter-params-5.8.1.jar assertj-core-2.6.0.jar tomcat-an
+ notations-api-7.0.109.jar spring-boot-starter-web-1.5.22.RELEASE.jar ju
+ nit-jupiter-5.8.1.jar jcip-annotations-1.0.jar hamcrest-core-1.3.jar sp
+ ring-boot-starter-jdbc-1.5.22.RELEASE.jar opentest4j-1.2.0.jar hibernat
+ e-entitymanager-5.0.12.Final.jar objenesis-2.1.jar logback-core-1.1.11.
+ jar json-simple-1.1.1.jar tomcat-embed-websocket-7.0.109.jar spring-web
+ -4.3.25.RELEASE.jar asm-5.0.3.jar spring-aspects-4.3.25.RELEASE.jar jun
+ it-4.12.jar modelmapper-2.4.4.jar hibernate-validator-5.3.6.Final.jar t
+ omcat-jdbc-7.0.109.jar spring-jdbc-4.3.25.RELEASE.jar spring-beans-4.3.
+ 25.RELEASE.jar spring-boot-test-autoconfigure-1.5.22.RELEASE.jar common
+ s-dbcp-1.4.jar android-json-0.0.20131108.vaadin1.jar jackson-core-2.8.1
+ 1.jar spring-boot-starter-1.5.22.RELEASE.jar junit-platform-engine-1.8.
+ 1.jar spring-tx-4.3.25.RELEASE.jar antlr-2.7.7.jar apiguardian-api-1.1.
+ 2.jar spring-boot-test-1.5.22.RELEASE.jar commons-io-2.4.jar jsonassert
+ -1.4.0.jar json-smart-2.2.1.jar jcl-over-slf4j-1.7.26.jar jackson-annot
+ ations-2.8.0.jar spring-data-jpa-1.11.23.RELEASE.jar spring-test-4.3.25
+ .RELEASE.jar spring-boot-autoconfigure-1.5.22.RELEASE.jar log4j-over-sl
+ f4j-1.7.26.jar snakeyaml-1.17.jar spring-boot-starter-aop-1.5.22.RELEAS
+ E.jar spring-core-4.3.25.RELEASE.jar log4j-1.2.11.jar dom4j-1.6.1.jar t
+ omcat-embed-core-7.0.109.jar ojdbc14.jar hamcrest-library-1.3.jar httpc
+ lient-4.2.4.jar mockito-core-1.10.19.jar spring-context-4.3.25.RELEASE.
+ jar commons-pool-1.6.jar hibernate-jpa-2.1-api-1.0.0.Final.jar tomcat-j
+ uli-7.0.109.jar accessors-smart-1.1.jar javax.transaction-api-1.2.jar n
+ imbus-jose-jwt-3.10.jar
+

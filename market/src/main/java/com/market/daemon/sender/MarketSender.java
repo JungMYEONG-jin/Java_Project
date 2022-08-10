@@ -203,7 +203,7 @@ public class MarketSender extends Thread {
 											+ ret.toString());
 									mapResCrawling.put(ret.getAppId(), ret);
 
-									// Max Seqence üũ
+									// Max Seqence
 
 									// TODO parkyk
 									if (nArraySendSeqCnt == 0) {

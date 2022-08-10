@@ -168,3 +168,28 @@ brew info java6 --cask # java6 있는지 확인
 brew install java6 --cask # java6 설치
 # 설치 완료
 ```
+
+
+> Gradle offline build
+- gradle/wrapper/gradle-wrapper.properties를 수정하면됨
+- distributionURL=gradle-version.bin.zip 으로 변경하자.
+- 그리고 해당 폴더에 실제로 bin.zip 폴더를 넣어주면 됨.
+- 하지만 이렇게 해서는 해결불가...cache 파일이 없다.
+```shell
+I have found a solution. A few files in C:\Users"USER_NAME".gradle folder contains paths to libs with <USER_NAME>. I tried to replace “USER_NAME” to my user name, however it wasn’t succesfull. I decided change path to .gradle folder from C:\Users<USER_NAME>.gradle to D:.gradle, download libs on PC-1 and then move .gradle folder from PC-1 to PC-2. On PC-2 I launch folowing command:
+
+gradle myTask --gradle-user-home D:\.gradle --offline
+and it worked. In order to change gradle folder on PC-1 you have to use the following command:
+
+gradle --gradle-user-home D:\.gradle --offline
+```
+- 기본적으로 gradle은 username/.gradle 로 cache 파일을 저장한다.
+- 각 pc마다 username이 다르기 때문에 여기서 문제가 발생!
+- 그래서 gradle home directory를 설정해주고 cache 생성후 옮기면 됨.
+```shell
+# online PC
+gradle bootRepackage -g C:\\Gradle\\.gradle
+# 해당 폴더 복사해서 offline PC에 똑같은 경로에 설정하고
+gradle bootRepackage -g C:\\Gradle\\.gradle --offline 하면 됨.
+```
+

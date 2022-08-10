@@ -1,12 +1,10 @@
 package com.market.property;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Description;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class MarketPropertyTest {
@@ -15,7 +13,6 @@ class MarketPropertyTest {
     MarketProperty marketProperty;
 
     @Description(value = "프로퍼티 설정 확인")
-    @Test
     void propertyTest() {
 
         String output_xml_file_name = marketProperty.getOutput_xml_file_name();
