@@ -1,8 +1,10 @@
 package com.spring.vol2.chapter1.di.config;
 
+import com.spring.vol2.chapter1.di.ArrBean;
 import com.spring.vol2.chapter1.di.Hello;
 import com.spring.vol2.chapter1.di.Printer;
 import com.spring.vol2.chapter1.di.StringPrinter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,6 +24,11 @@ public class HelloConfig {
         hello.setName("Spring");
         hello.setPrinter(printer());
         return hello;
+    }
+
+    @Bean
+    public ArrBean arrBean(){
+        return new ArrBean();
     }
 
     @Bean

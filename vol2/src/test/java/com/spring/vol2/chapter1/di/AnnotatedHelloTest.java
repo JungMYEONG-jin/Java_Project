@@ -1,12 +1,14 @@
 package com.spring.vol2.chapter1.di;
 
 import com.spring.vol2.chapter1.di.config.AnnotatedHelloConfig;
+import com.spring.vol2.chapter1.di.config.HelloConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -42,5 +44,15 @@ class AnnotatedHelloTest {
         ApplicationContext context = new AnnotationConfigApplicationContext(AnnotatedHelloConfig.class);
         AnnotatedHelloConfig annotatedHelloConfig = context.getBean("annotatedHelloConfig", AnnotatedHelloConfig.class);
         assertThat(annotatedHelloConfig).isNotNull();
+    }
+
+    @Test
+    void arrBeanTest() {
+        ApplicationContext context = new AnnotationConfigApplicationContext(HelloConfig.class);
+        ArrBean arrBean = context.getBean("arrBean", ArrBean.class);
+        int[] arr = arrBean.getArr();
+        for (int i : arr) {
+            System.out.println(i);
+        }
     }
 }
