@@ -18,7 +18,7 @@ public class Send extends BaseTime {
     private String sendStatus;
     @Column(name = "ERROR_MSG", length = 1000)
     private String errorMsg;
-    @Column(name = "REG_USER_ID", length = 20)
+    @Column(name = "REQ_USER_ID", length = 20)
     private String userId;
 
     @Column(name = "ETC1", length = 4000)

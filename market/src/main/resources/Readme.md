@@ -191,5 +191,7 @@ gradle --gradle-user-home D:\.gradle --offline
 gradle bootRepackage -g C:\\Gradle\\.gradle
 # 해당 폴더 복사해서 offline PC에 똑같은 경로에 설정하고
 gradle bootRepackage -g C:\\Gradle\\.gradle --offline 하면 됨.
+
+gradle clean bootRun -g C:\\Gradle\\.gradle --offline
 ```
 

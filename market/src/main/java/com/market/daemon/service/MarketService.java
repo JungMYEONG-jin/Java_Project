@@ -117,7 +117,7 @@ public class MarketService {
 			sendRepository.save(sendList);
 
 		} catch(Exception e) {
-			m_log.error("insertPeriodMarketSendInfo EXCEPTION.", e);
+			m_log.error("'iodMarketSendInfo EXCEPTION.", e);
 
 		}
 	}

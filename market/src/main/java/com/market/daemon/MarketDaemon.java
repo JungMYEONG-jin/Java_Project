@@ -184,6 +184,9 @@ public class MarketDaemon implements Runnable {
 	private boolean checkSendPacket() {
 
 		if(listDateTime != null && listDateTime.isEmpty() == false){
+			for (TimeCheker timeCheker : listDateTime) {
+
+			}
 
 			TimeCheker dtchk = listDateTime.getFirst();
 			if(dtchk != null){
@@ -246,7 +249,7 @@ public class MarketDaemon implements Runnable {
 
 	private boolean isChangeSettingInfo() {
 		try {
-			System.out.println("getPropertyInfo start");
+			System.out.println("'Info start");
 			MarketPropertyDao newPropertyDAO = serviceMarket.getPropertyInfo();
 //			System.out.println(newPropertyDAO);
 			System.out.println("getPropertyInfo end");
