@@ -195,3 +195,16 @@ gradle bootRepackage -g C:\\Gradle\\.gradle --offline 하면 됨.
 gradle clean bootRun -g C:\\Gradle\\.gradle --offline
 ```
 
+## Checked Exception vs Unchecked Exception
+- 체크 익셉션은 정말 치명적인 경우에만 사용하자.
+- 왜 그래야 하나?
+- 무조건 try catch 로 처리하거나 현재 메소드에서 처리하기 싫다면 throws를 해야함
+- 이렇게 되면 만약 다른 메소드에서 해당 메소드를 사용한다면 예외를 처리하거나 또 throws 해서 던져야됨...
+- 악순환의 반복이 된다.
+- 예외에서 회복할 수 있다는 장점이 있지 않은가?
+- 회복할 수 있다는 장점이 있긴 하지만... 그런 경우는 거의 찾기가 힘들다고 한다.
+- 언체크 익셉셥의 장점은?
+- try catch 안해도됨. 메소드에 throws 안해도됨. 
+- 만약 기존 프로젝트에 checked exception을 추가했다면 해당 메소드를 사용하는 모든 메소드에 throws를 추가하거나 try catch 로 예외 처리를 해야함.
+- 하지만 runtime은 아무것도 할 필요가 없다!!
+- 둘중 고민이 된다면 우선 runtime exception 사용하자.

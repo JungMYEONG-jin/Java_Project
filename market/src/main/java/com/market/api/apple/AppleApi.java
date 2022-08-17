@@ -159,10 +159,9 @@ public class AppleApi {
             entity = response.getEntity();
             responseBody = EntityUtils.toString(entity, "UTF-8");
             result = responseBody; // json 형식
-            System.out.println("res" + result);
 
         } catch (Exception e) {
-            throw new AppleAPIException("에러발생!!!" + e);
+            throw new AppleAPIException(e);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
@@ -243,7 +242,7 @@ public class AppleApi {
 
     private byte[] readPrivateKey(String keyPath)
     {
-        Resource resource = new ClassPathResource(keyPath+"11");
+        Resource resource = new ClassPathResource(keyPath);
 
         byte[] content = null;
         try
