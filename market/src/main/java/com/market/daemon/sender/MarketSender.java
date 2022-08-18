@@ -282,10 +282,10 @@ public class MarketSender extends Thread {
 					}catch (InterruptedException e){
 						e.printStackTrace();
 					}
-					threadPoolExecutor.shutdown(); // 모두 돌면 종료
-					m_log.info("Crawling End");
 
-					processSleep();
+					threadPoolExecutor.shutdown(); // 모두 돌면 종료
+
+					m_log.info("Crawling End");
 
 					if (myArraySeqCount > 0 && !myArraySeq.equals("")) {
 						updateSendInfoArray(myArraySeq);
