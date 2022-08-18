@@ -90,10 +90,10 @@ public class DaemonStarter {
 				"        <file_update_limit_sec>30000</file_update_limit_sec>\n" +
 				"        <setting_time_list>\n" +
 				"            <time_info>\n" +
-				"                <checktime>122400</checktime>\n" +
+				"                <checktime>144200</checktime>\n" +
 				"            </time_info>\n" +
 				"            <time_info>\n" +
-				"                <checktime>133100</checktime>\n" +
+				"                <checktime>151500</checktime>\n" +
 				"            </time_info>\n" +
 				"        </setting_time_list>\n" +
 				"    </item>\n" +

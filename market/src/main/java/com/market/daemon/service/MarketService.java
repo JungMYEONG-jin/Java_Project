@@ -1,6 +1,7 @@
 package com.market.daemon.service;
 
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.market.daemon.dao.MarketInfo;
 import com.market.daemon.dao.MarketPropertyDao;
 import com.market.daemon.dto.SendInfo;
@@ -19,9 +20,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MarketService {
@@ -208,23 +207,24 @@ public class MarketService {
 
 		try {
 			String[] split = arraySendSeq.split(",");
+			List<Long> ids = new ArrayList<Long>();
+			List<SendHistory> sendHistories = new ArrayList<SendHistory>();
 			List<Send> all = sendRepository.findAll();
-			List<Send> sendByIds = new ArrayList<Send>();
-			for (String str : split) {
+			for(String str : split){
 				Long id = Long.parseLong(str);
+				ids.add(id);
+			}
+
+			Collections.sort(ids);
+
+			for(Long id : ids){
 				for(Send send : all){
 					if(send.getId().equals(id)) {
-						sendByIds.add(send);
+						sendHistories.add(send.of());
 						break; // id 는 pk라 한번밖에 일치 못함...
 					}
 				}
 			}
-
-			List<SendHistory> sendHistories = new ArrayList<SendHistory>();
-			for (Send send : sendByIds) {
-				sendHistories.add(send.of());
-			}
-
 			sendHistoryRepository.save(sendHistories);
 
 		} catch(Exception e) {

@@ -50,20 +50,16 @@ public class MarketSender extends Thread {
 
 	private Crawling crawling;
 
-	// for thread
-	private SendInfo mySendInfo;
-	private String myArraySeq = "";
-	private int myArraySeqCount;
-
 	private long regTime = MarketProperty.INIT_VALUE;
 
 	private int m_nMaxArraySendSeqCnt = 500;
 
 	private HashMap<String, CrawlingResultData> mapResCrawling = new HashMap<String, CrawlingResultData>();
-	private BlockingQueue queue = new LinkedBlockingQueue(1000);
-	private UserThreadFactory factory = new UserThreadFactory("MJ");
-	private UserRejectHandler handler = new UserRejectHandler();
-	private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(50, 100, 60, TimeUnit.SECONDS, queue, factory, handler);
+
+	// for thread
+	private SendInfo mySendInfo;
+	private String myArraySeq = "";
+	private int myArraySeqCount;
 
 	private int mCheckCnt;
 
@@ -247,8 +243,15 @@ public class MarketSender extends Thread {
 
 					m_log.info("ProcessSendInfo Start Time : " + startTime);
 
-
-
+					BlockingQueue queue = new LinkedBlockingQueue(1000);
+					UserThreadFactory factory = new UserThreadFactory("MJ");
+					UserRejectHandler handler = new UserRejectHandler();
+					ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(50, 100, 60, TimeUnit.SECONDS, queue, factory, handler);
+					/**
+					 * java6에서는 람다가 안됨.. 따라서 전역변수로 myArraySeq, myArraySeqCount를 관리해야함.
+					 */
+					myArraySeq = "";
+					myArraySeqCount = 0;
 
 					m_log.info("Crawling Start");
 					System.out.println("Crawling Start");
@@ -260,8 +263,6 @@ public class MarketSender extends Thread {
 							@Override
 							public void run() {
 								doCrawling(mySendInfo);
-								System.out.println("myArraySeqCount " + myArraySeqCount);
-								System.out.println("myArraySeq " + myArraySeq);
 								countDownLatch.countDown();
 							}
 						});
@@ -281,21 +282,17 @@ public class MarketSender extends Thread {
 					}catch (InterruptedException e){
 						e.printStackTrace();
 					}
-
 					threadPoolExecutor.shutdown(); // 모두 돌면 종료
-
 					m_log.info("Crawling End");
-					System.out.println("nArraySendSeqCnt size " + myArraySeqCount);
-					System.out.println("arraySendSeq " + myArraySeq);
 
+					processSleep();
 
-					/**
-					 * HIST ���̺�� �ű�� ���� �ϱ�
-					 */
 					if (myArraySeqCount > 0 && !myArraySeq.equals("")) {
 						updateSendInfoArray(myArraySeq);
 						sendInfoList.clear();
 					}
+
+
 				}
 
 		} catch (Exception e) {
