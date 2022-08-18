@@ -93,7 +93,7 @@ public class DaemonStarter {
 				"                <checktime>144200</checktime>\n" +
 				"            </time_info>\n" +
 				"            <time_info>\n" +
-				"                <checktime>151500</checktime>\n" +
+				"                <checktime>162600</checktime>\n" +
 				"            </time_info>\n" +
 				"        </setting_time_list>\n" +
 				"    </item>\n" +

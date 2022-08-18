@@ -214,7 +214,9 @@ public class MarketService {
 				Long id = Long.parseLong(str);
 				ids.add(id);
 			}
-
+			// 멀티스레드 환경에서 시퀀스 순서가 꼬이면 hist에 값이 덜 넣어지는 현상 발생
+			// 대체 왜지..?
+			// 현상 방지하고자 id 정렬후 비교로 ...
 			Collections.sort(ids);
 
 			for(Long id : ids){
