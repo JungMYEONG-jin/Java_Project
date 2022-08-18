@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.concurrent.*;
 
 @Component
 public class DaemonStarter {
@@ -115,6 +116,7 @@ public class DaemonStarter {
 		fillSendRepository();
 		updateMarketRepository();
 		setMarketProperty();
+
 		marketDaemon.run();
 	}
 
