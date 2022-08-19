@@ -167,7 +167,6 @@ public class MarketDaemon implements Runnable {
 		m_log.info("\n\n\n");
 		for(TimeCheker time : listDateTime){
 			m_log.info(time.toString());
-			System.out.println("time = " + time.toString());
 		}
 		m_log.info("\n\n\n");
 	}
@@ -185,10 +184,6 @@ public class MarketDaemon implements Runnable {
 	private boolean checkSendPacket() {
 
 		if(listDateTime != null && listDateTime.isEmpty() == false){
-			for (TimeCheker timeCheker : listDateTime) {
-
-			}
-
 			TimeCheker dtchk = listDateTime.getFirst();
 			if(dtchk != null){
 				try {
@@ -196,7 +191,6 @@ public class MarketDaemon implements Runnable {
 						if(listDateTime != null && listDateTime.isEmpty() == false){
 							listDateTime.removeFirst();
 						}
-
 						return true;
 					} else {
 					}
@@ -250,9 +244,8 @@ public class MarketDaemon implements Runnable {
 
 	private boolean isChangeSettingInfo() {
 		try {
-			System.out.println("'Info start");
+			System.out.println("getPropertyInfo start");
 			MarketPropertyDao newPropertyDAO = serviceMarket.getPropertyInfo();
-//			System.out.println(newPropertyDAO);
 			System.out.println("getPropertyInfo end");
 			if(propertyDAO == null){
 				setPropertyInfo(newPropertyDAO);

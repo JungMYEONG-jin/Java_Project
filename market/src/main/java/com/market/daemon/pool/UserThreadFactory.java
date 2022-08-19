@@ -1,4 +1,4 @@
-package com.market.daemon;
+package com.market.daemon.pool;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -17,7 +17,7 @@ public class SendHistory{
     private String sendStatus;
     @Column(name = "ERROR_MSG", length = 4000)
     private String errorMsg;
-    @Column(name = "REG_USER_ID", length = 20)
+    @Column(name = "REQ_USER_ID", length = 20)
     private String userId;
     @Column(name = "REG_DT", length = 14)
     private String regDt;

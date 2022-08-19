@@ -3,8 +3,9 @@ package com.market.daemon.sender;
 import com.market.api.apple.AppleApi;
 import com.market.crawling.Crawling;
 import com.market.crawling.data.CrawlingResultData;
-import com.market.daemon.UserRejectHandler;
-import com.market.daemon.UserThreadFactory;
+import com.market.daemon.pool.MyThreadPoolConfig;
+import com.market.daemon.pool.UserRejectHandler;
+import com.market.daemon.pool.UserThreadFactory;
 import com.market.daemon.dto.SendInfo;
 import com.market.daemon.service.MarketService;
 import com.market.errorcode.ErrorCode;
@@ -14,7 +15,10 @@ import com.market.exception.GetSendInfoListException;
 import com.market.exception.SendInfoListException;
 import com.market.property.MarketProperty;
 import org.apache.log4j.Logger;
-import org.h2.engine.User;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -59,23 +63,27 @@ public class MarketSender extends Thread {
 	// for thread
 	private SendInfo mySendInfo;
 	private String myArraySeq = "";
+//	private ThreadPoolExecutor threadPoolExecutor;
+	//수동 주입해야 하는 이유.. market sender를  marketdaemon에서 수동 생성자로 생성하기 때문임.
+	private ThreadPoolTaskExecutor threadPoolExecutor;
+	// 어차피 in (seq) 이기 때문에 seq간 순서는 중요하지 않음. 따라서 volatile 사용 안해도 됨.
 	private int myArraySeqCount;
 
 	private int mCheckCnt;
 
-	private boolean isExist = false;
-
-	public void setExist(boolean exist) {
-		isExist = exist;
-	}
-
-	public boolean isExist() {
-		return isExist;
-	}
-
 	public MarketSender(MarketService marketService, MarketProperty marketProperty){
 		this.propertyMarket = marketProperty;
 		this.serviceMarket = marketService;
+		// pool init
+//		BlockingQueue queue = new LinkedBlockingQueue(100);
+//		UserThreadFactory factory = new UserThreadFactory("MJ");
+//		UserRejectHandler handler = new UserRejectHandler();
+//		threadPoolExecutor = new ThreadPoolExecutor(50, 100, 60, TimeUnit.SECONDS, queue, factory, handler);
+
+		// 수동 주입
+		ApplicationContext context = new AnnotationConfigApplicationContext(MyThreadPoolConfig.class);
+		threadPoolExecutor = context.getBean("taskExecutor", ThreadPoolTaskExecutor.class);
+		System.out.println("marketSender init");
 		initialize();
 	}
 
@@ -118,9 +126,6 @@ public class MarketSender extends Thread {
 				} catch (InterruptedException e) {
 					ErrorCode.LogError(getClass(), "B1003", e);
 				}
-
-//				if(isExist)
-//					break;
 
 				mCheckCnt++;
 			}
@@ -168,7 +173,7 @@ public class MarketSender extends Thread {
 		try {
 			if (sendInfo != null) {
 				System.out.println("sendInfo = " + sendInfo);
-				// set ��Ͻð�
+
 				regTime = System.currentTimeMillis();
 				// 이 부분이 크롤링 동작 인듯
 				CrawlingResultData ret = null;
@@ -229,10 +234,10 @@ public class MarketSender extends Thread {
 		}
 	}
 
+	@Async("asyncTaskExecutor")
 	public void processSendInfoList(List<SendInfo> sendInfoList) throws SendInfoListException {
 
 		try {
-			// 여기 synchronized(sendInfoList)
 				if (sendInfoList.isEmpty() == false) {
 					Crawling crawling = getCrawling();
 					AppleApi appleApi = getAppleApi();
@@ -242,11 +247,6 @@ public class MarketSender extends Thread {
 					String startTime = sdf.format(date);
 
 					m_log.info("ProcessSendInfo Start Time : " + startTime);
-
-					BlockingQueue queue = new LinkedBlockingQueue(1000);
-					UserThreadFactory factory = new UserThreadFactory("MJ");
-					UserRejectHandler handler = new UserRejectHandler();
-					ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(50, 100, 60, TimeUnit.SECONDS, queue, factory, handler);
 					/**
 					 * java6에서는 람다가 안됨.. 따라서 전역변수로 myArraySeq, myArraySeqCount를 관리해야함.
 					 */
@@ -283,7 +283,7 @@ public class MarketSender extends Thread {
 						e.printStackTrace();
 					}
 
-					threadPoolExecutor.shutdown(); // 모두 돌면 종료
+//					threadPoolExecutor.shutdown(); // 모두 돌면 종료
 
 					m_log.info("Crawling End");
 
@@ -330,10 +330,8 @@ public class MarketSender extends Thread {
 			trfomer.setOutputProperty(OutputKeys.INDENT, "yes");
 
 			DOMSource source = new DOMSource(doc);
-			// Console��¿�
-//			StreamResult res= new StreamResult(System.out);
-			
-			// FILE ����
+
+
 			Date date = new Date(System.currentTimeMillis());
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 			String dateString = sdf.format(date);
@@ -348,7 +346,6 @@ public class MarketSender extends Thread {
 		}
 		
 		m_log.info("Create File End");
-//		isExist = true;
 		return false;
 	}
 

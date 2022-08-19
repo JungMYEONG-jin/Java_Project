@@ -146,6 +146,9 @@ public class MarketPropertyDao {
 			return true;
 		}
 		System.out.println("55555 ");
+		//수동 변환일때도..
+		if(!this.getPropertyData().equals(newMarketPropertyDao.getPropertyData()))
+			return true;
 		return false;
 	}
 	private int getVersionToInt(String version) {

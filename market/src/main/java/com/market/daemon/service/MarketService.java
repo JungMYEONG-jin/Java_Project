@@ -10,6 +10,7 @@ import com.market.entity.MarketPropertyEntity;
 import com.market.entity.Send;
 import com.market.entity.SendHistory;
 import com.market.exception.AppDataException;
+import com.market.exception.GetPropertyException;
 import com.market.exception.GetSendInfoListException;
 import com.market.property.MarketProperty;
 import com.market.repository.MarketPropertyRepository;
@@ -149,8 +150,8 @@ public class MarketService {
 			MarketPropertyEntity property = marketPropertyRepository.findFirstByOrderByRegDt();
 			System.out.println("findFirstByOrderByRegDt end");
 			if (property == null){
-				System.out.println("findFirstByOrderByRegDt result is null");
-				throw new RuntimeException("프로퍼티 정보가 존재하지 않습니다.");
+				System.out.println("MarketPropertyRepository getPropertyInfo result is null");
+				throw new GetPropertyException("프로퍼티 정보가 존재하지 않습니다.");
 			}
 			// MarketPropertyDao 로 변환
 			propertyInfo = property.of();

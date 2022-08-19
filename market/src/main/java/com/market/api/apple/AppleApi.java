@@ -54,7 +54,6 @@ public class AppleApi {
     public static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
     public static final String keyId = "7JL62P566N";
     public static final String keyPath = "static/apple/AuthKey_7JL62P566N.p8";
-    public static String appId = "357484932";
 
     private int CONN_TIME_OUT = 1000 * 30;
 
@@ -202,7 +201,7 @@ public class AppleApi {
 
     }
 
-    public Map<String, String> getCrawlingInfo(String id) throws Exception {
+    public Map<String, String> getCrawlingInfo(String id) throws MalformedURLException, NoSuchAlgorithmException, ParseException {
         String jwt = createJWT();
         String appVersions = getAppVersions(jwt, id);
 
@@ -231,7 +230,7 @@ public class AppleApi {
      * @throws ParseException
      * @throws NoSuchAlgorithmException
      */
-    public CrawlingResultData getCrawlingResult(String id) throws Exception {
+    public CrawlingResultData getCrawlingResult(String id) throws MalformedURLException, NoSuchAlgorithmException, ParseException {
             Map<String, String> crawlingInfo = getCrawlingInfo(id);
             String realAppID = getRealAppID(id);
             return new CrawlingResultData(realAppID, id, crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));

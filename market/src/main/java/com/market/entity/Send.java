@@ -1,12 +1,13 @@
 package com.market.entity;
 
 import com.market.base.BaseTime;
+import com.market.base.BaseTimeSend;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "MBM_MARKET_SEND_INFO")
-public class Send extends BaseTime {
+public class Send extends BaseTimeSend {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SEQ")
