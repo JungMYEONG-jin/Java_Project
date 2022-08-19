@@ -208,3 +208,82 @@ gradle clean bootRun -g C:\\Gradle\\.gradle --offline
 - 만약 기존 프로젝트에 checked exception을 추가했다면 해당 메소드를 사용하는 모든 메소드에 throws를 추가하거나 try catch 로 예외 처리를 해야함.
 - 하지만 runtime은 아무것도 할 필요가 없다!!
 - 둘중 고민이 된다면 우선 runtime exception 사용하자.
+
+## ThreadPoolTaskExecutor vs ThreadPoolExecutor
+- 쓰레드풀 이라는 공통점이 있다.
+- 실제로 기능은 똑같으며 스프링에서 직접 제공하는 ThreadPoolTaskExecutor과 자바에서 concurrency 에서 제공하는 ThreadPoolExecutor 이라는 차이점이 있을뿐이다.
+- 쓰레드풀의 장점은 미리 쓰레드를 생성해놔서 적절하게 제공한다는 점이다.
+- 사용할때마다 재 생성할 필요가 없으니 메모리 절약이 가능하며 성능도 향상된다.
+
+```java
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+@Configuration
+public class MyThreadPoolConfig {
+
+    @Bean
+    public ThreadPoolTaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(50);
+        executor.setQueueCapacity(100);
+        executor.setMaxPoolSize(100);
+        executor.setKeepAliveSeconds(60);
+        executor.setThreadNamePrefix("MJ");
+        executor.setRejectedExecutionHandler(new UserRejectHandler());
+        return executor;
+    }
+
+    static class MyClass {
+        @Autowired
+        ThreadPoolTaskExecutor taskExecutor;
+
+        void doMultiJob() {
+            taskExecutor.execute(() -> {
+//                run something...
+            });
+        }
+
+        void doMultiJobByThreadPoolExecutor() {
+            BlockingQueue queue = new LinkedBlockingQueue(100);
+		    UserThreadFactory factory = new UserThreadFactory("MJ");
+		    UserRejectHandler handler = new UserRejectHandler();
+		    threadPoolExecutor = new ThreadPoolExecutor(50, 100, 60, TimeUnit.SECONDS, queue, factory, handler);
+            ThreadPoolExecutor.execute(()->{
+                // run something...
+            });
+        }
+    }
+}
+
+```
+- 쓰레드가 모두 안전하게 작업을 마친후 어떤 행동을 하고 싶다면 CountDownLatch를 사용하면 된다.
+- init 할때 작업하는 스레드의 개수 만큼 생성해주면됨.
+
+```java
+import java.util.concurrent.CountDownLatch;
+
+static class CountDown {
+    void setCountDown() {
+        int threadSize = 100;
+        CountDownLatch countDownLatch = new CountDownLatch(threadSize);
+        
+        // 스레드가 모든 작업을 완료할때까지 대기
+        try {
+            countDownLatch.await(); // 크롤링 다 돌때까지 대기
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        // 모든 스레드가 마무리 됨. 이제 thread safe하게 작업 가능
+        // do something...
+    }
+}
+```

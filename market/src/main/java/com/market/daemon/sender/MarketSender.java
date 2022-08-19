@@ -66,9 +66,9 @@ public class MarketSender extends Thread {
 //	private ThreadPoolExecutor threadPoolExecutor;
 	//수동 주입해야 하는 이유.. market sender를  marketdaemon에서 수동 생성자로 생성하기 때문임.
 	private ThreadPoolTaskExecutor threadPoolExecutor;
-	// 어차피 in (seq) 이기 때문에 seq간 순서는 중요하지 않음. 따라서 volatile 사용 안해도 됨.
-	private int myArraySeqCount;
 
+
+	private int myArraySeqCount;
 	private int mCheckCnt;
 
 	public MarketSender(MarketService marketService, MarketProperty marketProperty){

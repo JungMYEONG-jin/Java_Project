@@ -16,6 +16,7 @@ public class MyThreadPoolConfig {
         executor.setMaxPoolSize(100);
         executor.setKeepAliveSeconds(60);
         executor.setThreadNamePrefix("MJ");
+        executor.setRejectedExecutionHandler(new UserRejectHandler());
         return executor;
     }
 
