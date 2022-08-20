@@ -45,3 +45,22 @@ class Config {
 ## @Autowired
 - required=false로 하면 해당 빈이 존재하지 않아도 오류가 발생하지 않음.
 
+
+## @ComponentScan
+- ComponentScan은 Component를 자동으로 스캔하는것이다.
+- @Configuration 사용시 주의해야함. 자기 자신을 또 빈등록 할 수 있기 때문
+- 이럴땐 excludeFilters를 사용해 자기를 제외하자.
+
+```java
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan(basePackages = "com.spring.vol2.chapter1.di",
+        excludeFilters = @ComponentScan.Filter(Configuration.class))
+public class AppConfig{
+    
+}
+
+```
