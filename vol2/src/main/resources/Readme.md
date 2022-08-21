@@ -64,3 +64,7 @@ public class AppConfig{
 }
 
 ```
+
+> EntityManager는 스프링 빈으로 등록되지 않는다. 빈으로 등록한것은 EntityManagerFactory  타입의 빈을 생성하는 LocalContaìnerEntìtyManagerFactoryBean이다.
+> 따라서 @Autowired와 같은 스프링의 DI 방법으로는 EntityManager를 주입받을 수 없다.
+> @PersistenceContext를 사용하면된다.
