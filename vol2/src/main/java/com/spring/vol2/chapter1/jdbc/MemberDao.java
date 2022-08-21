@@ -6,14 +6,14 @@ import org.springframework.orm.hibernate5.HibernateTemplate;
 
 public class MemberDao {
 
-    private HibernateTemplate hibernateTemplate;
+    private SessionFactory sessionFactory;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory){
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
+        this.sessionFactory = sessionFactory;
     }
 
     public void addMember(Member member){
-        hibernateTemplate.persist(member);
+        sessionFactory.getCurrentSession().save(member);
     }
 }
