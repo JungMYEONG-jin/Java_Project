@@ -57,7 +57,6 @@ public class MarketService {
 	public List<MarketInfo> getSendMarketInfoList() throws Exception {
 		List<MarketInfo> appInfoList = new ArrayList<MarketInfo>();
 		try {
-
 			List<Market> markets = marketRepository.findAll();
 			for (Market market : markets) {
 				appInfoList.add(new MarketInfo(market));
@@ -141,14 +140,14 @@ public class MarketService {
 
 	public MarketPropertyDao getPropertyInfo() throws Exception {
 
-		System.out.println("getPropertyInfo of MarketService start");
+		m_log.info("getPropertyInfo of MarketService start");
 		MarketPropertyDao propertyInfo = null;
 
 		try {
 			MarketPropertyEntity property = marketPropertyRepository.findFirstByOrderByRegDt();
-			System.out.println("findFirstByOrderByRegDt end");
+			m_log.info("findFirstByOrderByRegDt end");
 			if (property == null){
-				System.out.println("MarketPropertyRepository getPropertyInfo result is null");
+				m_log.error("MarketPropertyRepository getPropertyInfo result is null");
 				throw new GetPropertyException("프로퍼티 정보가 존재하지 않습니다.");
 			}
 			// MarketPropertyDao 로 변환

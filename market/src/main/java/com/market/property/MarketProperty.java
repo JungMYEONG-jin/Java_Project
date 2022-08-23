@@ -1,6 +1,7 @@
 package com.market.property;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,7 @@ public class MarketProperty {
 	public static int FILE_UPDATE_LIMIT_SEC = DEFAULT_FILE_UPDATE_LIMIT_SEC;
 	public static int FILE_UPDATE_LIMIT_SEC_FOR_TEST = 1000 * 30 ;
 	
-	public Logger log = Logger.getLogger(getClass());	
+	public Logger log = LoggerFactory.getLogger(getClass());
 
 	@Value("${bReal}")
 	public boolean bReal = false;

@@ -16,7 +16,7 @@
     <!-- File Appender -->
     <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 파일명과 경로 설정 -->
-        <file>${LOGS_PATH}/mbm_market.log</file>
+        <file>${LOGS_PATH}/marketinfo.log</file>
         <!-- 출력 패턴 설정 -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n</pattern>
@@ -25,8 +25,8 @@
         <!-- Rolling 정책 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- .gz,.zip 등을 넣으면 자동 일자별 로그파일 압축 -->
-            <fileNamePattern>${LOGS_PATH}/%d{yyyy-MM-dd}_%i.log</fileNamePattern>
-            <maxFileSize>1MB</maxFileSize>
+            <fileNamePattern>${LOGS_PATH}/marketinfo.log.%d{yyyy-MM-dd}_%i</fileNamePattern>
+            <maxFileSize>10KB</maxFileSize>
             <!-- 일자별 로그파일 최대 보관주기(~일), 해당 설정일 이상된 파일은 자동으로 제거-->
             <maxHistory>60</maxHistory>
         </rollingPolicy>
@@ -35,7 +35,7 @@
     <!-- Error Appender -->
     <appender name="Error" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 파일명과 경로 설정 -->
-        <file>${LOGS_PATH}/error_file.log</file>
+        <file>${LOGS_PATH}/marketinfo_error.log</file>
         <!-- 출력 패턴 설정 -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n</pattern>
@@ -44,7 +44,7 @@
         <!-- Rolling 정책 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- .gz,.zip 등을 넣으면 자동 일자별 로그파일 압축 -->
-            <fileNamePattern>${LOGS_PATH}/%d{yyyy-MM-dd}_error_%i.log</fileNamePattern>
+            <fileNamePattern>${LOGS_PATH}/marketinfo_error.log.%d{yyyy-MM-dd}_%i</fileNamePattern>
             <maxFileSize>1MB</maxFileSize>
             <maxHistory>30</maxHistory>
         </rollingPolicy>

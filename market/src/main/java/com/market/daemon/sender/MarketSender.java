@@ -3,10 +3,8 @@ package com.market.daemon.sender;
 import com.market.api.apple.AppleApi;
 import com.market.crawling.Crawling;
 import com.market.crawling.data.CrawlingResultData;
-import com.market.daemon.pool.MyThreadPoolConfig;
-import com.market.daemon.pool.UserRejectHandler;
-import com.market.daemon.pool.UserThreadFactory;
 import com.market.daemon.dto.SendInfo;
+import com.market.daemon.pool.MyThreadPoolConfig;
 import com.market.daemon.service.MarketService;
 import com.market.errorcode.ErrorCode;
 import com.market.exception.CrawlingException;
@@ -14,7 +12,8 @@ import com.market.exception.CreateFileException;
 import com.market.exception.GetSendInfoListException;
 import com.market.exception.SendInfoListException;
 import com.market.property.MarketProperty;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.scheduling.annotation.Async;
@@ -36,7 +35,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author parkyk
@@ -44,7 +43,7 @@ import java.util.concurrent.*;
  */
 public class MarketSender extends Thread {
 
-	public Logger m_log = Logger.getLogger(getClass());
+	public Logger m_log = LoggerFactory.getLogger(getClass());
 
 	private MarketProperty propertyMarket;
 
@@ -109,16 +108,16 @@ public class MarketSender extends Thread {
 
 				} catch (GetSendInfoListException e){
 					System.out.println("GetSendInfoListException");
-					m_log.info("GetSendInfoListException : " + e.getMessage());
+					m_log.info("GetSendInfoListException : {}", e.getMessage());
 				} catch (SendInfoListException e) {
 					System.out.println("SendInfoListException");
-					m_log.info("SendInfoListException : " + e.getMessage());
+					m_log.info("SendInfoListException : {}", e.getMessage());
 				} catch (CreateFileException e) {
 					System.out.println("CreateFileException");
-					m_log.info("CreateFileException : " + e.getMessage());
+					m_log.info("CreateFileException : {}", e.getMessage());
 				} catch (Exception e) {
 					System.out.println("EXCEPTION");
-					m_log.info("Send Message Exception : "+ e.getMessage());
+					m_log.info("Send Message Exception : {}", e.getMessage());
 				}
 
 				try {
@@ -172,7 +171,7 @@ public class MarketSender extends Thread {
 	private void doCrawling(SendInfo sendInfo){
 		try {
 			if (sendInfo != null) {
-				System.out.println("sendInfo = " + sendInfo);
+				m_log.info("sendInfo = {}", sendInfo);
 
 				regTime = System.currentTimeMillis();
 				// 이 부분이 크롤링 동작 인듯
@@ -183,7 +182,7 @@ public class MarketSender extends Thread {
 					ret = crawling.crawling(sendInfo);
 				}
 
-				System.out.println("ret = " + ret);
+				m_log.info("ret = {}", ret);
 				if (ret != null) {
 					m_log.info("Crawling 시작 : "
 							+ ret.toString());
@@ -217,7 +216,7 @@ public class MarketSender extends Thread {
 				}
 
 			} else {
-				m_log.info("Market Entity is null.");
+				m_log.info("Market Entity is null...");
 			}
 
 		} catch (CrawlingException e) {
@@ -246,7 +245,7 @@ public class MarketSender extends Thread {
 							"yyyyMMddHHmmSS");
 					String startTime = sdf.format(date);
 
-					m_log.info("ProcessSendInfo Start Time : " + startTime);
+					m_log.info("ProcessSendInfo Start Time : {}", startTime);
 					/**
 					 * java6에서는 람다가 안됨.. 따라서 전역변수로 myArraySeq, myArraySeqCount를 관리해야함.
 					 */
@@ -254,7 +253,6 @@ public class MarketSender extends Thread {
 					myArraySeqCount = 0;
 
 					m_log.info("Crawling Start");
-					System.out.println("Crawling Start");
 					int threadSize = sendInfoList.size();
 					final CountDownLatch countDownLatch = new CountDownLatch(threadSize);
 					for (SendInfo sendInfo : sendInfoList) {
