@@ -1,7 +1,9 @@
 package com.market.errorcode;
 
+import com.market.daemon.MarketDaemon;
 import com.market.util.UtilString;
 import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
@@ -53,7 +55,7 @@ public class ErrorCode {
 
 	private final static String ERROR_FORMAT = "[%s] %s";
 	public static HashMap<String, String> errorCodeMap = new HashMap<String, String>();
-
+	private static final org.slf4j.Logger m_log = LoggerFactory.getLogger(ErrorCode.class);
 	static {
 		for(String[] errorCode : errorCode){
 			if(UtilString.isNotEmpty(errorCode[0], errorCode[1])) {
@@ -77,11 +79,11 @@ public class ErrorCode {
 	public static String LogError(Class<?> clazz, String code){
 		try {
 			String data = get(code);
-			Logger.getLogger(clazz).error(data);
+			m_log.error(data);
 			return data;
 			
 		} catch (Exception e) {
-			return String.format(ERROR_FORMAT, "Code���� �������� �ʽ��ϴ�.", "Value���� ���� ���� �ʽ��ϴ�.");
+			return String.format(ERROR_FORMAT, "LogError Code....", "Value...");
 			
 		}
 	}
@@ -89,8 +91,7 @@ public class ErrorCode {
 	public static String LogError(Class<?> clazz, String code, Exception e){
 		try {
 			String data = get(code);
-			Logger.getLogger(clazz).error(data + " Exception : "+ e.getMessage());
-			
+			LoggerFactory.getLogger(clazz).error(data + " Exception : "+ e.getMessage());
 			return data;
 			
 		} catch (Exception ex) {

@@ -1,7 +1,5 @@
 package com.market.daemon.service;
 
-
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.market.daemon.dao.MarketInfo;
 import com.market.daemon.dao.MarketPropertyDao;
 import com.market.daemon.dto.SendInfo;
@@ -172,29 +170,27 @@ public class MarketService {
 	public void insertSendHistArray(SendInfo sendInfo, String arraySendSeq) {
 		try {
 
-			// to be saved MBM_MARKET_SEND_HISTORY
-			// get from MBM_MARKET_SEND_INFO
-
-			// 이게 어떤 형식인지??
-			String[] strs = arraySendSeq.split(",");
+			String[] split = arraySendSeq.split(",");
+			List<Long> ids = new ArrayList<Long>();
+			List<SendHistory> sendHistories = new ArrayList<SendHistory>();
 			List<Send> all = sendRepository.findAll();
-			List<Send> sendByIds = new ArrayList<Send>();
-
-			for (String str : strs) {
+			for(String str : split){
 				Long id = Long.parseLong(str);
+				ids.add(id);
+			}
+			// 멀티스레드 환경에서 시퀀스 순서가 꼬이면 hist에 값이 덜 넣어지는 현상 발생
+			// 대체 왜지..?
+			// 현상 방지하고자 id 정렬후 비교로 ...
+			Collections.sort(ids);
+
+			for(Long id : ids){
 				for(Send send : all){
 					if(send.getId().equals(id)) {
-						sendByIds.add(send);
+						sendHistories.add(send.of());
 						break; // id 는 pk라 한번밖에 일치 못함...
 					}
 				}
 			}
-
-			List<SendHistory> sendHistories = new ArrayList<SendHistory>();
-			for (Send send : sendByIds) {
-				sendHistories.add(send.of());
-			}
-
 			sendHistoryRepository.save(sendHistories);
 
 		} catch(Exception e) {

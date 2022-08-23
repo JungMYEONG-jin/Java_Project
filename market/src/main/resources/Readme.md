@@ -287,3 +287,9 @@ static class CountDown {
     }
 }
 ```
+
+
+## Logback config
+- RollingFileAppender/TimeBasedRollingPolicy combination should not have %i token in the FileNamePattern.
+The following config snippet.
+- %d와 %i가 필수라면서 넣으면 계속 오류가 나는 현상 발생.. 알고보니 저 두개의 조합에서 %i를 사용하면 안된다고함.

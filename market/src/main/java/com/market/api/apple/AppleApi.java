@@ -25,6 +25,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -55,8 +56,8 @@ public class AppleApi {
     public static final String keyId = "7JL62P566N";
     public static final String keyPath = "static/apple/AuthKey_7JL62P566N.p8";
 
-    private int CONN_TIME_OUT = 1000 * 30;
 
+    private int CONN_TIME_OUT = 1000 * 30;
     public String getAppVersions(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException {
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps"+"/"+ id +"/appStoreVersions"+"?limit=1"); // 버전 업데이트날짜
         return getConnectResultByX509(jwt, id, url);

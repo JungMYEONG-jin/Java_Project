@@ -32,9 +32,10 @@ dependencies {
 	compile('org.jsoup:jsoup:1.10.3')
 	compile('org.apache.httpcomponents:httpclient:4.2.4')
 	compile('org.modelmapper:modelmapper:2.4.4')
-//	compile('org.projectlombok:lombok:1.18.24')
-//	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+//	compile('org.projectlombok:lombok:1.18.0')
+//	annotationProcessor 'org.projectlombok:lombok:1.18.0'
 	compile fileTree(dir: 'src/main/resources/lib/', include:['*.jar'])
 	compile 'com.h2database:h2:1.4.200'
 	testCompile("org.springframework.boot:spring-boot-starter-test")
 }
+
