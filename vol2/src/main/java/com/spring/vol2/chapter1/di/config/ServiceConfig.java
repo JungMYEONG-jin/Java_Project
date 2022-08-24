@@ -11,9 +11,9 @@ public class ServiceConfig {
     @Bean
     public DataSource dataSource(){
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setDriverClass(com.mysql.jdbc.Driver.class);
+        dataSource.setDriverClass(com.mysql.cj.jdbc.Driver.class);
         dataSource.setUrl("jdbc:mysql://localhost/testdb");
-        dataSource.setUsername("sa");
+        dataSource.setUsername("root");
         dataSource.setPassword("audwls##2A");
         return dataSource;
     }
