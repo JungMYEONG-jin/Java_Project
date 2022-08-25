@@ -1,7 +1,6 @@
 package crawler;
 
 import org.json.simple.JSONArray;
-import org.openqa.selenium.WebDriver;
 
 import java.util.HashMap;
 import java.util.List;
