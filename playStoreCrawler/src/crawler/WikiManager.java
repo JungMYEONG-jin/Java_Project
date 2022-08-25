@@ -11,6 +11,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class WikiManager {
 
@@ -28,6 +30,7 @@ public class WikiManager {
         chromeOptions.addArguments("--no-sandbox");
 
         WebDriver driver = new ChromeDriver(chromeOptions);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         return driver;
     }
@@ -37,6 +40,7 @@ public class WikiManager {
 //        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
         // set foreground setting
         WebDriver driver = new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         return driver;
     }
@@ -89,6 +93,73 @@ public class WikiManager {
             n++;
         }
         return n;
+    }
+
+    /**
+     * 메인 아이디 -> 각 솔루션 아이디 -> 각 솔루션 마다 Android iOS 등록
+     * @param mainID
+     */
+    public void addMiniCategory(String mainID) throws InterruptedException {
+        String url = managerURL+mainID;//22216948
+        WebDriver driver = getBackGroundDriver();
+        driver.get(url);
+        WebElement idBox = driver.findElement(By.xpath("//*[@id=\"os_username\"]"));
+        idBox.sendKeys("21111008");
+        WebElement pwBox = driver.findElement(By.xpath("//*[@id=\"os_password\"]"));
+        pwBox.sendKeys("audwls##2");
+        pwBox.sendKeys(Keys.ENTER);
+        // 잠시 대기
+        // 현재 솔루션 리스트 갯수 구하기
+        List<WebElement> childList = driver.findElements(By.xpath("//*[@id=\"child_ul"+mainID+"-0\"]/li"));
+        Map<String, String> pageList = new HashMap<>();
+        System.out.println("childList = " + childList.size());
+
+        // get PageList and number
+        for (WebElement webElement : childList) {
+            String text = webElement.getText();
+            List<WebElement> divs = webElement.findElements(By.xpath("div"));
+            // 3번째에 id
+            WebElement idDiv = divs.get(2);
+            String dirtyID = idDiv.getAttribute("id");
+            String[] split = dirtyID.split("-");
+            String id = split[0];
+            String pageID = id.replaceAll("[a-zA-Z]", "");
+            String number = text.substring(0,text.indexOf('.'));
+            String solutionURL = "https://mobwiki.shinhan.com/pages/viewpage.action?pageId="+pageID;
+            pageList.put(solutionURL, number);
+        }
+
+        int cnt = 0;
+        // 등록
+        for (Map.Entry<String, String> entry : pageList.entrySet()) {
+            String key = entry.getKey(); // page
+            String value = entry.getValue(); // number
+            driver.get(key);
+            cnt++;
+            List<WebElement> cateList = driver.findElements(By.xpath("//*[@id=\"child_ul"+key.substring(key.indexOf('=')+1)+"-0\"]/li"));
+            if (cateList.size()==2) //and ios 존재시
+                continue;
+            System.out.println(key+" "+value+" "+cateList.size()+" "+cnt);
+            addOSType(driver, value+"."+"Android");
+            driver.get(key);
+            addOSType(driver, value+"."+"iOS");
+        }
+
+        driver.quit();
+    }
+
+    private void addOSType(WebDriver driver, String OSType) {
+        WebElement createButton = driver.findElement(By.xpath("//*[@id=\"quick-create-page-button\"]"));
+        createButton.click();
+
+        // text
+        WebElement textBox = driver.findElement(By.xpath("//*[@id=\"content-title\"]"));
+        textBox.sendKeys(OSType);
+
+        //submit
+        WebElement submitButton = driver.findElement(By.xpath("//*[@id=\"rte-button-publish\"]"));
+        if(submitButton.isEnabled())
+            submitButton.click();
     }
 
 

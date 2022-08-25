@@ -15,9 +15,14 @@ public class PlayStore {
     public static void main(String[] args) {
         WikiManager wikiManager = new WikiManager();
         List<AppInfo> res = new ArrayList<>();
+        String mainID = "22216948";
         res.add(new AppInfo("test", "한글", "DS"));
-        wikiManager.addSolution("22216948", res);
-
+//        wikiManager.addSolution("22216948", res);
+        try {
+            wikiManager.addMiniCategory(mainID);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void sleep(int millis){
