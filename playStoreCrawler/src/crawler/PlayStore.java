@@ -18,11 +18,9 @@ public class PlayStore {
         String mainID = "22216948";
         res.add(new AppInfo("test", "한글", "DS"));
 //        wikiManager.addSolution("22216948", res);
-        try {
-            wikiManager.addMiniCategory(mainID);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+        wikiManager.addMiniCategory(mainID);
+
     }
 
     private static void sleep(int millis){

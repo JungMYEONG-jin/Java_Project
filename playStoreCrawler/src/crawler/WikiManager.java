@@ -99,7 +99,7 @@ public class WikiManager {
      * 메인 아이디 -> 각 솔루션 아이디 -> 각 솔루션 마다 Android iOS 등록
      * @param mainID
      */
-    public void addMiniCategory(String mainID) throws InterruptedException {
+    public void addMiniCategory(String mainID) {
         String url = managerURL+mainID;//22216948
         WebDriver driver = getBackGroundDriver();
         driver.get(url);
@@ -112,7 +112,6 @@ public class WikiManager {
         // 현재 솔루션 리스트 갯수 구하기
         List<WebElement> childList = driver.findElements(By.xpath("//*[@id=\"child_ul"+mainID+"-0\"]/li"));
         Map<String, String> pageList = new HashMap<>();
-        System.out.println("childList = " + childList.size());
 
         // get PageList and number
         for (WebElement webElement : childList) {
@@ -123,6 +122,7 @@ public class WikiManager {
             String dirtyID = idDiv.getAttribute("id");
             String[] split = dirtyID.split("-");
             String id = split[0];
+            //문자열제거
             String pageID = id.replaceAll("[a-zA-Z]", "");
             String number = text.substring(0,text.indexOf('.'));
             String solutionURL = "https://mobwiki.shinhan.com/pages/viewpage.action?pageId="+pageID;
@@ -154,12 +154,14 @@ public class WikiManager {
 
         // text
         WebElement textBox = driver.findElement(By.xpath("//*[@id=\"content-title\"]"));
+        sleep(1000);
         textBox.sendKeys(OSType);
 
         //submit
         WebElement submitButton = driver.findElement(By.xpath("//*[@id=\"rte-button-publish\"]"));
         if(submitButton.isEnabled())
             submitButton.click();
+        sleep(1000);
     }
 
 
