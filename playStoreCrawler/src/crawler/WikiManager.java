@@ -45,8 +45,10 @@ public class WikiManager {
         return driver;
     }
 
-    private void dododo(){
+    public List<AppInfo> getBasedList(){
         List<AppInfo> result = new ArrayList<>();
+        result.add(new AppInfo("RootChecker/JBScanner", "루팅/탈옥/백신", "안랩"));
+        result.add(new AppInfo("BigScraping", "스크래핑", "핑거"));
         result.add(new AppInfo("nFilter", "보안키패드", "NSHC"));
         result.add(new AppInfo("OnePass", "FIDO", "라온시큐어"));
         result.add(new AppInfo("Orchestra", "하이브리드프레임웍", "핑거"));
@@ -75,6 +77,7 @@ public class WikiManager {
         result.add(new AppInfo("ChattingPlus", "SMS기반이체연동서비스", "SKT"));
         result.add(new AppInfo("MetsaFR", "안면인증", "시큐젠"));
         result.add(new AppInfo("BankPay", "제로페이", "금융결제원"));
+        return result;
     }
 
 
