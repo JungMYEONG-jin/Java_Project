@@ -15,15 +15,17 @@ import com.market.repository.MarketPropertyRepository;
 import com.market.repository.MarketRepository;
 import com.market.repository.SendHistoryRepository;
 import com.market.repository.SendRepository;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
 public class MarketService {
-	public Logger m_log = Logger.getLogger(getClass());
+	public Logger m_log = LoggerFactory.getLogger(getClass());
 
 	final MarketRepository marketRepository;
 	final SendRepository sendRepository;
@@ -53,7 +55,7 @@ public class MarketService {
 		}
 	}
 
-
+	@Transactional(readOnly = true)
 	public List<MarketInfo> getSendMarketInfoList() throws Exception {
 		List<MarketInfo> appInfoList = new ArrayList<MarketInfo>();
 		try {
@@ -71,6 +73,7 @@ public class MarketService {
 		return appInfoList;
 	}
 
+	@Transactional(readOnly = true)
 	public List<SendInfo> getSendInfoList() throws GetSendInfoListException {
 		
 		List<SendInfo> sendInfoList = null;
@@ -137,7 +140,7 @@ public class MarketService {
 		}
 	}
 
-
+	@Transactional(readOnly = true)
 	public MarketPropertyDao getPropertyInfo() throws Exception {
 
 		m_log.info("getPropertyInfo of MarketService start");
@@ -168,30 +171,23 @@ public class MarketService {
 	@Transactional
 	public void insertSendHistArray(SendInfo sendInfo, String arraySendSeq) {
 		try {
-
 			String[] split = arraySendSeq.split(",");
 			List<Long> ids = new ArrayList<Long>();
 			List<SendHistory> sendHistories = new ArrayList<SendHistory>();
-			List<Send> all = sendRepository.findAll();
+
 			for(String str : split){
 				Long id = Long.parseLong(str);
 				ids.add(id);
 			}
-			// 멀티스레드 환경에서 시퀀스 순서가 꼬이면 hist에 값이 덜 넣어지는 현상 발생
-			// 대체 왜지..?
-			// 현상 방지하고자 id 정렬후 비교로 ...
+
 			Collections.sort(ids);
 
-			for(Long id : ids){
-				for(Send send : all){
-					if(send.getId().equals(id)) {
-						sendHistories.add(send.of());
-						break; // id 는 pk라 한번밖에 일치 못함...
-					}
-				}
+			List<Send> byIds = sendRepository.findByIdIn(ids);
+			for (Send byId : byIds) {
+				m_log.info("send id {}", byId.getId());
+				sendHistories.add(byId.of());
 			}
 			sendHistoryRepository.save(sendHistories);
-
 		} catch(Exception e) {
 			m_log.error("insertSendHistArray EXCEPTION", e);
 		}
@@ -205,28 +201,22 @@ public class MarketService {
 			String[] split = arraySendSeq.split(",");
 			List<Long> ids = new ArrayList<Long>();
 			List<SendHistory> sendHistories = new ArrayList<SendHistory>();
-			List<Send> all = sendRepository.findAll();
+
 			for(String str : split){
 				Long id = Long.parseLong(str);
 				ids.add(id);
 			}
-			// 멀티스레드 환경에서 시퀀스 순서가 꼬이면 hist에 값이 덜 넣어지는 현상 발생
-			// 대체 왜지..?
-			// 현상 방지하고자 id 정렬후 비교로 ...
+
 			Collections.sort(ids);
 
-			for(Long id : ids){
-				for(Send send : all){
-					if(send.getId().equals(id)) {
-						sendHistories.add(send.of());
-						break; // id 는 pk라 한번밖에 일치 못함...
-					}
-				}
+			List<Send> byIds = sendRepository.findByIdIn(ids);
+			for (Send byId : byIds) {
+				sendHistories.add(byId.of());
 			}
 			sendHistoryRepository.save(sendHistories);
 
 		} catch(Exception e) {
-			m_log.error("Ǫ�� �߼� ���̺� �߼۰�� ������Ʈ �� Exception�� �߻��߽��ϴ�.", e);
+			m_log.error("insertSendHistArray Exception.", e);
 		}
 	}
 
@@ -279,10 +269,6 @@ public class MarketService {
 	}
 
 
-	//미사용
-//	public void insertSendHistArray(String sendSt, String errorMsg, String arraySendSeq) {
-//
-//	}
 	@Transactional
 	public void testInsertMarketData(String appid, String appPkg){
 		try {

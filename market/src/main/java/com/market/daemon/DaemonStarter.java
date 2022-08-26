@@ -87,10 +87,10 @@ public class DaemonStarter {
 				"        <market_daemon_sleep_sec>2000</market_daemon_sleep_sec>\n" +
 				"        <send_daemon_sleep_sec>1000</send_daemon_sleep_sec>\n" +
 				"        <send_daemon_market_send_delay_sec>1000</send_daemon_market_send_delay_sec>\n" +
-				"        <file_update_limit_sec>30000</file_update_limit_sec>\n" +
+				"        <file_update_limit_sec>50000</file_update_limit_sec>\n" +
 				"        <setting_time_list>\n" +
 				"            <time_info>\n" +
-				"                <checktime>104400</checktime>\n" +
+				"                <checktime>094300</checktime>\n" +
 				"            </time_info>\n" +
 				"            <time_info>\n" +
 				"                <checktime>142500</checktime>\n" +

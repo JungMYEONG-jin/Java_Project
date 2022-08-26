@@ -1,7 +1,7 @@
 package com.market.daemon.sender;
 
-import com.market.api.apple.AppleApi;
-import com.market.crawling.Crawling;
+import com.market.crawling.IntegratedCrawler;
+import com.market.crawling.MarketCrawler;
 import com.market.crawling.data.CrawlingResultData;
 import com.market.daemon.dto.SendInfo;
 import com.market.daemon.pool.MyThreadPoolConfig;
@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,7 +38,7 @@ import java.util.concurrent.CountDownLatch;
 
 /**
  * @author parkyk
- * FILE UPDATE LIMIT MIN���� ������ �߰��� �����ٸ� ���Ϸ� ����.
+ * FILE UPDATE LIMIT MIN
  */
 public class MarketSender extends Thread {
 
@@ -49,9 +48,7 @@ public class MarketSender extends Thread {
 
 	private MarketService serviceMarket;
 
-	private AppleApi appleApi;
-
-	private Crawling crawling;
+	private MarketCrawler crawler = new IntegratedCrawler();
 
 	private long regTime = MarketProperty.INIT_VALUE;
 
@@ -66,19 +63,12 @@ public class MarketSender extends Thread {
 	//수동 주입해야 하는 이유.. market sender를  marketdaemon에서 수동 생성자로 생성하기 때문임.
 	private ThreadPoolTaskExecutor threadPoolExecutor;
 
-
 	private int myArraySeqCount;
 	private int mCheckCnt;
 
 	public MarketSender(MarketService marketService, MarketProperty marketProperty){
 		this.propertyMarket = marketProperty;
 		this.serviceMarket = marketService;
-		// pool init
-//		BlockingQueue queue = new LinkedBlockingQueue(100);
-//		UserThreadFactory factory = new UserThreadFactory("MJ");
-//		UserRejectHandler handler = new UserRejectHandler();
-//		threadPoolExecutor = new ThreadPoolExecutor(50, 100, 60, TimeUnit.SECONDS, queue, factory, handler);
-
 		// 수동 주입
 		ApplicationContext context = new AnnotationConfigApplicationContext(MyThreadPoolConfig.class);
 		threadPoolExecutor = context.getBean("taskExecutor", ThreadPoolTaskExecutor.class);
@@ -168,7 +158,7 @@ public class MarketSender extends Thread {
 		}
 	}
 
-	private void doCrawling(SendInfo sendInfo){
+	public void doCrawling(SendInfo sendInfo){
 		try {
 			if (sendInfo != null) {
 				m_log.info("sendInfo = {}", sendInfo);
@@ -176,11 +166,7 @@ public class MarketSender extends Thread {
 				regTime = System.currentTimeMillis();
 				// 이 부분이 크롤링 동작 인듯
 				CrawlingResultData ret = null;
-				if(sendInfo.getOsType().equals(SendInfo.OS_TYPE_IOS_API)){
-					ret = appleApi.getCrawlingResult(sendInfo.getAppPkg());
-				} else {
-					ret = crawling.crawling(sendInfo);
-				}
+				ret = crawler.getData(sendInfo);
 
 				m_log.info("ret = {}", ret);
 				if (ret != null) {
@@ -223,23 +209,22 @@ public class MarketSender extends Thread {
 			ErrorCode.LogError(getClass(), "B1002", e);
 			sendInfo.setErrorMsg(e.getMessage());
 			sendInfo.setSendStatus(SendInfo.SEND_RESULT_CRAWLING_FAIL);
+
 			updateSendInfoError(sendInfo, sendInfo.getSeq());
 
 		} catch (Exception e) {
 			ErrorCode.LogError(getClass(), "B1001", e);
 			sendInfo.setErrorMsg(e.getMessage());
 			sendInfo.setSendStatus(SendInfo.SEND_RESULT_ERROR);
+			m_log.info("sendinfo seq {}", sendInfo.getSeq());
 			updateSendInfoError(sendInfo, sendInfo.getSeq());
 		}
 	}
 
-	@Async("asyncTaskExecutor")
 	public void processSendInfoList(List<SendInfo> sendInfoList) throws SendInfoListException {
 
 		try {
 				if (sendInfoList.isEmpty() == false) {
-					Crawling crawling = getCrawling();
-					AppleApi appleApi = getAppleApi();
 					Date date = new Date(System.currentTimeMillis());
 					SimpleDateFormat sdf = new SimpleDateFormat(
 							"yyyyMMddHHmmSS");
@@ -260,6 +245,7 @@ public class MarketSender extends Thread {
 						threadPoolExecutor.execute(new Runnable() {
 							@Override
 							public void run() {
+								m_log.info("thread number {}", threadPoolExecutor.getActiveCount());
 								doCrawling(mySendInfo);
 								countDownLatch.countDown();
 							}
@@ -291,6 +277,7 @@ public class MarketSender extends Thread {
 					}
 
 
+
 				}
 
 		} catch (Exception e) {
@@ -303,10 +290,11 @@ public class MarketSender extends Thread {
 		// TODO 
 		if (sendInfo != null) {
 			serviceMarket.updateSendInfo(sendInfo);
-		}			
-		
+		}
 		// TODO
+		m_log.info("updateSendInfoError insert seq {}", arraySendSeq);
 		serviceMarket.insertSendHistArray(sendInfo, arraySendSeq);
+		m_log.info("updateSendInfoError delete seq {}", arraySendSeq);
 		serviceMarket.deleteSendInfoArray(arraySendSeq);
 	}
 
@@ -353,23 +341,9 @@ public class MarketSender extends Thread {
 	}
 
 	public void deleteSendInfoArray(String arraySendSeq) {
-		m_log.debug("arraySendSeq ==> "+arraySendSeq);
 		serviceMarket.deleteSendInfoArray(arraySendSeq);
 	}
-	
-	private Crawling getCrawling() {
-		if(crawling == null){
-			crawling = new Crawling();
-		}
-		return crawling;
-	}
 
-	private AppleApi getAppleApi(){
-		if(appleApi == null)
-			appleApi = new AppleApi();
-		return appleApi;
-	}
-	
 	private static Document createDocumentOutputXML(HashMap<String, CrawlingResultData> mapResult) throws ParserConfigurationException {
 		
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -416,15 +390,7 @@ public class MarketSender extends Thread {
 			app_info.appendChild(elUptDate);
 		}
 	}
-	
-	/**
-	 * @author parkyk
-	 * @param
-	 * 
-	 * ���� üũ
-	 * @throws InterruptedException 
-	 * 
-	 */
+
 	private void processSleep() throws InterruptedException {
 		// Sleep 
 		Thread.sleep(MarketProperty.SEND_DAEMON_SLEEP_TIME);

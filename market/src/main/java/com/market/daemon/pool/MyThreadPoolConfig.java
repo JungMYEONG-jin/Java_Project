@@ -11,10 +11,10 @@ public class MyThreadPoolConfig {
     @Bean
     public ThreadPoolTaskExecutor taskExecutor(){
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(50);
+        executor.setCorePoolSize(80);
         executor.setQueueCapacity(100);
         executor.setMaxPoolSize(100);
-        executor.setKeepAliveSeconds(60);
+        executor.setKeepAliveSeconds(90);
         executor.setThreadNamePrefix("MJ");
         executor.setRejectedExecutionHandler(new UserRejectHandler());
         return executor;

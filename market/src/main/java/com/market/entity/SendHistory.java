@@ -114,4 +114,19 @@ public class SendHistory{
     public void setEtc3(String etc3) {
         this.etc3 = etc3;
     }
+
+    @Override
+    public String toString() {
+        return "SendHistory{" +
+                "id=" + id +
+                ", appId='" + appId + '\'' +
+                ", sendStatus='" + sendStatus + '\'' +
+                ", errorMsg='" + errorMsg + '\'' +
+                ", userId='" + userId + '\'' +
+                ", regDt='" + regDt + '\'' +
+                ", etc1='" + etc1 + '\'' +
+                ", etc2='" + etc2 + '\'' +
+                ", etc3='" + etc3 + '\'' +
+                '}';
+    }
 }
