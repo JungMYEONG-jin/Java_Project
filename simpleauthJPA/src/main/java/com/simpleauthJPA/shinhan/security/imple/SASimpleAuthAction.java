@@ -2,6 +2,7 @@ package com.simpleauthJPA.shinhan.security.imple;
 
 
 
+import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.simpleauthJPA.entity.User;
 import com.simpleauthJPA.entity.UserDto;
 import com.simpleauthJPA.repository.UserRepository;
@@ -36,7 +37,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
-@Component
 public class SASimpleAuthAction {
     private static String _SASimpleAuthAction_ = "_SASimpleAuthAction_ :: ";
 
@@ -56,6 +56,21 @@ public class SASimpleAuthAction {
 
     public void setListener(SAListener listener) {
         this.listener = listener;
+    }
+
+    public boolean isNewerVersion(HashMap<String, String> passwordInfo){
+        boolean isNewer = false;
+        try{
+            String isContain = passwordInfo.get("isContain");
+
+            if(isContain != null && isContain.equals("true"))
+            {
+                isNewer = true;
+            }
+            return isNewer;
+        }catch (Exception e){
+            return isNewer;
+        }
     }
 
     public String reg_init_server(String strReqTag, String reqJson, String cusno, HttpSession session) throws SASimpleAuthException {
@@ -103,6 +118,17 @@ public class SASimpleAuthAction {
         String resultJson = null;
         boolean isSuccess = false;
         SARegClientMessage objRegClientMessage = new SARegClientMessage();
+        String rd = "";
+        String strSessionChallenge = "";
+        String challenge_kdf_server = "";
+        String aesKey = "";
+        String aesIV = "";
+        String decryptedRd = "";
+        String sha256RegiData = "";
+        SARegPlainTextMessage sign_plain_text_msg = new SARegPlainTextMessage();
+        PublicKey publicKey = null;
+        String deSigndata = "";
+
         try {
             userLogService.fine("reg_client_json :: " + reqJson);
             SAMessageUtil.parseJSONData(reqJson, objRegClientMessage);
@@ -119,20 +145,19 @@ public class SASimpleAuthAction {
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_SIGNDATA_NULL, SAErrorMessage.ERR_CODE_SIGNDATA_NULL);
 
 
-            String rd = objRegClientMessage.rd;
+            rd = objRegClientMessage.rd;
             userLogService.fine("rd :: " + rd);
-            String strSessionChallenge = challenge;
-            String challenge_kdf_server = SACryptoUtil.kdf512(SAHexUtil.hexStrToByteArr(strSessionChallenge));
+            strSessionChallenge = challenge;
+            challenge_kdf_server = SACryptoUtil.kdf512(SAHexUtil.hexStrToByteArr(strSessionChallenge));
             userLogService.fine("challenge_kdf_server ::" + challenge_kdf_server);
-            String aesKey = challenge_kdf_server.substring(0, 32);
+            aesKey = challenge_kdf_server.substring(0, 32);
             userLogService.fine("aesKey :: " + aesKey);
-            String aesIV = challenge_kdf_server.substring(32, 64);
+            aesIV = challenge_kdf_server.substring(32, 64);
             userLogService.fine("aesIV :: " + aesIV);
-            String decryptedRd = SACryptoUtil.aesDecrypt(aesKey, aesIV, rd);
+            decryptedRd = SACryptoUtil.aesDecrypt(aesKey, aesIV, rd);
             userLogService.fine("decryptedRd :: " + decryptedRd);
-            String sha256RegiData = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(decryptedRd));
+            sha256RegiData = SAHexUtil.byteArrToHexString(SAHashUtil.sha256(decryptedRd));
             userLogService.fine("sha256RegiData :: " + sha256RegiData);
-            SARegPlainTextMessage sign_plain_text_msg = new SARegPlainTextMessage();
             SAMessageUtil.parseJSONData(decryptedRd, sign_plain_text_msg);
 
 
@@ -151,51 +176,55 @@ public class SASimpleAuthAction {
             if (!SAValidateUtils.isValidType(sign_plain_text_msg.type))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_TYPE_INVALID, SAErrorMessage.ERR_CODE_TYPE_INVALID);
 
-            PublicKey publicKey = SACryptoUtil.byteToPublicKey(SAHexUtil.hexStrToByteArr(sign_plain_text_msg.pubkey));
-            String deSigndata = SACryptoUtil.rsaDecrypt(objRegClientMessage.signdata, publicKey);
+            publicKey = SACryptoUtil.byteToPublicKey(SAHexUtil.hexStrToByteArr(sign_plain_text_msg.pubkey));
+            deSigndata = SACryptoUtil.rsaDecrypt(objRegClientMessage.signdata, publicKey);
             userLogService.fine("deSigndata :: " + deSigndata);
+        }catch (SASimpleAuthException e) {
+            throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, e.getMsg(), e.getCode());
+        }catch (Exception e) {
+            throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, e.toString());
+        }
 
-            ////////////// password
 
+        try {
+            /**
+             * 21111008
+             * check clientPassword
+             * keys isContain clientPasswd
+             */
             HashMap<String, String> passwordInfo = SAMessageUtil.getPasswordInfo(decryptedRd);
             boolean isNewer = false;
+            if (passwordInfo != null) {
+                isNewer = isNewerVersion(passwordInfo);
 
-            if(passwordInfo != null)
-            {
-                try {
-                    String isContain = passwordInfo.get("isContain");
-
-                    if(isContain!=null && isContain.equals("true"))
-                    {
-                        isNewer = true;
-                    }
-                }catch (Exception e)
-                {
-                    isNewer = false;
-                }
-
-                userLogService.fine("isNewer: "+isNewer);
-
-
-                if(isNewer)
-                {
+                if (isNewer) {
                     String clientPasswd = passwordInfo.get("clientPasswd");
-                    if(SAValidateUtils.isEmpty(clientPasswd)) {
+                    if (SAValidateUtils.isEmpty(clientPasswd)) {
                         throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_NULL, SAErrorMessage.ERR_CODE_PASSWORD_NULL);
                     }
-                    userLogService.fine("Password: "+clientPasswd);
-                    boolean isValidPassword = this.listener.CheckPasswordValidation(clientPasswd, sign_plain_text_msg.type,session);
-                    if(!isValidPassword) {
-                        throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_INVALID, SAErrorMessage.ERR_CODE_PASSWORD_INVALID);
+
+                    if (this.listener != null) {
+                        boolean isValidPassword = this.listener.CheckPasswordValidation(clientPasswd, sign_plain_text_msg.type, session);
+
+                        if (!isValidPassword) {
+                            throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_PASSWORD_INVALID, SAErrorMessage.ERR_CODE_PASSWORD_INVALID);
+                        }
                     }
+
                 }
-            }else
-            {
-                userLogService.fine("passwordInfo is null");
+
+            } else {
+
+                throw new SAInvalidPasswordException("passwordInfo is null...");
             }
+        }catch (SAInvalidPasswordException e) {
+            throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, e.getMsg(), e.getCode());
+        }catch(Exception e) {
+            throw new SAInvalidPasswordException(SAErrsEnum.ERR_REG_SERVER, e.toString());
+        }
 
 
-
+        try{
 
             if (SAValidateUtils.isEmpty(deSigndata))
                 throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_DESIGNDATA_NULL, SAErrorMessage.ERR_CODE_DESIGNDATA_NULL);
@@ -253,6 +282,7 @@ public class SASimpleAuthAction {
         } catch (Exception e) {
             throw new SASimpleAuthMessageException(SAErrsEnum.ERR_REG_SERVER, e.toString());
         }
+
         userLogService.fine("================================reg_server :: end=======================================");
         return resultJson;
     }

@@ -13,6 +13,8 @@ public class SAEventReg {
 
     private SACallbackChallenge callbackChallenge;
 
+    private SACallbackPasswordCheck callbackPasswordCheck;
+
     public SAEventReg(SACallbackReg event) {
         this.callbackReg = event;
     }
@@ -27,6 +29,14 @@ public class SAEventReg {
 
     public SAEventReg(SACallbackChallenge event) {
         this.callbackChallenge = event;
+    }
+
+    public SAEventReg(SACallbackPasswordCheck callbackPasswordCheck) {
+        this.callbackPasswordCheck = callbackPasswordCheck;
+    }
+
+    public boolean doPasswordValidationCheck(String password, String authtype){
+        return this.callbackPasswordCheck.CheckPasswordValidation(password,authtype);
     }
 
     public boolean doSimpleAuthInfoReg(HashMap<String, String> hashMap, HttpServletRequest request, HttpServletResponse response) {
