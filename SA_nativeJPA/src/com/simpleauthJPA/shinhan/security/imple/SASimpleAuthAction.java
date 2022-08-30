@@ -25,9 +25,11 @@ import com.simpleauthJPA.shinhan.security.simpleauth.message.sign.SARegPlainText
 import com.simpleauthJPA.shinhan.security.simpleauth.message.unreg.SAUnRegClientMessage;
 import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SAErrsEnum;
 import com.simpleauthJPA.shinhan.security.simpleauth.tlv.SATagsEnum;
-import com.simpleauthJPA.shinhan.security.simpleauth.util.*;
+import com.simpleauthJPA.shinhan.security.simpleauth.util.SAHashUtil;
+import com.simpleauthJPA.shinhan.security.simpleauth.util.SAHexUtil;
+import com.simpleauthJPA.shinhan.security.simpleauth.util.SAUtil;
+import com.simpleauthJPA.shinhan.security.simpleauth.util.SAValidateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
 import java.security.PublicKey;
