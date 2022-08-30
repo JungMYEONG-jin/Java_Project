@@ -9,7 +9,9 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -117,7 +119,7 @@ public class SAMessageUtil {
      */
     public static HashMap<String, String> getPasswordInfo(String jsonString) throws ParseException
     {
-        HashMap<String, String> result = new HashMap<>();
+        HashMap<String, String> result = new HashMap<String, String>();
         result.put("isContain", "false");
         JSONParser parser = new JSONParser();
         org.json.simple.JSONObject obj = (org.json.simple.JSONObject)parser.parse(jsonString);
@@ -127,5 +129,11 @@ public class SAMessageUtil {
             result.put("isContain", "true");
         }
         return result;
+    }
+
+    public static String getDate(Date now){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String formattedDate = formatter.format(now);
+        return formattedDate;
     }
 }

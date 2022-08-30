@@ -5,6 +5,7 @@ import com.simpleauthJPA.entity.User;
 import com.simpleauthJPA.entity.UserDto;
 import com.simpleauthJPA.repository.UserRepository;
 import com.simpleauthJPA.service.UserLogService;
+import com.simpleauthJPA.shinhan.SAAuthType;
 import com.simpleauthJPA.shinhan.security.listener.SAListener;
 import com.simpleauthJPA.shinhan.security.simpleauth.crypto.SACryptoUtil;
 import com.simpleauthJPA.shinhan.security.simpleauth.exception.SAInvalidPasswordException;
@@ -33,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpSession;
 import java.security.PublicKey;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -247,7 +248,7 @@ public class SASimpleAuthAction {
 
 
                     try{
-                        userRepository.save(new User(sign_plain_text_msg.id, sign_plain_text_msg.appid, cusno, sign_plain_text_msg.uuid, sign_plain_text_msg.type, SAProperty.STATUS_Y, sign_plain_text_msg.pubkey, LocalDateTime.now().toString(), "999999999", null));
+                        userRepository.save(new User(sign_plain_text_msg.id, sign_plain_text_msg.appid, cusno, sign_plain_text_msg.uuid, sign_plain_text_msg.type, SAProperty.STATUS_Y, sign_plain_text_msg.pubkey, SAMessageUtil.getDate(new Date()), "999999999", null));
                         isSuccess = true;
                     }catch (Exception e){
                         throw new SASimpleAuthException(SAErrsEnum.ERR_REG_SERVER, SAErrorMessage.ERR_MSG_DB_INSERT, SAErrorMessage.ERR_CODE_DB_INSERT);
@@ -380,7 +381,7 @@ public class SASimpleAuthAction {
                  * face_id 4
                  * auto 5
                  */
-                if(isNewer && (type_db.equals("1") || type_db.equals("4"))) // when the version is new and bio information(fingerprint face_id)
+                if(isNewer && (type_db.equals(SAAuthType.FINGERPRINT) || type_db.equals(SAAuthType.FACEID))) // when the version is new and bio information(fingerprint face_id)
                 {
                     String clientPasswd = passwordInfo.get("clientPasswd");
                     userLogService.fine("RSA(Client Sha(id+Sha(uuid)+type)): "+clientPasswd);
@@ -604,7 +605,7 @@ public class SASimpleAuthAction {
             try{
                 User findUser = userRepository.findByIdAndUnregdateEquals(strId, "999999999");
                 // save 시 update와 동일함
-                findUser.setUnregdate(LocalDateTime.now().toString());
+                findUser.setUnregdate(new Date().toString());
                 findUser.setStatus(SAProperty.STATUS_N);
                 userRepository.save(findUser); // update
                 isClear = true;

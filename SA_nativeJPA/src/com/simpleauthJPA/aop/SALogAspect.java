@@ -20,6 +20,7 @@ public class SALogAspect {
         String methodName = getMethodName(joinPoint);
         log.info("===== method {} start=====", methodName);
         Object[] args = joinPoint.getArgs();
+
         if(args.length == 0)
         {
             log.info("no parameter");

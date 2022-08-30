@@ -3,14 +3,14 @@ package com.simpleauthJPA.service;
 import com.simpleauthJPA.entity.UserLog;
 import com.simpleauthJPA.repository.UserLogRepository;
 import com.simpleauthJPA.shinhan.security.imple.SAProperty;
+import com.simpleauthJPA.shinhan.security.simpleauth.message.SAMessageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,20 +34,20 @@ public class UserLogService {
     }
 
     public int SALog(String cusno, String id, String tag, String injson, String outjson, String msg, String errorcode, String stacktrace){
-        UserLog userLog = new UserLog(cusno, id, tag, injson, outjson, msg, errorcode, stacktrace, LocalDateTime.now().toString());
+        UserLog userLog = new UserLog(cusno, id, tag, injson, outjson, msg, errorcode, stacktrace, SAMessageUtil.getDate(new Date()));
         UserLog saved = userLogRepository.save(userLog);
-        Optional<UserLog> byId = userLogRepository.findById(saved.getSeq());
-        if(byId.isEmpty()){
+        UserLog byId = userLogRepository.findOne(saved.getSeq());
+        if(byId == null){
             return 0;
         }
         return 1;
     }
 
     public int SALog(String cusno, String id, String tag, String msg, String errorcode, String stacktrace){
-        UserLog userLog = new UserLog(cusno, id, tag, null, null, msg, errorcode, stacktrace, LocalDateTime.now().toString());
+        UserLog userLog = new UserLog(cusno, id, tag, null, null, msg, errorcode, stacktrace, SAMessageUtil.getDate(new Date()));
         UserLog saved = userLogRepository.save(userLog);
-        Optional<UserLog> byId = userLogRepository.findById(saved.getSeq());
-        if(byId.isEmpty()){
+        UserLog byId = userLogRepository.findOne(saved.getSeq());
+        if(byId == null){
             return 0;
         }
         return 1;
