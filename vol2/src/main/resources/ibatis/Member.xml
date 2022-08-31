@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+        PUBLIC '-//ibatis.apache.org//DTD SQL Map 2.0//EN'
+        'http://ibatis.apache.org/dtd/sql-map-2.dtd'>
+
+<sqlMap namespace="Member">
+    <typeAlias alias="Member" type="com.spring.vol2.chapter1.jdbc.Member"/>
+
+    <delete id="deleteMemberAll">
+        delete from Member
+    </delete>
+
+    <insert id="insertMember" parameterClass="Member">
+        insert into Member (id, name, point) values(#id#, #name#, #point#)
+    </insert>
+
+    <select id="findMemberById" parameterClass="int" resultClass="Member">
+        select * from member where id = #id#
+    </select>
+
+    <select id="findMembers" resultClass="Member">
+        select * from member order by id
+    </select>
+</sqlMap>

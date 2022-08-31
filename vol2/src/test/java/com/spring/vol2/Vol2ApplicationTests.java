@@ -1,9 +1,9 @@
-package com.market;
+package com.spring.vol2;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MarketApplicationTests {
+class Vol2ApplicationTests {
 
 //	@Test
 //	void contextLoads() {

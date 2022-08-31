@@ -1,6 +1,8 @@
 package com.market.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @author parkyk
@@ -104,6 +106,13 @@ public class TimeCheker {
 	private Calendar getCurrentCalendar() {
 		Calendar calCurrent = Calendar.getInstance();
 		calCurrent.setTimeInMillis(System.currentTimeMillis());
+
+		// calendar 날짜 오류 심각..
+		Date now = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+		String formattedDate = format.format(now);
+		int month = Integer.parseInt(formattedDate.substring(4, 6));
+		calCurrent.set(Calendar.MONTH, month);
 		return calCurrent;
 	}
 	

@@ -1,45 +1,45 @@
-package com.market.daemon.sender;
-
-import com.market.api.apple.AppleAppId;
-import com.market.daemon.MarketDaemon;
-import com.market.daemon.dao.MarketInfo;
-import com.market.daemon.dto.SendInfo;
-import com.market.daemon.service.MarketService;
-import com.market.entity.Market;
-import com.market.entity.MarketPropertyEntity;
-import com.market.entity.Send;
-import com.market.exception.GetSendInfoListException;
-import com.market.exception.SendInfoListException;
-import com.market.property.MarketProperty;
-import com.market.provider.ApplicationContextProvider;
-import com.market.repository.MarketPropertyRepository;
-import com.market.repository.MarketRepository;
-import com.market.repository.SendRepository;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-
-@SpringBootTest
-class MarketSenderTest {
-
-    @Autowired
-    MarketRepository marketRepository;
-    @Autowired
-    MarketDaemon daemon;
-    @Autowired
-    SendRepository sendRepository;
-    @Autowired
-    MarketPropertyRepository marketPropertyRepository;
-    @Autowired
-    MarketService marketService;
-
+//package com.market.daemon.sender;
+//
+//import com.market.api.apple.AppleAppId;
+//import com.market.daemon.MarketDaemon;
+//import com.market.daemon.dao.MarketInfo;
+//import com.market.daemon.dto.SendInfo;
+//import com.market.daemon.service.MarketService;
+//import com.market.entity.Market;
+//import com.market.entity.MarketPropertyEntity;
+//import com.market.entity.Send;
+//import com.market.exception.GetSendInfoListException;
+//import com.market.exception.SendInfoListException;
+//import com.market.property.MarketProperty;
+//import com.market.provider.ApplicationContextProvider;
+//import com.market.repository.MarketPropertyRepository;
+//import com.market.repository.MarketRepository;
+//import com.market.repository.SendRepository;
+//import org.junit.Test;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.transaction.annotation.Transactional;
+//
+//import java.text.SimpleDateFormat;
+//import java.util.ArrayList;
+//import java.util.Date;
+//import java.util.List;
+//
+//
+//@SpringBootTest
+//class MarketSenderTest {
+//
+//    @Autowired
+//    MarketRepository marketRepository;
+//    @Autowired
+//    MarketDaemon daemon;
+//    @Autowired
+//    SendRepository sendRepository;
+//    @Autowired
+//    MarketPropertyRepository marketPropertyRepository;
+//    @Autowired
+//    MarketService marketService;
+//
 //    @Test
 //    void daemonTest() throws Exception {
 //        daemon.run();
@@ -112,6 +112,6 @@ class MarketSenderTest {
 //        marketProperty.setIsSetting("N");
 //        marketPropertyRepository.save(marketProperty);
 //    }
-
-
-}
+//
+//
+//}

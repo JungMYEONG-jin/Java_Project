@@ -8,9 +8,10 @@ import com.market.errorcode.ErrorCode;
 import com.market.property.MarketProperty;
 import com.market.util.TimeCheker;
 import com.market.util.XMLParser;
-import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.NodeList;
@@ -26,10 +27,12 @@ public class MarketDaemon implements Runnable {
 
 	public static final boolean DEV = true;
 
-	public Logger m_log = Logger.getLogger(getClass());
+	private static final Logger m_log = LoggerFactory.getLogger(MarketDaemon.class);
 
 	@Autowired MarketProperty propertyMarket;
 	@Autowired MarketService serviceMarket;
+
+
 
 	private MarketSender senderThread;
 
@@ -122,11 +125,7 @@ public class MarketDaemon implements Runnable {
 				ErrorCode.LogError(getClass(), "A1004",e);
 			}
 
-//			if(senderThread.isExist())
-//				break;
 		}
-		
-//		senderThread.interrupt();
 	}
 
 	private void insertMarketSendInfo() {
@@ -159,14 +158,12 @@ public class MarketDaemon implements Runnable {
 			ErrorCode.LogError(getClass(), "A1002", e);
 		}
 
-		// time ����
 		Collections.sort(listDateTime, new CompareDateTime());
 
 
 		m_log.info("\n\n\n");
 		for(TimeCheker time : listDateTime){
-			m_log.info(time.toString());
-			System.out.println("time = " + time.toString());
+			m_log.info("listDateTime time : {}", time.toString());
 		}
 		m_log.info("\n\n\n");
 	}
@@ -184,15 +181,14 @@ public class MarketDaemon implements Runnable {
 	private boolean checkSendPacket() {
 
 		if(listDateTime != null && listDateTime.isEmpty() == false){
-
 			TimeCheker dtchk = listDateTime.getFirst();
+			m_log.info("listDateTime getFirst Time {}", dtchk.toString());
 			if(dtchk != null){
 				try {
 					if(dtchk.checkElapseTime()){
 						if(listDateTime != null && listDateTime.isEmpty() == false){
 							listDateTime.removeFirst();
 						}
-
 						return true;
 					} else {
 					}
@@ -248,7 +244,6 @@ public class MarketDaemon implements Runnable {
 		try {
 			System.out.println("getPropertyInfo start");
 			MarketPropertyDao newPropertyDAO = serviceMarket.getPropertyInfo();
-//			System.out.println(newPropertyDAO);
 			System.out.println("getPropertyInfo end");
 			if(propertyDAO == null){
 				setPropertyInfo(newPropertyDAO);
@@ -329,4 +324,6 @@ public class MarketDaemon implements Runnable {
 
 		return marketDaemonSleepSec;
 	}
+
+	
 }

@@ -1,12 +1,13 @@
 package com.market.entity;
 
 import com.market.base.BaseTime;
+import com.market.base.BaseTimeSend;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "MBM_MARKET_SEND_INFO")
-public class Send extends BaseTime {
+public class Send extends BaseTimeSend {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SEQ")
@@ -18,7 +19,7 @@ public class Send extends BaseTime {
     private String sendStatus;
     @Column(name = "ERROR_MSG", length = 1000)
     private String errorMsg;
-    @Column(name = "REG_USER_ID", length = 20)
+    @Column(name = "REQ_USER_ID", length = 20)
     private String userId;
 
     @Column(name = "ETC1", length = 4000)

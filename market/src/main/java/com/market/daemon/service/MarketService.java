@@ -1,6 +1,5 @@
 package com.market.daemon.service;
 
-
 import com.market.daemon.dao.MarketInfo;
 import com.market.daemon.dao.MarketPropertyDao;
 import com.market.daemon.dto.SendInfo;
@@ -9,23 +8,24 @@ import com.market.entity.MarketPropertyEntity;
 import com.market.entity.Send;
 import com.market.entity.SendHistory;
 import com.market.exception.AppDataException;
+import com.market.exception.GetPropertyException;
 import com.market.exception.GetSendInfoListException;
 import com.market.property.MarketProperty;
 import com.market.repository.MarketPropertyRepository;
 import com.market.repository.MarketRepository;
 import com.market.repository.SendHistoryRepository;
 import com.market.repository.SendRepository;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MarketService {
-	public Logger m_log = Logger.getLogger(getClass());
+	public Logger m_log = LoggerFactory.getLogger(getClass());
 
 	final MarketRepository marketRepository;
 	final SendRepository sendRepository;
@@ -55,11 +55,10 @@ public class MarketService {
 		}
 	}
 
-
+	@Transactional(readOnly = true)
 	public List<MarketInfo> getSendMarketInfoList() throws Exception {
 		List<MarketInfo> appInfoList = new ArrayList<MarketInfo>();
 		try {
-
 			List<Market> markets = marketRepository.findAll();
 			for (Market market : markets) {
 				appInfoList.add(new MarketInfo(market));
@@ -74,6 +73,7 @@ public class MarketService {
 		return appInfoList;
 	}
 
+	@Transactional(readOnly = true)
 	public List<SendInfo> getSendInfoList() throws GetSendInfoListException {
 		
 		List<SendInfo> sendInfoList = null;
@@ -117,7 +117,7 @@ public class MarketService {
 			sendRepository.save(sendList);
 
 		} catch(Exception e) {
-			m_log.error("insertPeriodMarketSendInfo EXCEPTION.", e);
+			m_log.error("'iodMarketSendInfo EXCEPTION.", e);
 
 		}
 	}
@@ -140,18 +140,18 @@ public class MarketService {
 		}
 	}
 
-
+	@Transactional(readOnly = true)
 	public MarketPropertyDao getPropertyInfo() throws Exception {
 
-		System.out.println("getPropertyInfo of MarketService start");
+		m_log.info("getPropertyInfo of MarketService start");
 		MarketPropertyDao propertyInfo = null;
 
 		try {
 			MarketPropertyEntity property = marketPropertyRepository.findFirstByOrderByRegDt();
-			System.out.println("findFirstByOrderByRegDt end");
+			m_log.info("findFirstByOrderByRegDt end");
 			if (property == null){
-				System.out.println("findFirstByOrderByRegDt result is null");
-				throw new RuntimeException("프로퍼티 정보가 존재하지 않습니다.");
+				m_log.error("MarketPropertyRepository getPropertyInfo result is null");
+				throw new GetPropertyException("프로퍼티 정보가 존재하지 않습니다.");
 			}
 			// MarketPropertyDao 로 변환
 			propertyInfo = property.of();
@@ -171,32 +171,23 @@ public class MarketService {
 	@Transactional
 	public void insertSendHistArray(SendInfo sendInfo, String arraySendSeq) {
 		try {
-
-			// to be saved MBM_MARKET_SEND_HISTORY
-			// get from MBM_MARKET_SEND_INFO
-
-			// 이게 어떤 형식인지??
-			String[] strs = arraySendSeq.split(",");
-			List<Send> all = sendRepository.findAll();
-			List<Send> sendByIds = new ArrayList<Send>();
-
-			for (String str : strs) {
-				Long id = Long.parseLong(str);
-				for(Send send : all){
-					if(send.getId().equals(id)) {
-						sendByIds.add(send);
-						break; // id 는 pk라 한번밖에 일치 못함...
-					}
-				}
-			}
-
+			String[] split = arraySendSeq.split(",");
+			List<Long> ids = new ArrayList<Long>();
 			List<SendHistory> sendHistories = new ArrayList<SendHistory>();
-			for (Send send : sendByIds) {
-				sendHistories.add(send.of());
+
+			for(String str : split){
+				Long id = Long.parseLong(str);
+				ids.add(id);
 			}
 
-			sendHistoryRepository.save(sendHistories);
+			Collections.sort(ids);
 
+			List<Send> byIds = sendRepository.findByIdIn(ids);
+			for (Send byId : byIds) {
+				m_log.info("send id {}", byId.getId());
+				sendHistories.add(byId.of());
+			}
+			sendHistoryRepository.save(sendHistories);
 		} catch(Exception e) {
 			m_log.error("insertSendHistArray EXCEPTION", e);
 		}
@@ -208,27 +199,24 @@ public class MarketService {
 
 		try {
 			String[] split = arraySendSeq.split(",");
-			List<Send> all = sendRepository.findAll();
-			List<Send> sendByIds = new ArrayList<Send>();
-			for (String str : split) {
-				Long id = Long.parseLong(str);
-				for(Send send : all){
-					if(send.getId().equals(id)) {
-						sendByIds.add(send);
-						break; // id 는 pk라 한번밖에 일치 못함...
-					}
-				}
-			}
-
+			List<Long> ids = new ArrayList<Long>();
 			List<SendHistory> sendHistories = new ArrayList<SendHistory>();
-			for (Send send : sendByIds) {
-				sendHistories.add(send.of());
+
+			for(String str : split){
+				Long id = Long.parseLong(str);
+				ids.add(id);
 			}
 
+			Collections.sort(ids);
+
+			List<Send> byIds = sendRepository.findByIdIn(ids);
+			for (Send byId : byIds) {
+				sendHistories.add(byId.of());
+			}
 			sendHistoryRepository.save(sendHistories);
 
 		} catch(Exception e) {
-			m_log.error("Ǫ�� �߼� ���̺� �߼۰�� ������Ʈ �� Exception�� �߻��߽��ϴ�.", e);
+			m_log.error("insertSendHistArray Exception.", e);
 		}
 	}
 
@@ -281,10 +269,6 @@ public class MarketService {
 	}
 
 
-	//미사용
-//	public void insertSendHistArray(String sendSt, String errorMsg, String arraySendSeq) {
-//
-//	}
 	@Transactional
 	public void testInsertMarketData(String appid, String appPkg){
 		try {

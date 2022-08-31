@@ -7,11 +7,31 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayStore {
 
     public static void main(String[] args) {
+        WikiManager wikiManager = new WikiManager();
+        List<AppInfo> res = new ArrayList<>();
+        String mainID = "22216948";
+        res = wikiManager.getBasedList();
+//        wikiManager.addSolution("22216948", res);
+        wikiManager.addMiniCategory(mainID);
+
+    }
+
+    private static void sleep(int millis){
+        try{
+            Thread.sleep(millis);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public void test(){
         System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--headless");
@@ -60,15 +80,5 @@ public class PlayStore {
 
 
         driver.quit();
-
-
-    }
-
-    private static void sleep(int millis){
-        try{
-            Thread.sleep(millis);
-        }catch (InterruptedException e){
-            e.printStackTrace();
-        }
     }
 }

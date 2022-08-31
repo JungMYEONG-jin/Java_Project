@@ -1,6 +1,9 @@
 package com.market.api.apple;
 
 import com.market.crawling.data.CrawlingResultData;
+import com.market.exception.AppleAPIException;
+import com.market.exception.JWTException;
+import com.market.exception.KeyReadException;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -22,6 +25,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -51,16 +55,15 @@ public class AppleApi {
     public static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
     public static final String keyId = "7JL62P566N";
     public static final String keyPath = "static/apple/AuthKey_7JL62P566N.p8";
-    public static String appId = "357484932";
+
 
     private int CONN_TIME_OUT = 1000 * 30;
-
-    public String getAppVersions(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
+    public String getAppVersions(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException {
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps"+"/"+ id +"/appStoreVersions"+"?limit=1"); // 버전 업데이트날짜
         return getConnectResultByX509(jwt, id, url);
     }
 
-    public String getAppTitle(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
+    public String getAppTitle(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException {
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id); // 이름
         return getConnectResultByX509(jwt, id, url);
     }
@@ -89,12 +92,12 @@ public class AppleApi {
             urlConnection.disconnect();
 
         } catch (IOException e) {
-            throw new RuntimeException("An Error Occurred. IO failed... " + e);
+            throw new AppleAPIException(e);
         }
         return result;
     }
 
-    private String getConnectResultByX509(String jwt, String id, URL url) throws MalformedURLException, NoSuchAlgorithmException {
+    private String getConnectResultByX509(String jwt, String id, URL url) throws NoSuchAlgorithmException {
 
         String result = "";
         DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -158,7 +161,7 @@ public class AppleApi {
             result = responseBody; // json 형식
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new AppleAPIException(e);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
@@ -189,17 +192,17 @@ public class AppleApi {
 
         }catch(InvalidKeyException e)
         {
-            throw new RuntimeException("Key Format is invalid!! " + e);
+            throw new KeyReadException("JWT Private Key read Failed... " + e);
         }catch (JOSEException e)
         {
-            throw new RuntimeException("JWT Transformation failed! "+e);
+            throw new JWTException("JWT Transformation failed! "+e);
         }
 
         return jwt.serialize();
 
     }
 
-    public Map<String, String> getCrawlingInfo(String id) throws MalformedURLException, ParseException, NoSuchAlgorithmException {
+    public Map<String, String> getCrawlingInfo(String id) throws MalformedURLException, NoSuchAlgorithmException, ParseException {
         String jwt = createJWT();
         String appVersions = getAppVersions(jwt, id);
 
@@ -228,10 +231,10 @@ public class AppleApi {
      * @throws ParseException
      * @throws NoSuchAlgorithmException
      */
-    public CrawlingResultData getCrawlingResult(String id) throws MalformedURLException, ParseException, NoSuchAlgorithmException {
-        Map<String, String> crawlingInfo = getCrawlingInfo(id);
-        String realAppID = getRealAppID(id);
-        return new CrawlingResultData(realAppID, id, crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));
+    public CrawlingResultData getCrawlingResult(String id) throws MalformedURLException, NoSuchAlgorithmException, ParseException {
+            Map<String, String> crawlingInfo = getCrawlingInfo(id);
+            String realAppID = getRealAppID(id);
+            return new CrawlingResultData(realAppID, id, crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));
 //        return new CrawlingResultData(id, MarketInfo.OS_TYPE_IOS_API, crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));
     }
 
@@ -253,7 +256,7 @@ public class AppleApi {
 
         }catch(IOException e)
         {
-            throw new RuntimeException("Private Key read Failed... " + e);
+            throw new KeyReadException("Private Key read Failed... " + e);
         }
         return content;
     }

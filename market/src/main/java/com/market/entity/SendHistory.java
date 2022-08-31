@@ -17,7 +17,7 @@ public class SendHistory{
     private String sendStatus;
     @Column(name = "ERROR_MSG", length = 4000)
     private String errorMsg;
-    @Column(name = "REG_USER_ID", length = 20)
+    @Column(name = "REQ_USER_ID", length = 20)
     private String userId;
     @Column(name = "REG_DT", length = 14)
     private String regDt;
@@ -113,5 +113,20 @@ public class SendHistory{
 
     public void setEtc3(String etc3) {
         this.etc3 = etc3;
+    }
+
+    @Override
+    public String toString() {
+        return "SendHistory{" +
+                "id=" + id +
+                ", appId='" + appId + '\'' +
+                ", sendStatus='" + sendStatus + '\'' +
+                ", errorMsg='" + errorMsg + '\'' +
+                ", userId='" + userId + '\'' +
+                ", regDt='" + regDt + '\'' +
+                ", etc1='" + etc1 + '\'' +
+                ", etc2='" + etc2 + '\'' +
+                ", etc3='" + etc3 + '\'' +
+                '}';
     }
 }
