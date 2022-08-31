@@ -68,3 +68,22 @@ public class AppConfig{
 > EntityManager는 스프링 빈으로 등록되지 않는다. 빈으로 등록한것은 EntityManagerFactory  타입의 빈을 생성하는 LocalContaìnerEntìtyManagerFactoryBean이다.
 > 따라서 @Autowired와 같은 스프링의 DI 방법으로는 EntityManager를 주입받을 수 없다.
 > @PersistenceContext를 사용하면된다.
+> HttpRequestHandler 모델과 뷰 개념이 없는 http 기반의 로우레벨 서비스를 개발할 때 이용 가능.
+
+## 핸들러 매핑 전략
+1. BeanNameUrlHandlerMapping
+빈의 이름에 있는 URL을 HTTP 요청의 URL과 비교해서 일치하는 빈을 찾아준다. 가장 직관적이고 쉬움.
+*, **, ? 같은 와일드 카드 사용이 가능하다. 하지만 컨트롤러의 개수가 많아지면 전체적인 매핑구조를 한눈에 파악하고 관리하기 불편하다. 복잡한 앱에서는 잘 사용하지 않는다.
+2. ControllerBeanNameHandlerMapping
+빈의 아이디나 이름을 이용해 매핑해주는 핸들러 전략이다. 디폴트 매핑이 아니므로 사용하려면 전략 빈으로 등록이 필요.
+3. ControllerClassNameHandlerMapping
+빈 이름 대신 클래스 이름을 URL에 매핑해주는 클래스이다.
+4. SimpleUrlHandlerMapping
+URL과 매핑정보를 한곳에 모아놓을 수 있는 매핑 전략이다.
+5. DefaultAnnotationHandlerMapping
+@RequestMapping 이라는 애노테이션을 컨트롤러 클래스나 메소드에 직접 부여하고 매핑하는 전략이다.
+메소드 단위 매핑이 가능해서 컨트롤러의 개수를 획기적으로 줄일 수 있다는 장점이 있다.
+GET, POST 등 분리해서 사용 가능. 요즘에는 PostMapping, GetMapping 등등
+디폴트 핸들러 매핑이므로 기본 설정을 바꾸지 않는한 그냥 써도 됨.
+
+

@@ -10,20 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HelloController implements Controller {
+public class HelloController extends SimpleController {
 
-    @Autowired
-    HelloSpring helloSpring;
+    public HelloController(){
+        this.setRequiredParams(new String[]{"name"});
+        this.setViewName("/WEB_INF/view/hello.jsp");
+    }
+
 
     @Override
-    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-        String name = request.getParameter("name");
-        String msg = this.helloSpring.sayHello(name);
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("message", msg);
-
-        return new ModelAndView("hello.jsp", model);
+    public void control(Map<String, String> params, Map<String, Object> model) throws Exception {
+        model.put("message", "Hello "+params.get("name"));
     }
 }

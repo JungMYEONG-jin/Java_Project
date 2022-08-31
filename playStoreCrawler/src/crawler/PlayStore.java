@@ -16,9 +16,8 @@ public class PlayStore {
         WikiManager wikiManager = new WikiManager();
         List<AppInfo> res = new ArrayList<>();
         String mainID = "22216948";
-        res.add(new AppInfo("test", "한글", "DS"));
+        res = wikiManager.getBasedList();
 //        wikiManager.addSolution("22216948", res);
-
         wikiManager.addMiniCategory(mainID);
 
     }

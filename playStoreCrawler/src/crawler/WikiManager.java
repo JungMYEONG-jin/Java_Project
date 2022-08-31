@@ -47,36 +47,48 @@ public class WikiManager {
 
     public List<AppInfo> getBasedList(){
         List<AppInfo> result = new ArrayList<>();
-        result.add(new AppInfo("RootChecker/JBScanner", "루팅/탈옥/백신", "안랩"));
-        result.add(new AppInfo("BigScraping", "스크래핑", "핑거"));
-        result.add(new AppInfo("nFilter", "보안키패드", "NSHC"));
-        result.add(new AppInfo("OnePass", "FIDO", "라온시큐어"));
-        result.add(new AppInfo("Orchestra", "하이브리드프레임웍", "핑거"));
-        result.add(new AppInfo("MobilianWeb", "공동인증서", "이니텍"));
-        result.add(new AppInfo("IDCard", "신분증인식", "인지소프트"));
-        result.add(new AppInfo("MOTP", "모바일OTP", "아톤"));
-        result.add(new AppInfo("Allatori", "소스난독화", "NSHC"));
-        result.add(new AppInfo("CodeGuard", "앱위변조방지", "비티웍스"));
-        result.add(new AppInfo("SplunkMint", "앱모니터링", "유클릭"));
-        result.add(new AppInfo("NetFUNNEL", "유량제어", "에스티씨랩"));
-        result.add(new AppInfo("ClipReport", "PDF전자서명", "클립소프트"));
-        result.add(new AppInfo("SafeOn", "PUSH", "마이스스포트"));
-        result.add(new AppInfo("S-Pass", "비대면영상인증", "신한DS"));
-        result.add(new AppInfo("QRCode", "인증서복사", "라온시큐어"));
-        result.add(new AppInfo("UBIKey", "공동인증서", "인포바인"));
-        result.add(new AppInfo("GA360", "앱정보수집", "Golden Planet"));
-        result.add(new AppInfo("UniSign", "전자세금계산서", "한국전자인증"));
-        result.add(new AppInfo("WebSquare", "웹프레임웍", "인스웨이브"));
-        result.add(new AppInfo("My-Id", "본인인증", "아이콘루프"));
-        result.add(new AppInfo("Openface", "안면인증", "네오시큐"));
-        result.add(new AppInfo("MMP", "광고플랫폼", "애드브릭스"));
-        result.add(new AppInfo("IniPass", "금융인증서", "이니텍"));
-        result.add(new AppInfo("AppSuit", "앱소스난독화/위변조방지", "스틸리언"));
-        result.add(new AppInfo("BankId", "간편로그인", "금융결제원"));
-        result.add(new AppInfo("ShinhanSign", "신한인증서", "아톤"));
-        result.add(new AppInfo("ChattingPlus", "SMS기반이체연동서비스", "SKT"));
-        result.add(new AppInfo("MetsaFR", "안면인증", "시큐젠"));
-        result.add(new AppInfo("BankPay", "제로페이", "금융결제원"));
+//        result.add(new AppInfo("RootChecker/JBScanner", "루팅/탈옥/백신", "안랩"));
+//        result.add(new AppInfo("BigScraping", "스크래핑", "핑거"));
+//        result.add(new AppInfo("nFilter", "보안키패드", "NSHC"));
+//        result.add(new AppInfo("OnePass", "FIDO", "라온시큐어"));
+//        result.add(new AppInfo("Orchestra", "하이브리드프레임웍", "핑거"));
+//        result.add(new AppInfo("MobilianWeb", "공동인증서", "이니텍"));
+//        result.add(new AppInfo("IDCard", "신분증인식", "인지소프트"));
+//        result.add(new AppInfo("MOTP", "모바일OTP", "아톤"));
+//        result.add(new AppInfo("Allatori", "소스난독화", "NSHC"));
+//        result.add(new AppInfo("CodeGuard", "앱위변조방지", "비티웍스"));
+//        result.add(new AppInfo("SplunkMint", "앱모니터링", "유클릭"));
+//        result.add(new AppInfo("NetFUNNEL", "유량제어", "에스티씨랩"));
+//        result.add(new AppInfo("ClipReport", "PDF전자서명", "클립소프트"));
+//        result.add(new AppInfo("SafeOn", "PUSH", "마이스스포트"));
+//        result.add(new AppInfo("S-Pass", "비대면영상인증", "신한DS"));
+//        result.add(new AppInfo("QRCode", "인증서복사", "라온시큐어"));
+//        result.add(new AppInfo("UBIKey", "공동인증서", "인포바인"));
+//        result.add(new AppInfo("GA360", "앱정보수집", "Golden Planet"));
+//        result.add(new AppInfo("UniSign", "전자세금계산서", "한국전자인증"));
+//        result.add(new AppInfo("WebSquare", "웹프레임웍", "인스웨이브"));
+//        result.add(new AppInfo("My-Id", "본인인증", "아이콘루프"));
+//        result.add(new AppInfo("Openface", "안면인증", "네오시큐"));
+//        result.add(new AppInfo("MMP", "광고플랫폼", "애드브릭스"));
+//        result.add(new AppInfo("IniPass", "금융인증서", "이니텍"));
+//        result.add(new AppInfo("AppSuit", "앱소스난독화/위변조방지", "스틸리언"));
+//        result.add(new AppInfo("BankId", "간편로그인", "금융결제원"));
+//        result.add(new AppInfo("ShinhanSign", "신한인증서", "아톤"));
+//        result.add(new AppInfo("ChattingPlus", "SMS기반이체연동서비스", "SKT"));
+//        result.add(new AppInfo("MetsaFR", "안면인증", "시큐젠"));
+//        result.add(new AppInfo("BankPay", "제로페이", "금융결제원"));
+        result.add(new AppInfo("SimpleAuth", "간편인증서", "신한은행"));
+        result.add(new AppInfo("SmartworkFFramework", "스마트프레임워크", "신한은행"));
+        result.add(new AppInfo("SHBDeviceInfo", "기기정보", "신한은행"));
+        result.add(new AppInfo("SMobileWS", "키패드", "신한은행"));
+        result.add(new AppInfo("SHBCertCrypto", "인증서암호화", "신한은행"));
+        result.add(new AppInfo("SKeyPad", "키패드", "신한은행"));
+
+
+
+
+
+
         return result;
     }
 
@@ -140,7 +152,7 @@ public class WikiManager {
             driver.get(key);
             cnt++;
             List<WebElement> cateList = driver.findElements(By.xpath("//*[@id=\"child_ul"+key.substring(key.indexOf('=')+1)+"-0\"]/li"));
-            if (cateList.size()==2) //and ios 존재시
+            if (cateList.size()>=2) //and ios 존재시
                 continue;
             System.out.println(key+" "+value+" "+cateList.size()+" "+cnt);
             addOSType(driver, value+"."+"Android");
