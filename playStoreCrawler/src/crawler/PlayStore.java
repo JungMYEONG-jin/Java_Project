@@ -1,5 +1,7 @@
 package crawler;
 
+import com.beust.ah.A;
+import crawler.apple.api.AppleApi;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -13,12 +15,15 @@ import java.util.List;
 public class PlayStore {
 
     public static void main(String[] args) {
-        WikiManager wikiManager = new WikiManager();
-        List<AppInfo> res = new ArrayList<>();
-        String mainID = "22216948";
-        res = wikiManager.getBasedList();
+//        WikiManager wikiManager = new WikiManager();
+//        List<AppInfo> res = new ArrayList<>();
+//        String mainID = "22216948";
+//        res = wikiManager.getBasedList();
 //        wikiManager.addSolution("22216948", res);
-        wikiManager.addMiniCategory(mainID);
+//        wikiManager.addMiniCategory(mainID);
+
+        AppleApi api = new AppleApi();
+        System.out.println(api.createJWT());
 
     }
 

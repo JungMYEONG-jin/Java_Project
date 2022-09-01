@@ -41,7 +41,7 @@ public class PlayStoreCrawler implements Crawler{
 
     private HashMap<String, String> doCrawling(WebDriver driver, String packageName){
 
-        HashMap<String, String> appInfo = new HashMap<>();
+        HashMap<String, String> appInfo = new HashMap<String, String>();
         appInfo.put("앱 이름",null);
         appInfo.put("버전",null);
         appInfo.put("업데이트 날짜",null);
@@ -107,7 +107,7 @@ public class PlayStoreCrawler implements Crawler{
         driver.get(url);
         System.out.println(packageName + " review crawling start ");
 
-        List<WebElement> reviews = new ArrayList<>();
+        List<WebElement> reviews = new ArrayList<WebElement>();
 
         // 리뷰 모두 보기 xpath
         WebElement element = driver.findElement(By.xpath("//button[@class='VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-dgl2Hf ksBjEc lKxP2d qfvgSe aLey0c']"));
@@ -209,7 +209,7 @@ public class PlayStoreCrawler implements Crawler{
     @Override
     public List<HashMap<String, String>> getInfoList(String[] packageNames) {
 
-        List<HashMap<String, String>> infos = new ArrayList<>();
+        List<HashMap<String, String>> infos = new ArrayList<HashMap<String, String>>();
 
         WebDriver driver = getBackGroundDriver();
 

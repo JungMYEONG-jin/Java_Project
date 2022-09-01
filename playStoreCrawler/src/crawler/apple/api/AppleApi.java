@@ -1,9 +1,10 @@
-package com.market.api.apple;
+package crawler.apple.api;
 
-import com.market.crawling.data.CrawlingResultData;
-import com.market.exception.AppleAPIException;
-import com.market.exception.JWTException;
-import com.market.exception.KeyReadException;
+
+import crawler.dto.CrawlingResultData;
+import crawler.exception.AppleAPIException;
+import crawler.exception.JWTException;
+import crawler.exception.KeyReadException;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -25,18 +26,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 import sun.security.ec.ECPrivateKeyImpl;
+import sun.security.util.Resources;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,8 +44,9 @@ import java.security.interfaces.ECPrivateKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
-@Component
+
 public class AppleApi {
 
     public static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
@@ -248,14 +245,11 @@ public class AppleApi {
 
     private byte[] readPrivateKey(String keyPath)
     {
-        Resource resource = new ClassPathResource(keyPath);
-
+        InputStream inputStream = null;
+        inputStream = this.getClass().getClassLoader().getResourceAsStream(keyPath); // in native read without spring core
         byte[] content = null;
         try
         {
-            InputStream inputStream = resource.getInputStream();
-//            FileReader keyReader = new FileReader(resource.getFile());
-//            FileReader keyReader = new FileReader(inputStream);
             PemReader pemReader = new PemReader(new InputStreamReader(inputStream)); // jar 배포시 getFile은 에러 발생 가능성 높음. inputstream으로 읽어오기
             PemObject pemObject = pemReader.readPemObject();
             content = pemObject.getContent();
