@@ -17,7 +17,9 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlayStore {
 
@@ -31,23 +33,11 @@ public class PlayStore {
         AppleApi api = new AppleApi();
         String jwt = api.createJWT();
         try {
-//            List<JSONObject> allReviews = api.getAllReviews(jwt, AppleAppId.O2O.getAppPkg());
-//            System.out.println("allReviews = " + allReviews.size());
-//            for (JSONObject allReview : allReviews) {
-//                System.out.println("allReview = " + allReview);
-//            }
-
-//            String reviewDetails = api.getReviewDetails(jwt, AppleAppId.sbank_ios.getAppPkg());
-//            System.out.println("reviewDetails = " + reviewDetails);
-//            JSONParser parser = new JSONParser();
-//            JSONObject obj = (JSONObject) parser.parse(reviewDetails);
-//            String links = obj.get("links").toString();
-//            System.out.println("links = " + links);
-
-
             List<JSONObject> allReviews = api.getAllReviews(jwt, AppleAppId.sbank_ios.getAppPkg());
             System.out.println("allReviews = " + allReviews.size());
-
+            for (JSONObject allReview : allReviews) {
+                System.out.println("allReview = " + allReview);
+            }
 
 
         } catch (NoSuchAlgorithmException e) {

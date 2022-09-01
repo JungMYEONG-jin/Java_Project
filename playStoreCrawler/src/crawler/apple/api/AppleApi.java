@@ -63,7 +63,7 @@ public class AppleApi {
     }
 
     public String getReviewDetails(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException{
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id+"/customerReviews"+"?sort=createdDate&limit=200");
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id+"/customerReviews"+"?include=response&sort=-createdDate&limit=200");
         return getConnectResultByX509(jwt, id, url);
     }
 
@@ -91,20 +91,19 @@ public class AppleApi {
      */
     public List<JSONObject> getAllReviews(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
 
-        boolean isNext = false;
         List<JSONObject> result = new ArrayList<JSONObject>();
         String reviewDetails = getReviewDetails(jwt, id);
         result.addAll(getReviewList(reviewDetails));
 
-        // 끝까지 작업 시작
-        String nextURL = getNextURL(reviewDetails);
-        while (nextURL!=null){
-            String nextReviews = getNextReviews(jwt, id, nextURL);
-            result.addAll(getReviewList(nextReviews)); // 계속 넣기
-            nextURL = getNextURL(nextReviews);
-            if (nextURL==null)
-                break;
-        }
+//        // 끝까지 작업 시작
+//        String nextURL = getNextURL(reviewDetails);
+//        while (nextURL!=null){
+//            String nextReviews = getNextReviews(jwt, id, nextURL);
+//            result.addAll(getReviewList(nextReviews)); // 계속 넣기
+//            nextURL = getNextURL(nextReviews);
+//            if (nextURL==null)
+//                break;
+//        }
 
         return result;
     }
@@ -348,18 +347,63 @@ public class AppleApi {
     private List<JSONObject> getReviewList(String reviewDetails){
         JSONObject obj = new JSONObject();
         JSONParser parser = new JSONParser();
+        List<JSONObject> result = new ArrayList<JSONObject>();
         try {
             obj = (JSONObject) parser.parse(reviewDetails);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        JSONArray data = (JSONArray)obj.get("data");
-        List<JSONObject> result = new ArrayList<JSONObject>();
-        for (Object datum : data) {
-            JSONObject temp = (JSONObject) datum;
-            result.add((JSONObject) temp.get("attributes"));
+
+        // response 또 따로 가져오려면 성능이 너무 느려짐... 맵에 넣자
+        Map<String, JSONObject> responseMap = new HashMap<String, JSONObject>();
+        if (obj.containsKey("included")) {
+            JSONArray included = (JSONArray) obj.get("included");
+            for (Object include : included) {
+                JSONObject temp = (JSONObject) include;
+                JSONObject attributes = (JSONObject) temp.get("attributes");
+                responseMap.put(temp.get("id").toString(), attributes);
+            }
+        }
+
+        // customer review
+        if (obj.containsKey("data")) {
+            JSONArray data = (JSONArray) obj.get("data");
+            for (Object datum : data) {
+                if (datum != null) {
+                    JSONObject temp = (JSONObject) datum;
+                    JSONObject attributes = (JSONObject) temp.get("attributes");
+                    // get 답변자 ID
+                    String existReponseID = isExistReponseID(responseMap, temp, attributes);
+                    if (existReponseID!=null){
+                        if (responseMap.containsKey(existReponseID)) {
+                            JSONObject responseData = responseMap.get(existReponseID);
+                            for (Object o : responseData.keySet()) {
+                                String key = (String) o;
+                                attributes.put(key, responseData.get(key).toString());
+                            }
+                        }
+                    }
+                    result.add(attributes);
+                }
+            }
         }
         return result;
+    }
+
+
+    private String isExistReponseID(Map<String, JSONObject> responseMap, JSONObject temp, JSONObject attributes) {
+        if (temp.containsKey("relationships")) {
+            JSONObject relationships = (JSONObject) temp.get("relationships");
+            if (relationships.containsKey("response")) {
+                JSONObject response = (JSONObject) relationships.get("response");
+                JSONObject resData = (JSONObject) response.get("data");
+                if (resData != null && resData.containsKey("id")) {
+                    String id = resData.get("id").toString();
+                    return id;
+                }
+            }
+        }
+        return null;
     }
 
     private String getNextURL(String reviewDetails){
