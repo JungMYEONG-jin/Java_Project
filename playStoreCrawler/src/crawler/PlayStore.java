@@ -2,6 +2,11 @@ package crawler;
 
 import com.beust.ah.A;
 import crawler.apple.api.AppleApi;
+import crawler.apple.api.AppleAppId;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -9,6 +14,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.net.MalformedURLException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +28,37 @@ public class PlayStore {
 //        res = wikiManager.getBasedList();
 //        wikiManager.addSolution("22216948", res);
 //        wikiManager.addMiniCategory(mainID);
-
         AppleApi api = new AppleApi();
-        System.out.println(api.createJWT());
+        String jwt = api.createJWT();
+        try {
+//            List<JSONObject> allReviews = api.getAllReviews(jwt, AppleAppId.O2O.getAppPkg());
+//            System.out.println("allReviews = " + allReviews.size());
+//            for (JSONObject allReview : allReviews) {
+//                System.out.println("allReview = " + allReview);
+//            }
+
+//            String reviewDetails = api.getReviewDetails(jwt, AppleAppId.sbank_ios.getAppPkg());
+//            System.out.println("reviewDetails = " + reviewDetails);
+//            JSONParser parser = new JSONParser();
+//            JSONObject obj = (JSONObject) parser.parse(reviewDetails);
+//            String links = obj.get("links").toString();
+//            System.out.println("links = " + links);
+
+
+            List<JSONObject> allReviews = api.getAllReviews(jwt, AppleAppId.sbank_ios.getAppPkg());
+            System.out.println("allReviews = " + allReviews.size());
+
+
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
     }
+
+
 
     private static void sleep(int millis){
         try{

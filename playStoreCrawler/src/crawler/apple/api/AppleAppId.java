@@ -32,7 +32,8 @@ public enum AppleAppId {
     shinhankh_ios("1071033100"),
     smailcn_ios("1249194034"),
     sbankmini_ios("458061594"),
-    foreignerbank_ios("1190468026");
+    foreignerbank_ios("1190468026"),
+    O2O("1598850912");
 
     private String appPkg;
 
