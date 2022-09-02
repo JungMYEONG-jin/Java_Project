@@ -1,8 +1,12 @@
 package crawler.google;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 
+import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,9 +30,27 @@ class GoogleControllerTest {
     }
 
     @Test
-    void getReviewTest() {
-        String reviewDetails = controller.getReviewDetails("com.shinhan.o2o", "ya29.a0AVA9y1vm0Z8hVMAt9tnRX8ErKoTSTDLqAR1EgMbtdho_x0jAU33O9evIL0pV7P2a4Y4N6c_jRvrhGIjbKvS_XoiKQY65t079cZminKhEWNJeKcdZf16Bfu2mAvTvVTg5HKeLy0_aZ796OvGID80GLsa6y6RGaCgYKATASAQASFQE65dr8V2DRwTHs5koBPlr9rKE8Iw0163");
-        System.out.println("reviewDetails = " + reviewDetails);
+    void getReviewTest() throws ParseException, MalformedURLException {
+        String accessToken = controller.getAccessToken();
+        List<JSONObject> reviewDetails = controller.getReviewDetails("com.shinhan.o2o", accessToken);
+        System.out.println("reviewDetails = " + reviewDetails.size());
+
+        for (JSONObject reviewDetail : reviewDetails) {
+            System.out.println("reviewDetail = " + reviewDetail.toJSONString());
+        }
+
+
+//        System.out.println("reviewDetails = " + reviewDetails);
+//
+//        JSONParser parser = new JSONParser();
+//        JSONObject parse = (JSONObject)parser.parse(reviewDetails);
+//        JSONObject next = (JSONObject)parse.get("tokenPagination");
+//        String nextPageToken = next.get("nextPageToken").toString();
+//        System.out.println("nextPageToken = " + nextPageToken);
+//        String details = controller.getReviewDetails("com.shinhan.o2o", nextPageToken);
+//        System.out.println("details = " + details);
+
+
     }
 }
 

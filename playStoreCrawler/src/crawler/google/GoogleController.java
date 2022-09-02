@@ -31,7 +31,9 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GoogleController {
@@ -68,23 +70,54 @@ public class GoogleController {
         return resToken;
     }
 
-
-
-    public String getReviewDetails(String packageName, String token){
-        String link = "https://www.googleapis.com/androidpublisher/v3/applications/"+packageName+"/reviews?access_token="+token;
+    public List<JSONObject> getReviewDetails(String packageName, String token) throws MalformedURLException {
+        String link = "https://www.googleapis.com/androidpublisher/v3/applications/"+packageName+"/reviews?access_token="+token+"&maxResults=200";
         URL url = null;
+        String reviewDetails = "";
+        String nextToken = "";
+        List<JSONObject> res = new ArrayList<>();
         try {
             url = new URL(link);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+
         try {
-            return getConnectResultByX509(url);
+            reviewDetails = getConnectResultByX509(url);
+            JSONParser parser = new JSONParser();
+            JSONObject parseResult = (JSONObject) parser.parse(reviewDetails);
+            res.add(parseResult);
+            JSONObject next = null;
+            nextToken = getNextToken(parseResult, next, nextToken);
+            System.out.println("nextToken = " + nextToken);
+            while(!nextToken.isEmpty()) {
+                reviewDetails = getConnectResultByX509(new URL("https://www.googleapis.com/androidpublisher/v3/applications/"+packageName+"/reviews?access_token="+token+"&token="+nextToken+"&maxResults=200"));
+                parseResult = (JSONObject) parser.parse(reviewDetails);
+                res.add(parseResult);
+
+                next = null;
+                nextToken = null;
+                nextToken = getNextToken(parseResult, next, nextToken);
+                if (nextToken==null)
+                    break;
+            }
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        return null;
+
+        return res;
     }
+
+    private String getNextToken(JSONObject parseResult, JSONObject next, String nextToken) {
+        if(parseResult.containsKey("tokenPagination"))
+            next = (JSONObject) parseResult.get("tokenPagination");
+        if (next !=null && next.containsKey("nextPageToken"))
+            nextToken = next.get("nextPageToken").toString();
+        return nextToken;
+    }
+
 
     private String getAccessTokenX509Post(URL url, String token, String clientId, String clientSecret, String redirectURI) throws NoSuchAlgorithmException {
 
@@ -161,10 +194,6 @@ public class GoogleController {
         }
         return result;
     }
-
-
-
-
 
 
     private String getConnectResultByX509(URL url) throws NoSuchAlgorithmException {
