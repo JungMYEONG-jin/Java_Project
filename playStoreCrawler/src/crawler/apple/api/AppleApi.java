@@ -82,10 +82,10 @@ public class AppleApi {
 
 
     /**
-     * 리뷰를 전부 크롤링 하는 함수
+     * 리뷰를 전부 크롤링 하는 함수, 멀티 스레드로 구현 가능할거같은데??
      * @param jwt
      * @param id
-     * @return
+     * @return 고객 리뷰, 상담사 답변, 답변 작성일
      * @throws MalformedURLException
      * @throws NoSuchAlgorithmException
      */
@@ -95,15 +95,15 @@ public class AppleApi {
         String reviewDetails = getReviewDetails(jwt, id);
         result.addAll(getReviewList(reviewDetails));
 
-//        // 끝까지 작업 시작
-//        String nextURL = getNextURL(reviewDetails);
-//        while (nextURL!=null){
-//            String nextReviews = getNextReviews(jwt, id, nextURL);
-//            result.addAll(getReviewList(nextReviews)); // 계속 넣기
-//            nextURL = getNextURL(nextReviews);
-//            if (nextURL==null)
-//                break;
-//        }
+        // 끝까지 작업 시작
+        String nextURL = getNextURL(reviewDetails);
+        while (nextURL!=null){
+            String nextReviews = getNextReviews(jwt, id, nextURL);
+            result.addAll(getReviewList(nextReviews)); // 계속 넣기
+            nextURL = getNextURL(nextReviews);
+            if (nextURL==null)
+                break;
+        }
 
         return result;
     }
@@ -390,7 +390,13 @@ public class AppleApi {
         return result;
     }
 
-
+    /**
+     * 상담사 답변이 달렸는지 체크하는 함수
+     * @param responseMap
+     * @param temp
+     * @param attributes
+     * @return
+     */
     private String isExistReponseID(Map<String, JSONObject> responseMap, JSONObject temp, JSONObject attributes) {
         if (temp.containsKey("relationships")) {
             JSONObject relationships = (JSONObject) temp.get("relationships");
@@ -406,6 +412,11 @@ public class AppleApi {
         return null;
     }
 
+    /**
+     * 한번에 가져올수있는 리스트는 200가 최대임, link에 next가 있는지 체크해서 계속 돌리기 위해 체크하는 함수
+     * @param reviewDetails
+     * @return
+     */
     private String getNextURL(String reviewDetails){
         JSONObject obj = new JSONObject();
         JSONParser parser = new JSONParser();

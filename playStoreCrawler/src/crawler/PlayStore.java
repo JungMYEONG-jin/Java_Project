@@ -16,10 +16,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PlayStore {
 
@@ -33,11 +30,14 @@ public class PlayStore {
         AppleApi api = new AppleApi();
         String jwt = api.createJWT();
         try {
-            List<JSONObject> allReviews = api.getAllReviews(jwt, AppleAppId.sbank_ios.getAppPkg());
-            System.out.println("allReviews = " + allReviews.size());
+            long start = new Date().getTime();
+            List<JSONObject> allReviews = api.getAllReviews(jwt, AppleAppId.sbankmini_ios.getAppPkg());
             for (JSONObject allReview : allReviews) {
                 System.out.println("allReview = " + allReview);
             }
+            long end = new Date().getTime();
+            System.out.println((end - start)/1000); // sec
+            System.out.println("allReviews = " + allReviews.size());
 
 
         } catch (NoSuchAlgorithmException e) {
@@ -48,6 +48,14 @@ public class PlayStore {
 
     }
 
+
+
+
+
+    //AIzaSyBQrXTIJL4XfXUuy7cMp7pqVu5zW8kWr8M google key
+    //5722814114791747414 dev id
+    //118014375029-3lfevtf7okr9mqrn7l8p41p4g3dus4ah.apps.googleusercontent.com client id
+    //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 client password
 
 
     private static void sleep(int millis){
