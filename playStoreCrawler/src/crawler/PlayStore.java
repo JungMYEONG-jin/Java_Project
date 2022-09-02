@@ -1,5 +1,12 @@
 package crawler;
 
+import com.beust.ah.A;
+import crawler.apple.api.AppleApi;
+import crawler.apple.api.AppleAppId;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -7,20 +14,49 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 public class PlayStore {
 
     public static void main(String[] args) {
-        WikiManager wikiManager = new WikiManager();
-        List<AppInfo> res = new ArrayList<>();
-        String mainID = "22216948";
-        res = wikiManager.getBasedList();
+//        WikiManager wikiManager = new WikiManager();
+//        List<AppInfo> res = new ArrayList<>();
+//        String mainID = "22216948";
+//        res = wikiManager.getBasedList();
 //        wikiManager.addSolution("22216948", res);
-        wikiManager.addMiniCategory(mainID);
+//        wikiManager.addMiniCategory(mainID);
+        AppleApi api = new AppleApi();
+        String jwt = api.createJWT();
+        try {
+            long start = new Date().getTime();
+            List<JSONObject> allReviews = api.getAllReviews(jwt, AppleAppId.sbankmini_ios.getAppPkg());
+            for (JSONObject allReview : allReviews) {
+                System.out.println("allReview = " + allReview);
+            }
+            long end = new Date().getTime();
+            System.out.println((end - start)/1000); // sec
+            System.out.println("allReviews = " + allReviews.size());
+
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
     }
+
+
+
+
+
+    //AIzaSyBQrXTIJL4XfXUuy7cMp7pqVu5zW8kWr8M google key
+    //5722814114791747414 dev id
+    //118014375029-3lfevtf7okr9mqrn7l8p41p4g3dus4ah.apps.googleusercontent.com client id
+    //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 client password
+
 
     private static void sleep(int millis){
         try{

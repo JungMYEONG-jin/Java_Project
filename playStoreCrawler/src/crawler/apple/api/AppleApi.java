@@ -1,9 +1,10 @@
-package com.market.api.apple;
+package crawler.apple.api;
 
-import com.market.crawling.data.CrawlingResultData;
-import com.market.exception.AppleAPIException;
-import com.market.exception.JWTException;
-import com.market.exception.KeyReadException;
+
+import crawler.dto.CrawlingResultData;
+import crawler.exception.AppleAPIException;
+import crawler.exception.JWTException;
+import crawler.exception.KeyReadException;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -25,18 +26,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 import sun.security.ec.ECPrivateKeyImpl;
+import sun.security.util.Resources;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,11 +41,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.interfaces.ECPrivateKey;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-@Component
+
 public class AppleApi {
 
     public static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
@@ -69,15 +63,77 @@ public class AppleApi {
     }
 
     public String getReviewDetails(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException{
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/appStoreReviewDetails/"+id);
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id+"/customerReviews"+"?include=response&sort=-createdDate&limit=200");
+        return getConnectResultByX509(jwt, id, url);
+    }
+
+    /**
+     * links에 next 키가 있다면 계속 크롤링하여 리뷰를 획득한다.
+     * @param jwt
+     * @param id
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws MalformedURLException
+     */
+    public String getNextReviews(String jwt, String id, String link) throws NoSuchAlgorithmException, MalformedURLException{
+        URL url = new URL(link);
         return getConnectResultByX509(jwt, id, url);
     }
 
 
+    /**
+     * 리뷰를 전부 크롤링 하는 함수, 멀티 스레드로 구현 가능할거같은데??
+     * @param jwt
+     * @param id
+     * @return 고객 리뷰, 상담사 답변, 답변 작성일
+     * @throws MalformedURLException
+     * @throws NoSuchAlgorithmException
+     */
+    public List<JSONObject> getAllReviews(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
+
+        List<JSONObject> result = new ArrayList<JSONObject>();
+        String reviewDetails = getReviewDetails(jwt, id);
+        result.addAll(getReviewList(reviewDetails));
+
+        // 끝까지 작업 시작
+        String nextURL = getNextURL(reviewDetails);
+        while (nextURL!=null){
+            String nextReviews = getNextReviews(jwt, id, nextURL);
+            result.addAll(getReviewList(nextReviews)); // 계속 넣기
+            nextURL = getNextURL(nextReviews);
+            if (nextURL==null)
+                break;
+        }
+
+        return result;
+    }
+
+    // for test
+    public String getReviewSubmissions(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException{
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id+"/reviewSubmissions?include=appStoreVersionForReview");
+        return getConnectResultByX509(jwt, id, url);
+    }
+
+    // for test
+    public String getReviewInfo(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException{
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/357484932/customerReviews?cursor=AMg.ANcXDEE&limit=200&sort=createdDate");
+        return getConnectResultByX509(jwt, id, url);
+    }
+
+    // for test
     public String getBuildInfo(String jwt, String id) throws MalformedURLException{
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id+"/builds?limit=1"); // 이름
         return getConnectResult(jwt, id, url);
     }
+
+    /**
+     * 테더링 사용할때 사용 가능
+     * @param jwt
+     * @param id
+     * @param url
+     * @return
+     * @throws MalformedURLException
+     */
     private String getConnectResult(String jwt, String id, URL url) throws MalformedURLException {
         String result = "";
         try{
@@ -103,6 +159,15 @@ public class AppleApi {
         return result;
     }
 
+
+    /**
+     * 테더링 없이 사용 가능.
+     * @param jwt
+     * @param id
+     * @param url
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     private String getConnectResultByX509(String jwt, String id, URL url) throws NoSuchAlgorithmException {
 
         String result = "";
@@ -115,7 +180,6 @@ public class AppleApi {
                 public void checkClientTrusted(
                         java.security.cert.X509Certificate[] arg0, String arg1)
                         throws CertificateException {
-                    // LOGGER.debug("checkClientTrusted");
 
                 }
 
@@ -123,12 +187,10 @@ public class AppleApi {
                 public void checkServerTrusted(
                         java.security.cert.X509Certificate[] arg0, String arg1)
                         throws CertificateException {
-                    // LOGGER.debug("checkServerTrusted");
                 }
 
                 @Override
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    // LOGGER.debug("getAcceptedIssuers");
 
                     return null;
                 }
@@ -176,7 +238,10 @@ public class AppleApi {
 
     }
 
-
+    /**
+     * jwt 인증 토큰 생성
+     * @return
+     */
     public String createJWT( )
     {
         JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES256).keyID(keyId).type(JOSEObjectType.JWT).build();
@@ -248,14 +313,11 @@ public class AppleApi {
 
     private byte[] readPrivateKey(String keyPath)
     {
-        Resource resource = new ClassPathResource(keyPath);
-
+        InputStream inputStream = null;
+        inputStream = this.getClass().getClassLoader().getResourceAsStream(keyPath); // in native read without spring core
         byte[] content = null;
         try
         {
-            InputStream inputStream = resource.getInputStream();
-//            FileReader keyReader = new FileReader(resource.getFile());
-//            FileReader keyReader = new FileReader(inputStream);
             PemReader pemReader = new PemReader(new InputStreamReader(inputStream)); // jar 배포시 getFile은 에러 발생 가능성 높음. inputstream으로 읽어오기
             PemObject pemObject = pemReader.readPemObject();
             content = pemObject.getContent();
@@ -280,5 +342,92 @@ public class AppleApi {
                 return value.toString();
         }
         return "존재하지 않는 패키지입니다.";
+    }
+
+    private List<JSONObject> getReviewList(String reviewDetails){
+        JSONObject obj = new JSONObject();
+        JSONParser parser = new JSONParser();
+        List<JSONObject> result = new ArrayList<JSONObject>();
+        try {
+            obj = (JSONObject) parser.parse(reviewDetails);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // response 또 따로 가져오려면 성능이 너무 느려짐... 맵에 넣자
+        Map<String, JSONObject> responseMap = new HashMap<String, JSONObject>();
+        if (obj.containsKey("included")) {
+            JSONArray included = (JSONArray) obj.get("included");
+            for (Object include : included) {
+                JSONObject temp = (JSONObject) include;
+                JSONObject attributes = (JSONObject) temp.get("attributes");
+                responseMap.put(temp.get("id").toString(), attributes);
+            }
+        }
+
+        // customer review
+        if (obj.containsKey("data")) {
+            JSONArray data = (JSONArray) obj.get("data");
+            for (Object datum : data) {
+                if (datum != null) {
+                    JSONObject temp = (JSONObject) datum;
+                    JSONObject attributes = (JSONObject) temp.get("attributes");
+                    // get 답변자 ID
+                    String existReponseID = isExistReponseID(responseMap, temp, attributes);
+                    if (existReponseID!=null){
+                        if (responseMap.containsKey(existReponseID)) {
+                            JSONObject responseData = responseMap.get(existReponseID);
+                            for (Object o : responseData.keySet()) {
+                                String key = (String) o;
+                                attributes.put(key, responseData.get(key).toString());
+                            }
+                        }
+                    }
+                    result.add(attributes);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 상담사 답변이 달렸는지 체크하는 함수
+     * @param responseMap
+     * @param temp
+     * @param attributes
+     * @return
+     */
+    private String isExistReponseID(Map<String, JSONObject> responseMap, JSONObject temp, JSONObject attributes) {
+        if (temp.containsKey("relationships")) {
+            JSONObject relationships = (JSONObject) temp.get("relationships");
+            if (relationships.containsKey("response")) {
+                JSONObject response = (JSONObject) relationships.get("response");
+                JSONObject resData = (JSONObject) response.get("data");
+                if (resData != null && resData.containsKey("id")) {
+                    String id = resData.get("id").toString();
+                    return id;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 한번에 가져올수있는 리스트는 200가 최대임, link에 next가 있는지 체크해서 계속 돌리기 위해 체크하는 함수
+     * @param reviewDetails
+     * @return
+     */
+    private String getNextURL(String reviewDetails){
+        JSONObject obj = new JSONObject();
+        JSONParser parser = new JSONParser();
+        try {
+            obj = (JSONObject) parser.parse(reviewDetails);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        JSONObject data = (JSONObject)obj.get("links");
+        if(data.containsKey("next"))
+            return data.get("next").toString();
+        return null;
     }
 }
