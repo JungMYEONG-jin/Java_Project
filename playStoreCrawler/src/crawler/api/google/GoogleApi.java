@@ -1,4 +1,4 @@
-package crawler.google;
+package crawler.api.google;
 
 import crawler.exception.AppleAPIException;
 import crawler.exception.KeyReadException;
@@ -34,7 +34,7 @@ import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class GoogleController {
+public class GoogleApi {
 
     private static final String keyPath = "static/client_secret_118014375029-3lfevtf7okr9mqrn7l8p41p4g3dus4ah.apps.googleusercontent.com.json";
     private static final String refresh_token = "1//0eHh6SNkcC1SPCgYIARAAGA4SNwF-L9IrO20uMiHCN2C-TL1xpKOl-J2-4RHi9VUaJ98jdnzfthNDFo5sbvzLA2cblzJNxQl1Le4";
@@ -123,7 +123,7 @@ public class GoogleController {
                     attr.put("responseBody", text);
                     JSONObject lastModified = (JSONObject)developerComment.get("lastModified");
                     Long sec = Long.parseLong(userLastModified.get("seconds").toString());
-                    attr.put("reviewDate", dateFormat.format(new Date(userSec*1000)).toString());
+                    attr.put("reviewedDate", dateFormat.format(new Date(userSec*1000)).toString());
 
                 }
                 res.add(attr);

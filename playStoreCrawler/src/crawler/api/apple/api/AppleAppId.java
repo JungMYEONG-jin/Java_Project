@@ -1,4 +1,4 @@
-package crawler.apple.api;
+package crawler.api.apple.api;
 
 public enum AppleAppId {
 

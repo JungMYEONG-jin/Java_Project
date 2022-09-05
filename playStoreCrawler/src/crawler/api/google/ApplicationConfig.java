@@ -1,4 +1,4 @@
-package crawler.google;
+package crawler.api.google;
 
 
 /**

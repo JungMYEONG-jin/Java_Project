@@ -1,10 +1,8 @@
-package crawler.google;
+package crawler.api.google;
 
-import com.google.gson.Gson;
-import com.sun.javafx.binding.StringFormatter;
+import com.sun.org.glassfish.gmbal.Description;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 
@@ -14,13 +12,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.DeflaterInputStream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class GoogleControllerTest {
 
-    GoogleController controller = new GoogleController();
+    GoogleApi controller = new GoogleApi();
 
     @Test
     void mappingTest() {
@@ -36,11 +31,12 @@ class GoogleControllerTest {
         System.out.println("accessToken = " + accessToken);
     }
 
+    @Description("리뷰 정제 테스트")
     @Test
     void getReviewList() throws MalformedURLException {
         List<JSONObject> res = controller.getReviewList("com.shinhan.o2o");
         for (JSONObject re : res) {
-            System.out.println("re.toJSONString() = " + re.toJSONString());
+            System.out.println("JSONString() = " + re.toJSONString());
         }
     }
 

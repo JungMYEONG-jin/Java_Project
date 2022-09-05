@@ -43,6 +43,7 @@ import java.util.concurrent.CountDownLatch;
 public class MarketSender extends Thread {
 
 	public Logger m_log = LoggerFactory.getLogger(getClass());
+	public Logger mj = LoggerFactory.getLogger("mjError");
 
 	private MarketProperty propertyMarket;
 
@@ -162,7 +163,7 @@ public class MarketSender extends Thread {
 		try {
 			if (sendInfo != null) {
 				m_log.info("sendInfo = {}", sendInfo);
-
+				mj.error("hello!!!!");
 				regTime = System.currentTimeMillis();
 				// 이 부분이 크롤링 동작 인듯
 				CrawlingResultData ret = null;

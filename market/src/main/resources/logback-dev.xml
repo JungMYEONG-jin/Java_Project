@@ -55,11 +55,15 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
+<!--    loggerFactory에 name 넣으면 됨 클래스 대신-->
+    <logger name="mjError" level="ERROR" additivity="false">
+        <appender-ref ref="Error"/>
+    </logger>
+
     <!-- 전역 설정 -->
     <root level="${LOGS_LEVEL}">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="File"/>
-        <appender-ref ref="Error"/>
     </root>
 
 </configuration>

@@ -1,4 +1,4 @@
-package crawler.apple.api;
+package crawler.api.apple.api;
 
 
 import crawler.dto.CrawlingResultData;
@@ -27,7 +27,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import sun.security.ec.ECPrivateKeyImpl;
-import sun.security.util.Resources;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -89,9 +88,10 @@ public class AppleApi {
      * @throws MalformedURLException
      * @throws NoSuchAlgorithmException
      */
-    public List<JSONObject> getAllReviews(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
+    public List<JSONObject> getAllReviews(String id) throws MalformedURLException, NoSuchAlgorithmException {
 
         List<JSONObject> result = new ArrayList<JSONObject>();
+        String jwt = createJWT();
         String reviewDetails = getReviewDetails(jwt, id);
         result.addAll(getReviewList(reviewDetails));
 
@@ -386,7 +386,7 @@ public class AppleApi {
                     /**
                      * and ios  칼럼 동기화
                      */
-                    attributes.put("reviewDate", attributes.get("lastModifiedDate"));
+                    attributes.put("reviewedDate", attributes.get("lastModifiedDate"));
                     attributes.remove("lastModifiedDate");
                     attributes.put("device", "");
                     attributes.put("appVersion","");
