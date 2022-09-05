@@ -31,7 +31,7 @@ public class PlayStore {
         String jwt = api.createJWT();
         try {
             long start = new Date().getTime();
-            List<JSONObject> allReviews = api.getAllReviews(jwt, AppleAppId.sbankmini_ios.getAppPkg());
+            List<JSONObject> allReviews = api.getAllReviews(jwt, AppleAppId.sbizbank_ios.getAppPkg());
             for (JSONObject allReview : allReviews) {
                 System.out.println("allReview = " + allReview);
             }

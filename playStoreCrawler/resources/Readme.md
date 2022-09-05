@@ -85,5 +85,21 @@ client_secret=your_client_secret
 redirect_uri=redirect_uri
 grant_type=refresh_token
 ```
-
-
+form-data 채워서 post
+```java
+HttpPost httpPost = new HttpPost(url.toURI());
+                MultipartEntity multipartEntity = new MultipartEntity();
+                StringBody grantBody = new StringBody("refresh_token");
+                StringBody tokenBdoy = new StringBody(refresh_token);
+                StringBody idBody = new StringBody(clientId);
+                StringBody secretBody = new StringBody(clientSecret);
+                StringBody redirectBody = new StringBody(redirectURI);
+                multipartEntity.addPart("refresh_token", tokenBdoy);
+                multipartEntity.addPart("client_id", idBody);
+                multipartEntity.addPart("client_secret", secretBody);
+                multipartEntity.addPart("redirect_uri", redirectBody);
+                multipartEntity.addPart("grant_type", grantBody);
+                httpPost.setEntity(multipartEntity);
+                http = httpPost;
+```
+코드를 첨부한 더 자세한 설명을 원하시면 댓글 남겨주세요.

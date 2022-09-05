@@ -383,6 +383,13 @@ public class AppleApi {
                             }
                         }
                     }
+                    /**
+                     * and ios  칼럼 동기화
+                     */
+                    attributes.put("reviewDate", attributes.get("lastModifiedDate"));
+                    attributes.remove("lastModifiedDate");
+                    attributes.put("device", "");
+                    attributes.put("appVersion","");
                     result.add(attributes);
                 }
             }

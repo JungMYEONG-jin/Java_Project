@@ -31,10 +31,8 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class GoogleController {
 
@@ -68,6 +66,70 @@ public class GoogleController {
             e.printStackTrace();
         }
         return resToken;
+    }
+
+    /**
+     * 해당 메소드로 정해진 형식으로 리뷰 정제해서 가져
+     * @param packageName
+     * @return
+     * @throws MalformedURLException
+     */
+    public List<JSONObject> getReviewList(String packageName) throws MalformedURLException{
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        Map<String, String> map = new HashMap<>();
+        map.put("createdDate", "");map.put("reviewerNickname", "");map.put("rating", "");map.put("body", "");
+        map.put("responseBody", "");map.put("reviewDate", "");map.put("appVersion", "");map.put("device", "");map.put("reviewDate", "");
+
+
+        // token 생성
+        String accessToken = getAccessToken();
+        // 리뷰 가져오기
+        List<JSONObject> reviewDetails = getReviewDetails(packageName, accessToken);
+        List<JSONObject> res = new ArrayList<>();
+        for (JSONObject reviewDetail : reviewDetails) {
+            JSONArray reviews = (JSONArray)reviewDetail.get("reviews");
+            System.out.println("reviews.size() = " + reviews.size());
+            for (Object review : reviews) {
+                JSONObject attr = new JSONObject(map);
+                JSONObject val = (JSONObject) review;
+                String authorName = val.get("authorName").toString();
+                attr.put("reviewerNickname", authorName);
+                JSONArray comments = (JSONArray)val.get("comments");
+                JSONObject comment = (JSONObject)comments.get(0);
+                JSONObject userComment = (JSONObject)comment.get("userComment");
+                String userText = userComment.get("text").toString();
+                attr.put("body", userText);
+                JSONObject userLastModified = (JSONObject)userComment.get("lastModified");
+                Long userSec = Long.parseLong(userLastModified.get("seconds").toString());
+                attr.put("createdDate", dateFormat.format(new Date(userSec*1000)).toString());
+                String starRating = userComment.get("starRating").toString();
+                attr.put("rating", starRating);
+                if (userComment.containsKey("device")){
+                    String device = userComment.get("device").toString();
+                    attr.put("device", device);
+                }
+                if(userComment.containsKey("appVersionName")) {
+                    String appVersionName = userComment.get("appVersionName").toString();
+                    attr.put("appVersion", appVersionName);
+                }
+                if (userComment.containsKey("androidOsVersion")) {
+                    String androidOsVersion = userComment.get("androidOsVersion").toString();
+                    attr.put("osVersion", androidOsVersion);
+                }
+                if (comment.containsKey("developerComment"))
+                {
+                    JSONObject developerComment = (JSONObject)comment.get("developerComment");
+                    String text = developerComment.get("text").toString();
+                    attr.put("responseBody", text);
+                    JSONObject lastModified = (JSONObject)developerComment.get("lastModified");
+                    Long sec = Long.parseLong(userLastModified.get("seconds").toString());
+                    attr.put("reviewDate", dateFormat.format(new Date(userSec*1000)).toString());
+
+                }
+                res.add(attr);
+            }
+        }
+        return res;
     }
 
     public List<JSONObject> getReviewDetails(String packageName, String token) throws MalformedURLException {
