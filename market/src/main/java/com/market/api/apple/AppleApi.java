@@ -1,6 +1,8 @@
 package com.market.api.apple;
 
+import com.market.crawling.ICrawling;
 import com.market.crawling.data.CrawlingResultData;
+import com.market.daemon.dto.SendInfo;
 import com.market.exception.AppleAPIException;
 import com.market.exception.JWTException;
 import com.market.exception.KeyReadException;
@@ -25,11 +27,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import sun.security.ec.ECPrivateKeyImpl;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -50,7 +52,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class AppleApi {
+public class AppleApi implements ICrawling {
 
     public static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
     public static final String keyId = "7JL62P566N";
@@ -71,36 +73,6 @@ public class AppleApi {
     public String getReviewDetails(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException{
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/appStoreReviewDetails/"+id);
         return getConnectResultByX509(jwt, id, url);
-    }
-
-
-    public String getBuildInfo(String jwt, String id) throws MalformedURLException{
-        URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id+"/builds?limit=1"); // 이름
-        return getConnectResult(jwt, id, url);
-    }
-    private String getConnectResult(String jwt, String id, URL url) throws MalformedURLException {
-        String result = "";
-        try{
-            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
-
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty("Authorization", "Bearer "+ jwt);
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            String line = "";
-            String res = "";
-            while((line=br.readLine())!=null)
-            {
-                res+=line;
-            }
-
-            result = res;
-            urlConnection.disconnect();
-
-        } catch (IOException e) {
-            throw new AppleAPIException(e);
-        }
-        return result;
     }
 
     private String getConnectResultByX509(String jwt, String id, URL url) throws NoSuchAlgorithmException {
@@ -280,5 +252,18 @@ public class AppleApi {
                 return value.toString();
         }
         return "존재하지 않는 패키지입니다.";
+    }
+
+    public CrawlingResultData crawling(SendInfo sendInfo){
+        try {
+            return getCrawlingResult(sendInfo.getAppPkg());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

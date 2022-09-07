@@ -3,10 +3,13 @@ package crawler.api.google;
 import com.sun.org.glassfish.gmbal.Description;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +41,42 @@ class GoogleControllerTest {
         for (JSONObject re : res) {
             System.out.println("JSONString() = " + re.toJSONString());
         }
+    }
+
+    @Test
+    void getReviewDetails() throws MalformedURLException {
+        String accessToken = controller.getAccessToken();
+        List<JSONObject> reviewDetails = controller.getReviewDetails("com.shinhan.sbanking", accessToken);
+        for (JSONObject reviewDetail : reviewDetails) {
+            System.out.println("reviewDetail = " + reviewDetail.toJSONString());
+        }
+    }
+
+    @Test
+    void getInAppDetails() throws MalformedURLException {
+        String accessToken = controller.getAccessToken();
+        List<JSONObject> inAppDetails = controller.getInAppDetails("com.shinhan.sbanking", accessToken);
+        for (JSONObject inAppDetail : inAppDetails) {
+            System.out.println("inAppDetail = " + inAppDetail.toJSONString());
+        }
+    }
+
+    @Test// title
+    void getAppListTest() {
+        String appList = controller.getAppDescription("com.shinhan.o2o");
+        System.out.println("appList = " + appList);
+    }
+
+    @Test
+    void getApksInfoTest() {
+        String appList = controller.getApksInfo("com.shinhan.o2o");
+        System.out.println("appList = " + appList);
+    }
+
+    @Test// version code
+    void getProductionTrackInfoTest() {
+        String appList = controller.getProductionTrackInfo("com.shinhan.o2o");
+        System.out.println("appList = " + appList);
     }
 
     @Test
@@ -123,6 +162,12 @@ class GoogleControllerTest {
 //        System.out.println("details = " + details);
 
 
+    }
+
+
+    @Test
+    void versionTest() {
+        String crawlingInfo = controller.getCrawlingInfo("com.shinhan.o2o");
     }
 }
 

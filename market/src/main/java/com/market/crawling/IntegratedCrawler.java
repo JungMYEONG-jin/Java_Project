@@ -1,26 +1,21 @@
 package com.market.crawling;
 
 import com.market.api.apple.AppleApi;
+import com.market.api.google.GoogleApi;
 import com.market.crawling.data.CrawlingResultData;
 import com.market.daemon.dto.SendInfo;
-import com.market.exception.CrawlingException;
 
-public class IntegratedCrawler implements MarketCrawler {
+public class IntegratedCrawler{
 
-    private Crawling crawling;
-    private AppleApi appleApi;
-    
-    public IntegratedCrawler() {
-        crawling = new Crawling();
-        appleApi = new AppleApi();
-    }
-
-    @Override
-    public CrawlingResultData getData(SendInfo sendInfo) throws CrawlingException, Exception {
+    public CrawlingResultData getData(SendInfo sendInfo) {
+        ICrawling crawling = null;
         if(sendInfo.getOsType().equals(SendInfo.OS_TYPE_IOS_API)){
-            return appleApi.getCrawlingResult(sendInfo.getAppPkg());
-        } else {
-            return crawling.crawling(sendInfo);
+            crawling = new AppleApi();
+        } else if(sendInfo.getOsType().equals(SendInfo.OS_TYPE_AND_API)){
+            crawling = new GoogleApi();
+        } else{
+            crawling = new Crawling();
         }
+        return crawling.crawling(sendInfo);
     }
 }

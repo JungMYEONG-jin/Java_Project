@@ -82,7 +82,7 @@ public class AppleApi {
 
     /**
      * 리뷰를 전부 크롤링 하는 함수, 멀티 스레드로 구현 가능할거같은데??
-     * @param jwt
+     * @param jwtm
      * @param id
      * @return 고객 리뷰, 상담사 답변, 답변 작성일
      * @throws MalformedURLException
