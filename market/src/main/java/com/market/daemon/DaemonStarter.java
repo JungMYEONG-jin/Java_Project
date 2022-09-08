@@ -47,6 +47,14 @@ public class DaemonStarter {
 	@Transactional
 	public void fillSendRepository(){
 		sendRepository.deleteAll(); // 모두 제거 후 새로 삽입
+		for(GoogleAppId value : GoogleAppId.values()){
+			Send send = new Send();
+			send.setAppId(value.name());
+			send.setSendStatus(SendInfo.SEND_RESULT_OK);
+			send.setUserId("1111");
+			send.setErrorMsg("");
+			sendRepository.save(send);
+		}
 		for(AppleAppId value : AppleAppId.values()){
 			Send send = new Send();
 			send.setAppId(value.name());
@@ -56,18 +64,18 @@ public class DaemonStarter {
 			sendRepository.save(send);
 		}
 
-		for(GoogleAppId value : GoogleAppId.values()){
-			Send send = new Send();
-			send.setAppId(value.name());
-			send.setSendStatus(SendInfo.SEND_RESULT_OK);
-			send.setUserId("1111");
-			send.setErrorMsg("");
-			sendRepository.save(send);
-		}
+
 	}
 
 	@Transactional
 	public void updateMarketRepository(){
+		for(GoogleAppId value : GoogleAppId.values()){
+			Market market = new Market();
+			market.setAppId(value.name());
+			market.setAppPkg(value.getAppPkg());
+			market.setOsType(SendInfo.OS_TYPE_AND_API);
+			marketRepository.save(market);
+		}
 		for(AppleAppId value : AppleAppId.values()){
 			Market market = new Market();
 			market.setAppId(value.name());
@@ -76,13 +84,7 @@ public class DaemonStarter {
 			marketRepository.save(market);
 		}
 
-		for(GoogleAppId value : GoogleAppId.values()){
-			Market market = new Market();
-			market.setAppId(value.name());
-			market.setAppPkg(value.getAppPkg());
-			market.setOsType(SendInfo.OS_TYPE_AND_API);
-			marketRepository.save(market);
-		}
+
 	}
 
 	@Transactional

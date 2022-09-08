@@ -25,6 +25,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -42,10 +44,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class GoogleApi implements ICrawling {
 
     private static final String keyPath = "static/google/client_secret.json";
-    private static final String refresh_token = "1//0eHh6SNkcC1SPCgYIARAAGA4SNwF-L9IrO20uMiHCN2C-TL1xpKOl-J2-4RHi9VUaJ98jdnzfthNDFo5sbvzLA2cblzJNxQl1Le4";
+    @Value("${refresh_token}")
+    private String refresh_token;
     private static final int CONN_TIME_OUT = 1000 * 30;
     // 권한 획득 범위 https://www.googleapis.com/auth/androidpublisher
 
@@ -67,6 +71,7 @@ public class GoogleApi implements ICrawling {
         }
 
         String result = null;
+        System.out.println("refresh_token = " + refresh_token);
         try {
             result = getAccessTokenX509Post(url, refresh_token, clientInfo.get("client_id"), clientInfo.get("client_secret"), clientInfo.get("redirect_uri"));
         }catch (NoSuchAlgorithmException e) {

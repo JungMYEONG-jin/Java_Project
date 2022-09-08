@@ -173,9 +173,13 @@ public class GoogleApi {
                 if (obj.containsKey("name"))
                 {
                     String name = obj.get("name").toString();
-                    int startIdx = name.indexOf('(');
-                    int lastIdx = name.lastIndexOf(')');
-                    appVer = name.substring(startIdx+1, lastIdx);
+                    if (name.contains("(") && name.contains(")"))
+                    {
+                        int startIdx = name.indexOf('(');
+                        int lastIdx = name.lastIndexOf(')');
+                        appVer = name.substring(startIdx+1, lastIdx);
+                    }else
+                        appVer = name;
                     break;
                 }
             }

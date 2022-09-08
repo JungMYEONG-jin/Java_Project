@@ -11,8 +11,10 @@ import com.market.exception.CreateFileException;
 import com.market.exception.GetSendInfoListException;
 import com.market.exception.SendInfoListException;
 import com.market.property.MarketProperty;
+import com.market.provider.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -46,7 +48,8 @@ public class MarketSender extends Thread {
 	private MarketProperty propertyMarket;
 
 	private MarketService serviceMarket;
-	private IntegratedCrawler crawler = new IntegratedCrawler();
+
+	private IntegratedCrawler crawler;
 
 	private long regTime = MarketProperty.INIT_VALUE;
 
@@ -71,8 +74,7 @@ public class MarketSender extends Thread {
 		this.propertyMarket = marketProperty;
 		this.serviceMarket = marketService;
 		// 수동 주입
-		ApplicationContext context = new AnnotationConfigApplicationContext(MyThreadPoolConfig.class);
-		threadPoolExecutor = context.getBean("taskExecutor", ThreadPoolTaskExecutor.class);
+		crawler = (IntegratedCrawler) ApplicationContextProvider.getBean(IntegratedCrawler.class);
 		System.out.println("marketSender init");
 		initialize();
 	}
