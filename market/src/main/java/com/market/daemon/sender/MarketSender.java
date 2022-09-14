@@ -1,10 +1,8 @@
 package com.market.daemon.sender;
 
-import com.market.crawling.ICrawling;
 import com.market.crawling.IntegratedCrawler;
 import com.market.crawling.data.CrawlingResultData;
 import com.market.daemon.dto.SendInfo;
-import com.market.daemon.pool.MyThreadPoolConfig;
 import com.market.daemon.service.MarketService;
 import com.market.errorcode.ErrorCode;
 import com.market.exception.CreateFileException;
@@ -14,9 +12,6 @@ import com.market.property.MarketProperty;
 import com.market.provider.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
