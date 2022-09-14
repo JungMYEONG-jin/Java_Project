@@ -169,7 +169,6 @@ public class GoogleApi implements Crawler {
             res.add(parseResult);
             JSONObject next = null;
             nextToken = getNextToken(parseResult, next, nextToken);
-            System.out.println("nextToken = " + nextToken);
             while(nextToken!=null) {
 
                 if (nextToken==null)
@@ -274,71 +273,6 @@ public class GoogleApi implements Crawler {
         return result;
     }
 
-    private String postEditID(String packageName, String token) throws NoSuchAlgorithmException, MalformedURLException {
-
-        String result = "";
-        DefaultHttpClient httpClient = new DefaultHttpClient();
-        SSLContext sslContext = SSLContext.getInstance("SSL");
-        URL url = new URL("https://androidpublisher.googleapis.com/androidpublisher/v3/applications/"+packageName+"/edits");
-        try {
-            X509TrustManager trustManager = new X509TrustManager() {
-                @Override
-                public void checkClientTrusted(
-                        java.security.cert.X509Certificate[] arg0, String arg1)
-                        throws CertificateException {
-                }
-                @Override
-                public void checkServerTrusted(
-                        java.security.cert.X509Certificate[] arg0, String arg1)
-                        throws CertificateException {
-                }
-                @Override
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-
-                    return null;
-                }
-            };
-
-            sslContext.init(null, new TrustManager[] { trustManager },
-                    new SecureRandom());
-            SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext,
-                    SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-            Scheme sch = new Scheme("https", 443, socketFactory);
-            httpClient.getConnectionManager().getSchemeRegistry().register(sch);
-
-            HttpParams httpParam = httpClient.getParams();
-            org.apache.http.params.HttpConnectionParams.setConnectionTimeout(httpParam, CONN_TIME_OUT);
-            org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
-            HttpRequestBase http = null;
-            try {
-                http = new HttpPost(url.toURI());
-                http.setHeader("Authorization", "Bearer "+token);
-            } catch (Exception e) {
-                System.out.println(" error " );
-                http = new HttpPost(url.toURI());
-            }
-
-            HttpResponse response = null;
-            HttpEntity entity = null;
-            HttpRequest request = null;
-            String responseBody = null;
-            /**
-             * ??? ?? OUTPUT
-             */
-            // Time Out
-            response = httpClient.execute(http);
-            entity = response.getEntity();
-            responseBody = EntityUtils.toString(entity, "UTF-8");
-            result = responseBody; // json 형식
-
-        } catch (Exception e) {
-            throw new GooleAPIException(e);
-        } finally {
-            httpClient.getConnectionManager().shutdown();
-        }
-        return result;
-    }
-
     private String getConnectResultByX509(URL url) throws NoSuchAlgorithmException {
         String result = "";
         DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -404,71 +338,6 @@ public class GoogleApi implements Crawler {
         return result;
     }
 
-    private String getConnectResultByX509(URL url, String token) throws NoSuchAlgorithmException {
-        String result = "";
-        DefaultHttpClient httpClient = new DefaultHttpClient();
-        SSLContext sslContext = SSLContext.getInstance("SSL");
-        try {
-            X509TrustManager trustManager = new X509TrustManager() {
-                @Override
-                public void checkClientTrusted(
-                        java.security.cert.X509Certificate[] arg0, String arg1)
-                        throws CertificateException {
-
-                }
-
-                @Override
-                public void checkServerTrusted(
-                        java.security.cert.X509Certificate[] arg0, String arg1)
-                        throws CertificateException {
-                }
-
-                @Override
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-
-                    return null;
-                }
-            };
-
-            sslContext.init(null, new TrustManager[] { trustManager },
-                    new SecureRandom());
-            SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext,
-                    SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-            Scheme sch = new Scheme("https", 443, socketFactory);
-            httpClient.getConnectionManager().getSchemeRegistry().register(sch);
-
-            HttpParams httpParam = httpClient.getParams();
-            org.apache.http.params.HttpConnectionParams.setConnectionTimeout(httpParam, CONN_TIME_OUT);
-            org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
-
-            HttpRequestBase http = null;
-            try {
-                http = new HttpGet(url.toURI());
-                http.setHeader("Authorization", "Bearer "+token);
-            } catch (Exception e) {
-                http = new HttpPost(url.toURI());
-            }
-
-            HttpResponse response = null;
-            HttpEntity entity = null;
-            HttpRequest request = null;
-            String responseBody = null;
-            /**
-             * ??? ?? OUTPUT
-             */
-            // Time Out
-            response = httpClient.execute(http);
-            entity = response.getEntity();
-            responseBody = EntityUtils.toString(entity, "UTF-8");
-            result = responseBody; // json 형식
-
-        } catch (Exception e) {
-            throw new GooleAPIException(e);
-        } finally {
-            httpClient.getConnectionManager().shutdown();
-        }
-        return result;
-    }
 
     private JSONObject readJson(String keyPath)
     {

@@ -363,7 +363,13 @@ public class AppleApi implements Crawler {
                     /**
                      * and ios  칼럼 동기화
                      */
-                    attributes.put("answeredDate", attributes.get("lastModifiedDate"));
+                    attributes.put("createdDate", getModifiedDate(attributes.get("createdDate").toString()));
+                    if (attributes.containsKey("lastModifiedDate") && attributes.get("lastModifiedDate")!=null) {
+                        String lastModifiedDate = getModifiedDate(attributes.get("lastModifiedDate").toString());
+                        attributes.put("answeredDate", lastModifiedDate);
+                    }
+                    else
+                        attributes.put("answeredDate", "");
                     attributes.remove("lastModifiedDate");
                     attributes.put("device", "");
                     attributes.put("appVersion","");
@@ -372,6 +378,12 @@ public class AppleApi implements Crawler {
             }
         }
         return result;
+    }
+
+    private String getModifiedDate(String lastModifiedDate) {
+        lastModifiedDate = lastModifiedDate.replaceAll("[^0-9]+", "");
+        lastModifiedDate = lastModifiedDate.substring(0, 14);
+        return lastModifiedDate;
     }
 
     /**
@@ -410,7 +422,7 @@ public class AppleApi implements Crawler {
             e.printStackTrace();
         }
         JSONObject data = (JSONObject)obj.get("links");
-        if(data.containsKey("next"))
+        if(data.containsKey("next") && data.get("next")!=null)
             return data.get("next").toString();
         return null;
     }
