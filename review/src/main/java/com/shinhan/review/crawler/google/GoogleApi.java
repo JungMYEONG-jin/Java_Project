@@ -86,9 +86,8 @@ public class GoogleApi implements Crawler {
     public List<JSONObject> getReviewList(String packageName) throws MalformedURLException{
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         Map<String, String> map = new HashMap<>();
-        map.put("createdDate", "");map.put("reviewerNickname", "");map.put("rating", "");map.put("body", "");
+        map.put("createdDate", "");map.put("nickName", "");map.put("rating", "");map.put("body", "");
         map.put("responseBody", "");map.put("answeredDate", "");map.put("appVersion", "");map.put("device", "");
-
 
         // token 생성
         String accessToken = getAccessToken();
@@ -107,7 +106,7 @@ public class GoogleApi implements Crawler {
                     JSONObject val = (JSONObject) review;
                     if (val.containsKey("authorName")) {
                         String authorName = val.get("authorName").toString();
-                        attr.put("reviewerNickname", authorName);
+                        attr.put("nickName", authorName);
                     }
                     JSONArray comments = (JSONArray) val.get("comments");
                     JSONObject comment = (JSONObject) comments.get(0);

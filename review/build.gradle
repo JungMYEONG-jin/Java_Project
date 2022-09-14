@@ -27,6 +27,8 @@ dependencies {
 	implementation('org.apache.httpcomponents:httpclient:4.2.4')
 	fileTree(dir: 'src/main/resources/lib/', include:['*.jar'])
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 }
 
 tasks.named('test') {

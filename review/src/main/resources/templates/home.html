@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta content="text/html; charset=UTF-8">
     <title>Title</title>
 </head>
 <body>
-This is Home.
+<div class="container">
+    <div class="app">
+        <h1>리뷰 사이트</h1>
+        <p class="lead">리뷰</p>
+        <p>
+            <a class="btn btn-lg btn-secondary" href="/reviews/new">리뷰 등록</a>
+            <a class="btn btn-lg btn-secondary" href="/reviews">리뷰 목록</a>
+        </p>
+    </div>
+</div>
 
 </body>
 </html>

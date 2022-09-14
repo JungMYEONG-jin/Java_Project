@@ -371,6 +371,10 @@ public class AppleApi implements Crawler {
                     else
                         attributes.put("answeredDate", "");
                     attributes.remove("lastModifiedDate");
+
+                    if (!attributes.containsKey("responseBody"))
+                        attributes.put("responseBody", "");
+
                     attributes.put("device", "");
                     attributes.put("appVersion","");
                     result.add(attributes);

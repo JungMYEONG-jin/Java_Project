@@ -29,6 +29,10 @@ public class ReviewService {
         return reviewRepository.findById(id).orElse(null);
     }
 
+    public List<Review> findAll(){
+        return reviewRepository.findAll();
+    }
+
     public List<Review> findByAppPkg(String appPkg){
         return reviewRepository.findByAppPkg(appPkg);
     }

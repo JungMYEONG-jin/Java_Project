@@ -15,6 +15,8 @@ public class Review {
     private String rating;
     @Column(length = 4000)
     private String body; // 리뷰
+    @Column(length = 4000)
+    private String responseBody;
     private String answeredDate; // 답변일
     private String device;
     private String appPkg;
@@ -23,13 +25,14 @@ public class Review {
     public Review() {
     }
 
-    public Review(Long id, String appVersion, String createdDate, String nickname, String rating, String body, String answeredDate, String device, String appPkg, String osType) {
+    public Review(Long id, String appVersion, String createdDate, String nickname, String rating, String body, String responseBody, String answeredDate, String device, String appPkg, String osType) {
         this.id = id;
         this.appVersion = appVersion;
         this.createdDate = createdDate;
         this.nickname = nickname;
         this.rating = rating;
         this.body = body;
+        this.responseBody = responseBody;
         this.answeredDate = answeredDate;
         this.device = device;
         this.appPkg = appPkg;
@@ -46,6 +49,10 @@ public class Review {
 
     public String getOsType() {
         return osType;
+    }
+
+    public String getResponseBody() {
+        return responseBody;
     }
 
     public String getAppVersion() {
@@ -79,11 +86,12 @@ public class Review {
     @Override
     public String toString() {
         return "Review{" +
-                ", appVersion='" + appVersion + '\'' +
+                "appVersion='" + appVersion + '\'' +
                 ", createdDate='" + createdDate + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", rating='" + rating + '\'' +
                 ", body='" + body + '\'' +
+                ", responseBody='" + responseBody + '\'' +
                 ", answeredDate='" + answeredDate + '\'' +
                 ", device='" + device + '\'' +
                 ", appPkg='" + appPkg + '\'' +

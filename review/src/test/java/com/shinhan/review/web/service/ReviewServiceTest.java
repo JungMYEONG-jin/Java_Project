@@ -51,10 +51,6 @@ class ReviewServiceTest {
         service.saveAll(reviews);
     }
 
-    @AfterEach
-    void clear(){
-        service.clear();
-    }
 
     @Description("android")
     @Test
@@ -66,8 +62,6 @@ class ReviewServiceTest {
                 System.out.println("review = " + review);
             }
         }
-        List<JSONObject> reviewList = crawler.getReviewList(GoogleAppId.sbank_android.getAppPkg(), OS.AND.getNumber());
-        Assertions.assertThat(reviewList.size()).isEqualTo(byAppPkg.size());
     }
 
     @Description("ios")

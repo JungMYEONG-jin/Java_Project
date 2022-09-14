@@ -10,13 +10,14 @@ public class ReviewDto {
     private String nickname;
     private String rating;
     private String body; // 리뷰
+    private String responseBody;
     private String answeredDate; // 답변일
     private String device;
     private String appPkg;
     private String osType;
 
     public Review toEntity(){
-        return new Review(id, appVersion, createdDate, nickname, rating, body, answeredDate, device, appPkg, osType);
+        return new Review(id, appVersion, createdDate, nickname, rating, body,responseBody, answeredDate, device, appPkg, osType);
     }
 
     public ReviewDto(JSONObject jsonObject){
@@ -31,11 +32,22 @@ public class ReviewDto {
                 rating = jsonObject.get("rating").toString();
             if (jsonObject.containsKey("body"))
                 body = jsonObject.get("body").toString();
+            if (jsonObject.containsKey("responseBody"))
+                responseBody = jsonObject.get("responseBody").toString();
             if (jsonObject.containsKey("answeredDate"))
                 answeredDate = jsonObject.get("answeredDate").toString();
             if (jsonObject.containsKey("device"))
                 device = jsonObject.get("device").toString();
+
         }
+    }
+
+    public String getResponseBody() {
+        return responseBody;
+    }
+
+    public void setResponseBody(String responseBody) {
+        this.responseBody = responseBody;
     }
 
     public String getAppPkg() {
