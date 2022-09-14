@@ -12,9 +12,11 @@ public class ReviewDto {
     private String body; // 리뷰
     private String answeredDate; // 답변일
     private String device;
+    private String appPkg;
+    private String osType;
 
     public Review toEntity(){
-        return new Review(id, appVersion, createdDate, nickname, rating, body, answeredDate, device);
+        return new Review(id, appVersion, createdDate, nickname, rating, body, answeredDate, device, appPkg, osType);
     }
 
     public ReviewDto(JSONObject jsonObject){
@@ -36,6 +38,21 @@ public class ReviewDto {
         }
     }
 
+    public String getAppPkg() {
+        return appPkg;
+    }
+
+    public void setAppPkg(String appPkg) {
+        this.appPkg = appPkg;
+    }
+
+    public String getOsType() {
+        return osType;
+    }
+
+    public void setOsType(String osType) {
+        this.osType = osType;
+    }
 
     public Long getId() {
         return id;

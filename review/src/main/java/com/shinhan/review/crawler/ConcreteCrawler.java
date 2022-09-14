@@ -16,7 +16,7 @@ public class ConcreteCrawler{
      * @param osType
      * @return
      */
-    List<JSONObject> getReviewList(String pacakgeName, String osType){
+    public List<JSONObject> getReviewList(String pacakgeName, String osType){
         Crawler crawler = null;
         if (osType.equals(OS.AND.getNumber()))
         {

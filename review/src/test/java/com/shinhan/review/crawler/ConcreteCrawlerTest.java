@@ -32,7 +32,10 @@ class ConcreteCrawlerTest {
         List<Review> reviews = new ArrayList<>();
         if (!reviewList.isEmpty()) {
             for (JSONObject jsonObject : reviewList) {
-                reviews.add(new ReviewDto(jsonObject).toEntity());
+                ReviewDto reviewDto = new ReviewDto(jsonObject);
+                reviewDto.setAppPkg(GoogleAppId.sbank_android.getAppPkg());
+                reviewDto.setOsType(OS.AND.getNumber());
+                reviews.add(reviewDto.toEntity());
             }
         }
         reviewRepository.saveAll(reviews);
@@ -45,8 +48,10 @@ class ConcreteCrawlerTest {
         List<Review> reviews = new ArrayList<>();
         if (!reviewList.isEmpty()) {
             for (JSONObject jsonObject : reviewList) {
-                System.out.println("jsonObject = " + jsonObject);
-                reviews.add(new ReviewDto(jsonObject).toEntity());
+                ReviewDto reviewDto = new ReviewDto(jsonObject);
+                reviewDto.setAppPkg(AppleAppId.O2O.toString());
+                reviewDto.setOsType(OS.IOS.getNumber());
+                reviews.add(reviewDto.toEntity());
             }
         }
         reviewRepository.saveAll(reviews);
