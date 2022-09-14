@@ -1,12 +1,8 @@
-package com.market.api.google;
+package com.shinhan.review.crawler.google;
 
-
-import com.market.crawling.ICrawling;
-import com.market.crawling.data.CrawlingResultData;
-import com.market.daemon.dto.SendInfo;
-import com.market.exception.GooleAPIException;
-import com.market.exception.KeyReadException;
-import com.market.util.DateUtil;
+import com.shinhan.review.crawler.Crawler;
+import com.shinhan.review.exception.GooleAPIException;
+import com.shinhan.review.exception.KeyReadException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -24,9 +20,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -39,17 +32,13 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-@Component
-public class GoogleApi implements ICrawling {
+public class GoogleApi implements Crawler {
 
     private static final String keyPath = "static/google/client_secret.json";
-    @Value("${refresh_token}")
-    private String refresh_token;
+    private static final String refresh_token = "1//0eHh6SNkcC1SPCgYIARAAGA4SNwF-L9IrO20uMiHCN2C-TL1xpKOl-J2-4RHi9VUaJ98jdnzfthNDFo5sbvzLA2cblzJNxQl1Le4";
     private static final int CONN_TIME_OUT = 1000 * 30;
     // 권한 획득 범위 https://www.googleapis.com/auth/androidpublisher
 
@@ -71,7 +60,6 @@ public class GoogleApi implements ICrawling {
         }
 
         String result = null;
-        System.out.println("refresh_token = " + refresh_token);
         try {
             result = getAccessTokenX509Post(url, refresh_token, clientInfo.get("client_id"), clientInfo.get("client_secret"), clientInfo.get("redirect_uri"));
         }catch (NoSuchAlgorithmException e) {
@@ -89,31 +77,88 @@ public class GoogleApi implements ICrawling {
         return resToken;
     }
 
-    private String getEditID(String packageName, String token) {
-        try {
-            String editID =  postEditID(packageName, token);
-            JSONParser parser = new JSONParser();
-            JSONObject editJSON = (JSONObject) parser.parse(editID);
-            if (editJSON.containsKey("id"))
-            {
-                return editJSON.get("id").toString();
+    /**
+     * 해당 메소드로 정해진 형식으로 리뷰 정제해서 가져
+     * @param packageName
+     * @return
+     * @throws MalformedURLException
+     */
+    public List<JSONObject> getReviewList(String packageName) throws MalformedURLException{
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        Map<String, String> map = new HashMap<>();
+        map.put("createdDate", "");map.put("reviewerNickname", "");map.put("rating", "");map.put("body", "");
+        map.put("responseBody", "");map.put("reviewDate", "");map.put("appVersion", "");map.put("device", "");map.put("reviewDate", "");
+
+
+        // token 생성
+        String accessToken = getAccessToken();
+        System.out.println("accessToken = " + accessToken);
+        // 리뷰 가져오기
+        List<JSONObject> reviewDetails = getReviewDetails(packageName, accessToken);
+        if (reviewDetails.isEmpty())
+            return null;
+
+        List<JSONObject> res = new ArrayList<>();
+
+        for (JSONObject reviewDetail : reviewDetails) {
+            JSONArray reviews = (JSONArray) reviewDetail.get("reviews");
+            if (reviews != null) {
+                for (Object review : reviews) {
+                    JSONObject attr = new JSONObject(map);
+                    JSONObject val = (JSONObject) review;
+                    if (val.containsKey("authorName")) {
+                        String authorName = val.get("authorName").toString();
+                        attr.put("reviewerNickname", authorName);
+                    }
+                    JSONArray comments = (JSONArray) val.get("comments");
+                    JSONObject comment = (JSONObject) comments.get(0);
+                    JSONObject userComment = (JSONObject) comment.get("userComment");
+                    String userText = userComment.get("text").toString();
+                    attr.put("body", userText);
+                    JSONObject userLastModified = (JSONObject) userComment.get("lastModified");
+                    Long userSec = Long.parseLong(userLastModified.get("seconds").toString());
+                    attr.put("createdDate", dateFormat.format(new Date(userSec * 1000)).toString());
+                    String starRating = userComment.get("starRating").toString();
+                    attr.put("rating", starRating);
+                    if (userComment.containsKey("device")) {
+                        String device = userComment.get("device").toString();
+                        attr.put("device", device);
+                    }
+                    if (userComment.containsKey("appVersionName")) {
+                        String appVersionName = userComment.get("appVersionName").toString();
+                        attr.put("appVersion", appVersionName);
+                    }
+                    if (userComment.containsKey("androidOsVersion")) {
+                        String androidOsVersion = userComment.get("androidOsVersion").toString();
+                        attr.put("osVersion", androidOsVersion);
+                    }
+                    if (comment.containsKey("developerComment")) {
+                        JSONObject developerComment = (JSONObject) comment.get("developerComment");
+                        String text = developerComment.get("text").toString();
+                        attr.put("responseBody", text);
+                        JSONObject lastModified = (JSONObject) developerComment.get("lastModified");
+                        Long sec = Long.parseLong(userLastModified.get("seconds").toString());
+                        attr.put("reviewedDate", dateFormat.format(new Date(userSec * 1000)).toString());
+
+                    }
+                    res.add(attr);
+                }
             }
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
-        return null;
+        return res;
     }
 
+    public List<JSONObject> getReviewDetails(String packageName, String token) throws MalformedURLException {
+        String link = "https://www.googleapis.com/androidpublisher/v3/applications/"+packageName+"/reviews?access_token="+token;
+        List<JSONObject> res = commonJsonTask(link);
+        return res;
+    }
 
     private List<JSONObject> commonJsonTask(String link) throws MalformedURLException {
         URL url = null;
         String reviewDetails = "";
         String nextToken = "";
-        List<JSONObject> res = new ArrayList<JSONObject>();
+        List<JSONObject> res = new ArrayList<>();
         try {
             url = new URL(link);
         } catch (MalformedURLException e) {
@@ -129,6 +174,9 @@ public class GoogleApi implements ICrawling {
             nextToken = getNextToken(parseResult, next, nextToken);
             System.out.println("nextToken = " + nextToken);
             while(nextToken!=null) {
+
+                if (nextToken==null)
+                    break;
                 reviewDetails = getConnectResultByX509(new URL(link +"&token="+nextToken));
                 parseResult = (JSONObject) parser.parse(reviewDetails);
                 res.add(parseResult);
@@ -136,8 +184,6 @@ public class GoogleApi implements ICrawling {
                 next = null;
                 nextToken = null;
                 nextToken = getNextToken(parseResult, next, nextToken);
-                if (nextToken==null)
-                    break;
             }
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -334,7 +380,6 @@ public class GoogleApi implements ICrawling {
             org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
 
             HttpRequestBase http = null;
-
             try {
                 http = new HttpGet(url.toURI());
             } catch (Exception e) {
@@ -448,57 +493,12 @@ public class GoogleApi implements ICrawling {
     }
 
     @Override
-    public CrawlingResultData crawling(SendInfo sendInfo) {
-        String accessToken = getAccessToken();
-        String packageName = sendInfo.getAppPkg();
-        String editId = getEditID(packageName, accessToken);
-        String appVer = "";
-        String title = "";
+    public List<JSONObject> getReview(String packageName) {
         try {
-            URL url = new URL("https://androidpublisher.googleapis.com/androidpublisher/v3/applications/"+packageName+"/edits/"+editId+"/listings");
-            String appDesc = getConnectResultByX509(url, accessToken);
-            url = new URL("https://androidpublisher.googleapis.com/androidpublisher/v3/applications/"+packageName+"/edits/"+editId+"/tracks/production");
-            String version = getConnectResultByX509(url, accessToken);
-
-            JSONParser parser = new JSONParser();
-            JSONObject parse = (JSONObject)parser.parse(version);
-            JSONArray releases = (JSONArray)parse.get("releases");
-            for (Object o : releases) {
-                JSONObject obj = (JSONObject) o;
-                if (obj.containsKey("name"))
-                {
-                    String name = obj.get("name").toString();
-                    if (name.contains("(") && name.contains(")")) {
-                        int startIdx = name.indexOf('(');
-                        int lastIdx = name.lastIndexOf(')');
-                        LoggerFactory.getLogger("mjError").error("{} {} {}", name, startIdx, lastIdx);
-                        appVer = name.substring(startIdx + 1, lastIdx);
-                    }else
-                        appVer = name;
-                    LoggerFactory.getLogger("mjError").error(appVer);
-                    break;
-                }
-            }
-            parse.clear();
-            releases.clear();
-
-            parse = (JSONObject) parser.parse(appDesc);
-            releases = (JSONArray)parse.get("listings");
-            for (Object release : releases) {
-                JSONObject obj = (JSONObject) release;
-                if(obj.containsKey("title")){
-                    title = obj.get("title").toString();
-                    break;
-                }
-            }
-            return new CrawlingResultData(sendInfo.getAppId(), sendInfo.getAppPkg(), title, appVer, new DateUtil().getNow());
-
+            return getReviewList(packageName);
         } catch (MalformedURLException e) {
-            throw new GooleAPIException("잘못된 주소 입니다.", e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new GooleAPIException("해당 알고리즘이 존재하지 않습니다.", e);
-        } catch (ParseException e) {
-            throw new GooleAPIException("JSON Parsing중 에러가 발생했습니다. 키값을 확인해주세요...", e);
+            e.printStackTrace();
         }
+        return null;
     }
 }
