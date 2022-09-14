@@ -87,12 +87,11 @@ public class GoogleApi implements Crawler {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         Map<String, String> map = new HashMap<>();
         map.put("createdDate", "");map.put("reviewerNickname", "");map.put("rating", "");map.put("body", "");
-        map.put("responseBody", "");map.put("reviewDate", "");map.put("appVersion", "");map.put("device", "");map.put("reviewDate", "");
+        map.put("responseBody", "");map.put("answeredDate", "");map.put("appVersion", "");map.put("device", "");
 
 
         // token 생성
         String accessToken = getAccessToken();
-        System.out.println("accessToken = " + accessToken);
         // 리뷰 가져오기
         List<JSONObject> reviewDetails = getReviewDetails(packageName, accessToken);
         if (reviewDetails.isEmpty())
@@ -136,9 +135,7 @@ public class GoogleApi implements Crawler {
                         JSONObject developerComment = (JSONObject) comment.get("developerComment");
                         String text = developerComment.get("text").toString();
                         attr.put("responseBody", text);
-                        JSONObject lastModified = (JSONObject) developerComment.get("lastModified");
-                        Long sec = Long.parseLong(userLastModified.get("seconds").toString());
-                        attr.put("reviewedDate", dateFormat.format(new Date(userSec * 1000)).toString());
+                        attr.put("answeredDate", dateFormat.format(new Date(userSec * 1000)).toString());
 
                     }
                     res.add(attr);

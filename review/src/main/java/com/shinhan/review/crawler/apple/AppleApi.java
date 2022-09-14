@@ -363,7 +363,7 @@ public class AppleApi implements Crawler {
                     /**
                      * and ios  칼럼 동기화
                      */
-                    attributes.put("reviewedDate", attributes.get("lastModifiedDate"));
+                    attributes.put("answeredDate", attributes.get("lastModifiedDate"));
                     attributes.remove("lastModifiedDate");
                     attributes.put("device", "");
                     attributes.put("appVersion","");
