@@ -1,20 +1,46 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Search Result</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Import할 CSS 파일 (경로 주의) -->
+  <link th:href="@{/css/bootstrap.min.css}"
+        href="../static/css/bootstrap.min.css"
+        rel="stylesheet">
+  <link th:href="@{/css/integrated-css.css}"
+        href="../static/css/integrated-css.css"
+        rel="stylesheet">
+  <title>리뷰 검색</title>
   <style>
-    ul.pagination {
-      margin: -50px 0 0 -50px;
-      position: absolute;
+    div.paging {
+      display: flex;
+      align-items: center; /* 수직 정렬 */
+      flex-direction: row; /* default: row */
+      justify-content: center; /* flex direction에 대해서 정렬방식 선택 */
     }
   </style>
 </head>
+
 <body>
 
-<form th:action="@{/reviews/search}" th:object="${dateSearch}" method="POST" style="display: flex; justify-content: flex-end; padding: 10px 0;">
+<div class="home">
+  <a th:href="@{/}">
+    홈
+  </a>
+</div>
+
+
+<form th:action="@{/reviews/search}" th:object="${searchForm}" method="POST" style="display: flex; justify-content: flex-end; padding: 10px 0;">
   <input type="date" th:field="*{start}">
   <input type="date" th:field="*{end}">
+  <select th:field="*{os}" class="form-select">
+    <option value="">==OS 선택==</option>
+    <option th:each="type : ${T(com.shinhan.review.crawler.OS).values()}"
+            th:value="${type.name()}"
+            th:text="${type.name()}">
+      AND
+    </option>
+  </select>
   <input type="submit" value="검색"/>
 </form>
 

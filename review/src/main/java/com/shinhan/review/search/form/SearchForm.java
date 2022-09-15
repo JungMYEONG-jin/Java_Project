@@ -1,23 +1,39 @@
 package com.shinhan.review.search.form;
 
+import com.shinhan.review.crawler.OS;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-public class DateSearch {
+public class SearchForm {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate start;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate end;
 
-    public DateSearch() {
+    private OS os;
+
+    public SearchForm() {
     }
 
-    public DateSearch(LocalDate start, LocalDate end) {
+    public SearchForm(LocalDate start, LocalDate end) {
         this.start = start;
         this.end = end;
+    }
+
+    public SearchForm(LocalDate start, LocalDate end, OS os) {
+        this.start = start;
+        this.end = end;
+        this.os = os;
+    }
+
+    public OS getOs() {
+        return os;
+    }
+
+    public void setOs(OS os) {
+        this.os = os;
     }
 
     public LocalDate getStart() {

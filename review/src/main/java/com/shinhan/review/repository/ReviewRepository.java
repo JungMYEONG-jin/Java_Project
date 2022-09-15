@@ -18,5 +18,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findAll(Pageable pageable);
     @Query("select r from Review r where r.createdDate between :start and :end")
     Page<Review> searchByDate(Pageable pageable, @Param("start") String start, @Param("end") String end); // 날짜 기반 검색
+    @Query("select r from Review r where r.createdDate between :start and :end and r.osType = :type")
+    Page<Review> searchByDateAndOsType(Pageable pageable, @Param("start") String start, @Param("end") String end, @Param("type") String type); // 날짜 기반 검색
+    @Query("select r from Review r where r.osType = :type")
+    Page<Review> searchByOsType(Pageable pageable, @Param("type") String type);
+
 }
 

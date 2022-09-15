@@ -3,7 +3,7 @@ package com.shinhan.review.web.service;
 import com.shinhan.review.crawler.ConcreteCrawler;
 import com.shinhan.review.entity.Review;
 import com.shinhan.review.repository.ReviewRepository;
-import com.shinhan.review.search.form.DateSearch;
+import com.shinhan.review.search.form.SearchForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +40,6 @@ public class ReviewService {
     }
 
     public Page<Review> findAll(Pageable pageable){
-//        int page =(pageable.getPageNumber() == 0 ? 0 : pageable.getPageNumber()-1);
-//        pageable = PageRequest.of(page, 10);
-//        LoggerFactory.getLogger(this.getClass()).info("page {}", page);
         return reviewRepository.findAll(pageable);
     }
 
@@ -54,10 +51,38 @@ public class ReviewService {
         return reviewRepository.findByOsType(osType);
     }
 
-    public Page<Review> searchByDate(Pageable pageable, DateSearch form){
+    public Page<Review> searchByCondition(Pageable pageable, SearchForm form){
+        if (form.getStart()==null && form.getEnd()==null)
+        {
+            if (form.getOs()==null)
+                return findAll(pageable);
+            else
+                return searchByOsType(pageable, form);
+        }
+        if (form.getStart()!=null && form.getEnd()!=null) {
+            if (form.getOs()==null)
+                return searchByDate(pageable, form);
+            else
+                return searchByDateAndOsType(pageable, form);
+        }
+
+        return null; //최악의 경우 에러 날리기로 바꾸자
+    }
+
+    public Page<Review> searchByOsType(Pageable pageable, SearchForm form){
+        return reviewRepository.searchByOsType(pageable, form.getOs().getNumber());
+    }
+
+    public Page<Review> searchByDate(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.searchByDate(pageable, start, end);
+    }
+
+    public Page<Review> searchByDateAndOsType(Pageable pageable, SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        String end = getFormattedDate(form.getEnd().toString());
+        return reviewRepository.searchByDateAndOsType(pageable, start, end, form.getOs().getNumber());
     }
 
     private String getFormattedDate(String dates) {
