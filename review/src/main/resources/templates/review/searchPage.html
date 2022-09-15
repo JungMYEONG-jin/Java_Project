@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Search Result</title>
+  <style>
+    ul.pagination {
+      margin: -50px 0 0 -50px;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+
+<form th:action="@{/reviews/search}" th:object="${dateSearch}" method="POST" style="display: flex; justify-content: flex-end; padding: 10px 0;">
+  <input type="date" th:field="*{start}">
+  <input type="date" th:field="*{end}">
+  <input type="submit" value="검색"/>
+</form>
+
+
+<div class="container">
+  <div>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>앱이름</th>
+        <th>앱버전</th>
+        <th>OS</th>
+        <th>닉네임</th>
+        <th>작성일</th>
+        <th>리뷰</th>
+        <th>평점</th>
+        <th>디바이스</th>
+        <th>답변</th>
+        <th>답변일</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="review : ${reviews}">
+        <td th:text="${review.getId()}"></td>
+        <td th:text="${review.getAppPkg()}"></td>
+        <td th:text="${review.getAppVersion()}"></td>
+        <td th:text="${review.getOsType()}"></td>
+        <td th:text="${review.getNickname()}"></td>
+        <td th:text="${review.getCreatedDate()}"></td>
+        <td th:text="${review.getBody()}"></td>
+        <td th:text="${review.getRating()}"></td>
+        <td th:text="${review.getDevice()}"></td>
+        <td th:text="${review.getResponseBody()}"></td>
+        <td th:text="${review.getAnsweredDate()}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!--Paging-->
+<div class="paging" th:if="${!reviews.isEmpty()}">
+  <!-- 전역 변수 선언 -->
+  <nav
+          th:with="
+                pageNumber = ${reviews.pageable.pageNumber},
+                pageSize = ${reviews.pageable.pageSize},
+                totalPages = ${reviews.totalPages},
+                startPage = ${T(java.lang.Math).floor(pageNumber / pageSize) * pageSize + 1},
+                tempEndPage = ${startPage + pageSize - 1},
+                endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
+          aria-label="Page navigation"
+  >
+    <ul class="pagination ">
+      <!-- 처음으로 이동 -->
+      <li th:classappend="${pageNumber < pageSize} ? 'disabled'" class="page-item">
+        <a class="page-link" th:href="@{/reviews/search/(page=0)}">
+          <span>&laquo;</span>
+          <span class="sr-only">First</span>
+        </a>
+      </li>
+
+      <!-- 이전으로 이동 -->
+      <li th:classappend="${reviews.first} ? 'disabled'" class="page-item">
+        <a class="page-link" th:href="${reviews.first} ? '#' : @{/reviews/search/(page=${pageNumber - 1})}" aria-label="Previous">
+          <span aria-hidden="true">&lt;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+
+      <!-- 특정 페이지로 이동 -->
+      <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
+        <a th:text="${page}" class="page-link" th:href="@{/reviews/search/(page=${page - 1})}"></a>
+      </li>
+
+      <!-- 다음으로 이동 -->
+      <li th:classappend="${reviews.last} ? 'disabled'" class="page-item">
+        <a class="page-link" th:href="${reviews.last} ? '#' : @{/reviews/search/(page=${pageNumber + 1})}" aria-label="Next">
+          <span aria-hidden="true">&gt;</span>
+          <span class="sr-only">Next</span>
+        </a>
+      </li>
+
+      <!-- 마지막으로 이동 -->
+      <li th:classappend=" ${T(java.lang.Math).floor(totalPages / pageSize) * pageSize - 1 <= startPage} ? 'disabled'" class="page-item">
+        <a class="page-link" th:href="@{/reviews/search/(page=${totalPages - 1})}">
+          <span>&raquo;</span>
+          <span class="sr-only">Last</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div> <!-- /container -->
+
+</body>
+</html>

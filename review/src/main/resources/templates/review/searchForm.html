@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+</head>
+
+<form th:action="@{/reviews/search}" th:object="${dateSearch}" method="POST" style="display: flex; justify-content: flex-end; padding: 10px 0;">
+    <input type="date" th:field="*{start}">
+    <input type="date" th:field="*{end}">
+    <input type="submit" value="검색"/>
+</form>
+</body>
+</html>
