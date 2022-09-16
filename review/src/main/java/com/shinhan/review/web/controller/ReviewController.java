@@ -1,6 +1,5 @@
 package com.shinhan.review.web.controller;
 
-import com.shinhan.review.crawler.OS;
 import com.shinhan.review.entity.Review;
 import com.shinhan.review.search.form.CrawlingForm;
 import com.shinhan.review.search.form.SearchForm;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -63,12 +61,6 @@ public class ReviewController {
         return "redirect:/";
     }
 
-//    @GetMapping("/reviews")
-//    public String getReviewList(Model model){
-//        List<Review> reviews = reviewService.findAll();
-//        model.addAttribute("reviews", reviews);
-//        return "review/reviewList";
-//    }
 
     @GetMapping("/reviews")
     public String getReviewList(Model model, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
