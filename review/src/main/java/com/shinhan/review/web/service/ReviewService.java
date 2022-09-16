@@ -52,6 +52,7 @@ public class ReviewService {
     }
 
     public Page<Review> searchByCondition(Pageable pageable, SearchForm form){
+        // 날짜 지정 안했을때
         if (form.getStart()==null && form.getEnd()==null)
         {
             if (form.getOs()==null)
@@ -59,6 +60,24 @@ public class ReviewService {
             else
                 return searchByOsType(pageable, form);
         }
+
+        // 시작일만 지정한경우
+        if(form.getStart()!=null && form.getEnd()==null){
+            if (form.getOs()==null)
+                return searchByCreatedDateAfter(pageable, form);
+            else
+                return searchByCreatedDateAfterAndOSType(pageable, form);
+        }
+
+        // 종료일만 지정한 경우
+        if(form.getStart()==null && form.getEnd()!=null){
+            if (form.getOs()==null)
+                return searchByCreatedDateBefore(pageable, form);
+            else
+                return searchByCreatedDateBeforeAndOSType(pageable, form);
+        }
+
+        // 시작, 종료 지정 했을때
         if (form.getStart()!=null && form.getEnd()!=null) {
             if (form.getOs()==null)
                 return searchByDate(pageable, form);
@@ -66,11 +85,12 @@ public class ReviewService {
                 return searchByDateAndOsType(pageable, form);
         }
 
-        return null; //최악의 경우 에러 날리기로 바꾸자
+        // 작동 안할시 전체 반환
+        return findAll(pageable); //최악의 경우 전체 반환
     }
 
     public Page<Review> searchByOsType(Pageable pageable, SearchForm form){
-        return reviewRepository.searchByOsType(pageable, form.getOs().getNumber());
+        return reviewRepository.findByOsType(pageable, form.getOs().getNumber());
     }
 
     public Page<Review> searchByDate(Pageable pageable, SearchForm form){
@@ -83,6 +103,26 @@ public class ReviewService {
         String start = getFormattedDate(form.getStart().toString());
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.searchByDateAndOsType(pageable, start, end, form.getOs().getNumber());
+    }
+
+    public Page<Review> searchByCreatedDateAfter(Pageable pageable, SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        return reviewRepository.findByCreatedDateAfter(pageable, start);
+    }
+
+    public Page<Review> searchByCreatedDateBefore(Pageable pageable, SearchForm form){
+        String end = getFormattedDate(form.getEnd().toString());
+        return reviewRepository.findByCreatedDateBefore(pageable, end);
+    }
+
+    public Page<Review> searchByCreatedDateAfterAndOSType(Pageable pageable, SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        return reviewRepository.findByCreatedDateAfterAndOsType(pageable, start, form.getOs().getNumber());
+    }
+
+    public Page<Review> searchByCreatedDateBeforeAndOSType(Pageable pageable, SearchForm form){
+        String end = getFormattedDate(form.getEnd().toString());
+        return reviewRepository.findByCreatedDateBeforeAndOsType(pageable, end, form.getOs().getNumber());
     }
 
     private String getFormattedDate(String dates) {
