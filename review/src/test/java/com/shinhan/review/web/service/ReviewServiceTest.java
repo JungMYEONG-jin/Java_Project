@@ -34,16 +34,16 @@ class ReviewServiceTest {
         if (!reviewList.isEmpty()) {
             for (JSONObject jsonObject : reviewList) {
                 ReviewDto reviewDto = new ReviewDto(jsonObject);
-                reviewDto.setAppPkg(AppleAppId.O2O.toString());
+                reviewDto.setAppPkg(AppleAppId.O2O.name());
                 reviewDto.setOsType(OS.IOS.getNumber());
                 reviews.add(reviewDto.toEntity());
             }
         }
-        reviewList = crawler.getReviewList(GoogleAppId.sbank_android.getAppPkg(), OS.AND.getNumber());
+        reviewList = crawler.getReviewList(GoogleAppId.sbank.getAppPkg(), OS.AND.getNumber());
         if (!reviewList.isEmpty()) {
             for (JSONObject jsonObject : reviewList) {
                 ReviewDto reviewDto = new ReviewDto(jsonObject);
-                reviewDto.setAppPkg(GoogleAppId.sbank_android.getAppPkg());
+                reviewDto.setAppPkg(GoogleAppId.sbank.name());
                 reviewDto.setOsType(OS.AND.getNumber());
                 reviews.add(reviewDto.toEntity());
             }
@@ -55,7 +55,7 @@ class ReviewServiceTest {
     @Description("android")
     @Test
     void findByAppPkgTest1(){
-        List<Review> byAppPkg = service.findByAppPkg(GoogleAppId.sbank_android.getAppPkg());
+        List<Review> byAppPkg = service.findByAppPkg(GoogleAppId.sbank.getAppPkg());
         if (byAppPkg!=null)
         {
             for (Review review : byAppPkg) {
@@ -89,7 +89,7 @@ class ReviewServiceTest {
                 System.out.println("review = " + review);
             }
         }
-        List<JSONObject> reviewList = crawler.getReviewList(GoogleAppId.sbank_android.getAppPkg(), OS.AND.getNumber());
+        List<JSONObject> reviewList = crawler.getReviewList(GoogleAppId.sbank.getAppPkg(), OS.AND.getNumber());
         Assertions.assertThat(reviewList.size()).isEqualTo(byAppPkg.size());
     }
 

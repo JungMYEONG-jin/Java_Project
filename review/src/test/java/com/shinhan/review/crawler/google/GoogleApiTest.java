@@ -16,7 +16,7 @@ class GoogleApiTest {
 
     @Test
     void review() throws MalformedURLException {
-        List<JSONObject> reviewList = controller.getReviewList(GoogleAppId.sbank_android.getAppPkg());
+        List<JSONObject> reviewList = controller.getReviewList(GoogleAppId.sbank.getAppPkg());
         for (JSONObject jsonObject : reviewList) {
             System.out.println("jsonObject = " + jsonObject.toJSONString());
         }

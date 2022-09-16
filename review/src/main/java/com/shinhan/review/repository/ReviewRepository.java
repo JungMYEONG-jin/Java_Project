@@ -34,8 +34,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findByCreatedDateAfterAndOsType(Pageable pageable, String createdDate, String osType);
     // 종료 OS
     Page<Review> findByCreatedDateBeforeAndOsType(Pageable pageable, String createdDate, String osType);
-
-
-
 }
 

@@ -1,9 +1,14 @@
 package com.shinhan.review.web.service;
 
 import com.shinhan.review.crawler.ConcreteCrawler;
+import com.shinhan.review.crawler.OS;
+import com.shinhan.review.crawler.apple.AppleAppId;
+import com.shinhan.review.crawler.google.GoogleAppId;
 import com.shinhan.review.entity.Review;
+import com.shinhan.review.entity.dto.ReviewDto;
 import com.shinhan.review.repository.ReviewRepository;
 import com.shinhan.review.search.form.SearchForm;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,6 +31,44 @@ public class ReviewService {
 
     public void saveAll(List<Review> reviews){
         reviewRepository.saveAll(reviews);
+    }
+
+    public void saveReviews(String appName, String osType){
+        String packageName = getPackageName(appName, osType);
+        List<JSONObject> reviewList = crawler.getReviewList(packageName, osType);
+        List<Review> reviews = new ArrayList<>();
+        if (!reviewList.isEmpty()) {
+            for (JSONObject jsonObject : reviewList) {
+                ReviewDto reviewDto = new ReviewDto(jsonObject);
+                reviewDto.setAppPkg(appName);
+                reviewDto.setOsType(osType);
+                reviews.add(reviewDto.toEntity());
+            }
+        }
+        reviewRepository.saveAll(reviews);
+        logger.info("{} 크롤링 완료", packageName);
+    }
+
+    private String getPackageName(String packageName, String osType) {
+        String pack = "";
+        if (osType.equals("1")){
+            for(GoogleAppId google : GoogleAppId.values()){
+                if(google.name().equals(packageName))
+                {
+                    pack = google.getAppPkg();
+                    break;
+                }
+            }
+        }else if(osType.equals("2")){
+            for(AppleAppId apple : AppleAppId.values()){
+                if(apple.name().equals(packageName))
+                {
+                    pack = apple.getAppPkg();
+                    break;
+                }
+            }
+        }
+        return pack;
     }
 
     public void saveOne(Review review){

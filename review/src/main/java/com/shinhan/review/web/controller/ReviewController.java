@@ -2,6 +2,7 @@ package com.shinhan.review.web.controller;
 
 import com.shinhan.review.crawler.OS;
 import com.shinhan.review.entity.Review;
+import com.shinhan.review.search.form.CrawlingForm;
 import com.shinhan.review.search.form.SearchForm;
 import com.shinhan.review.web.service.ReviewService;
 import org.slf4j.Logger;
@@ -40,6 +41,26 @@ public class ReviewController {
     public String goHome(){
         logger.info("home controller");
         return "home";
+    }
+
+    @GetMapping("/crawling/{packageName}/{osType}")
+    public String crawlingReviews(@PathVariable String packageName, @PathVariable String osType){
+        logger.info("crawling 시작");
+        reviewService.saveReviews(packageName, osType);
+        return "redirect:/";
+    }
+
+    @GetMapping("/crawling/search")
+    public String getCrawlingSearchForm(Model model){
+        model.addAttribute("crawlingForm", new CrawlingForm());
+        return "review/searchForm";
+    }
+
+    @PostMapping("/crawling/search")
+    public String postCrawlingSearchForm(Model model, @ModelAttribute("crawlingForm") CrawlingForm crawlingForm){
+        logger.info("크롤링을 시작합니다...");
+        reviewService.saveReviews(crawlingForm.getAppId(), crawlingForm.getOs().getNumber());
+        return "redirect:/";
     }
 
 //    @GetMapping("/reviews")

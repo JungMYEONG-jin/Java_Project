@@ -15,8 +15,6 @@ import org.springframework.context.annotation.Description;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class ConcreteCrawlerTest {
 
@@ -28,12 +26,12 @@ class ConcreteCrawlerTest {
     @Description("android")
     @Test
     void andTest() {
-        List<JSONObject> reviewList = crawler.getReviewList(GoogleAppId.sbank_android.getAppPkg(), OS.AND.getNumber());
+        List<JSONObject> reviewList = crawler.getReviewList(GoogleAppId.sbank.getAppPkg(), OS.AND.getNumber());
         List<Review> reviews = new ArrayList<>();
         if (!reviewList.isEmpty()) {
             for (JSONObject jsonObject : reviewList) {
                 ReviewDto reviewDto = new ReviewDto(jsonObject);
-                reviewDto.setAppPkg(GoogleAppId.sbank_android.getAppPkg());
+                reviewDto.setAppPkg(GoogleAppId.sbank.getAppPkg());
                 reviewDto.setOsType(OS.AND.getNumber());
                 reviews.add(reviewDto.toEntity());
             }
@@ -60,6 +58,6 @@ class ConcreteCrawlerTest {
     @Description("존재하지않는 타입")
     @Test
     void failTest() {
-        Assertions.assertThatThrownBy(()->{crawler.getReviewList(AppleAppId.salimi_ios.getAppPkg(),"3");}).isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThatThrownBy(()->{crawler.getReviewList(AppleAppId.salimi.getAppPkg(),"3");}).isInstanceOf(IllegalArgumentException.class);
     }
 }
