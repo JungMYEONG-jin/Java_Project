@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -52,21 +53,25 @@ public class ReviewService {
     private String getPackageName(String packageName, String osType) {
         String pack = "";
         if (osType.equals("1")){
-            for(GoogleAppId google : GoogleAppId.values()){
-                if(google.name().equals(packageName))
-                {
-                    pack = google.getAppPkg();
-                    break;
-                }
-            }
+            GoogleAppId id = Arrays.stream(GoogleAppId.values()).filter(app -> app.name().equals(packageName)).findAny().orElse(null);
+            pack = id.getAppPkg();
+//            for(GoogleAppId google : GoogleAppId.values()){
+//                if(google.name().equals(packageName))
+//                {
+//                    pack = google.getAppPkg();
+//                    break;
+//                }
+//            }
         }else if(osType.equals("2")){
-            for(AppleAppId apple : AppleAppId.values()){
-                if(apple.name().equals(packageName))
-                {
-                    pack = apple.getAppPkg();
-                    break;
-                }
-            }
+            AppleAppId id = Arrays.stream(AppleAppId.values()).filter(app -> app.name().equals(packageName)).findAny().orElse(null);
+            pack = id.getAppPkg();
+//            for(AppleAppId apple : AppleAppId.values()){
+//                if(apple.name().equals(packageName))
+//                {
+//                    pack = apple.getAppPkg();
+//                    break;
+//                }
+//            }
         }
         return pack;
     }
@@ -94,59 +99,66 @@ public class ReviewService {
     public List<Review> findByType(String osType){
         return reviewRepository.findByOsType(osType);
     }
+    
+    private boolean isEmpty(String text){
+        if(text==null || text.isEmpty())
+            return true;
+        return false;
+    }
 
     public Page<Review> searchByCondition(Pageable pageable, SearchForm form){
         // 날짜 지정 안했을때
         if (form.getStart()==null && form.getEnd()==null)
         {
-            if (form.getOs()==null && form.getAppPkg()==null)
+            if (form.getOs()==null && isEmpty(form.getAppPkg()))
                 return findAll(pageable);
-            else if (form.getOs()==null && form.getAppPkg()!=null)
+            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
                 return searchByAppPkg(pageable, form);
-            else if(form.getOs()!=null && form.getAppPkg()==null)
+            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
                 return searchByOsType(pageable, form);
-            else if(form.getOs()!=null && form.getAppPkg()!=null)
+            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
                 return searchByOsTypeAndAppPkg(pageable, form);
         }
 
         // 시작일만 지정한경우
         if(form.getStart()!=null && form.getEnd()==null){
-            if (form.getOs()==null && form.getAppPkg()==null)
+            if (form.getOs()==null && isEmpty(form.getAppPkg()))
                 return searchByCreatedDateAfter(pageable, form);
-            else if (form.getOs()==null && form.getAppPkg()!=null)
+            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
                 return searchByCreatedDateAfterAndAppPkg(pageable, form);
-            else if(form.getOs()!=null && form.getAppPkg()==null)
+            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
                 return searchByCreatedDateAfterAndOSType(pageable, form);
-            else if(form.getOs()!=null && form.getAppPkg()!=null)
+            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
                 return searchByCreatedDateAfterAndOsTypeAndAppPkg(pageable, form);
         }
 
         // 종료일만 지정한 경우
         if(form.getStart()==null && form.getEnd()!=null){
-            if (form.getOs()==null && form.getAppPkg()==null)
+            if (form.getOs()==null && isEmpty(form.getAppPkg()))
                 return searchByCreatedDateBefore(pageable, form);
-            else if (form.getOs()==null && form.getAppPkg()!=null)
+            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
                 return searchByCreatedDateBeforeAndAppPkg(pageable, form);
-            else if(form.getOs()!=null && form.getAppPkg()==null)
+            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
                 return searchByCreatedDateBeforeAndOSType(pageable, form);
-            else if(form.getOs()!=null && form.getAppPkg()!=null)
+            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
                 return searchByCreatedDateBeforeAndOsTypeAndAppPkg(pageable, form);
         }
 
         // 시작, 종료 지정 했을때
         if (form.getStart()!=null && form.getEnd()!=null) {
-            if (form.getOs()==null && form.getAppPkg()==null)
+            if (form.getOs()==null && isEmpty(form.getAppPkg()))
                 return searchByDate(pageable, form);
-            else if(form.getOs()==null && form.getAppPkg()!=null)
+            else if(form.getOs()==null && !isEmpty(form.getAppPkg()))
                 return searchByDateAndAppPkg(pageable, form);
-            else if(form.getOs()!=null && form.getAppPkg()==null)
+            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
                 return searchByDateAndOsType(pageable, form);
-            else if(form.getOs()!=null && form.getAppPkg()!=null)
+            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
                 return searchByDateAndOsTypeAndAppPkg(pageable, form);
         }
 
         throw new IllegalStateException("검색 조건이 잘못되었습니다...");
     }
+
 
     public Page<Review> searchByOsType(Pageable pageable, SearchForm form){
         return reviewRepository.findByOsType(pageable, form.getOs().getNumber());
