@@ -99,38 +99,53 @@ public class ReviewService {
         // 날짜 지정 안했을때
         if (form.getStart()==null && form.getEnd()==null)
         {
-            if (form.getOs()==null)
+            if (form.getOs()==null && form.getAppPkg()==null)
                 return findAll(pageable);
-            else
+            else if (form.getOs()==null && form.getAppPkg()!=null)
+                return searchByAppPkg(pageable, form);
+            else if(form.getOs()!=null && form.getAppPkg()==null)
                 return searchByOsType(pageable, form);
+            else if(form.getOs()!=null && form.getAppPkg()!=null)
+                return searchByOsTypeAndAppPkg(pageable, form);
         }
 
         // 시작일만 지정한경우
         if(form.getStart()!=null && form.getEnd()==null){
-            if (form.getOs()==null)
+            if (form.getOs()==null && form.getAppPkg()==null)
                 return searchByCreatedDateAfter(pageable, form);
-            else
+            else if (form.getOs()==null && form.getAppPkg()!=null)
+                return searchByCreatedDateAfterAndAppPkg(pageable, form);
+            else if(form.getOs()!=null && form.getAppPkg()==null)
                 return searchByCreatedDateAfterAndOSType(pageable, form);
+            else if(form.getOs()!=null && form.getAppPkg()!=null)
+                return searchByCreatedDateAfterAndOsTypeAndAppPkg(pageable, form);
         }
 
         // 종료일만 지정한 경우
         if(form.getStart()==null && form.getEnd()!=null){
-            if (form.getOs()==null)
+            if (form.getOs()==null && form.getAppPkg()==null)
                 return searchByCreatedDateBefore(pageable, form);
-            else
+            else if (form.getOs()==null && form.getAppPkg()!=null)
+                return searchByCreatedDateBeforeAndAppPkg(pageable, form);
+            else if(form.getOs()!=null && form.getAppPkg()==null)
                 return searchByCreatedDateBeforeAndOSType(pageable, form);
+            else if(form.getOs()!=null && form.getAppPkg()!=null)
+                return searchByCreatedDateBeforeAndOsTypeAndAppPkg(pageable, form);
         }
 
         // 시작, 종료 지정 했을때
         if (form.getStart()!=null && form.getEnd()!=null) {
-            if (form.getOs()==null)
+            if (form.getOs()==null && form.getAppPkg()==null)
                 return searchByDate(pageable, form);
-            else
+            else if(form.getOs()==null && form.getAppPkg()!=null)
+                return searchByDateAndAppPkg(pageable, form);
+            else if(form.getOs()!=null && form.getAppPkg()==null)
                 return searchByDateAndOsType(pageable, form);
+            else if(form.getOs()!=null && form.getAppPkg()!=null)
+                return searchByDateAndOsTypeAndAppPkg(pageable, form);
         }
 
-        // 작동 안할시 전체 반환
-        return findAll(pageable); //최악의 경우 전체 반환
+        throw new IllegalStateException("검색 조건이 잘못되었습니다...");
     }
 
     public Page<Review> searchByOsType(Pageable pageable, SearchForm form){
@@ -168,6 +183,50 @@ public class ReviewService {
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.findByCreatedDateBeforeAndOsType(pageable, end, form.getOs().getNumber());
     }
+
+    // app
+    public Page<Review> searchByAppPkg(Pageable pageable, SearchForm form){
+        return reviewRepository.findByAppPkg(pageable,  form.getAppPkg());
+    }
+    // os app
+    public Page<Review> searchByOsTypeAndAppPkg(Pageable pageable, SearchForm form){
+        return reviewRepository.findByOsTypeAndAppPkg(pageable, form.getOs().getNumber(), form.getAppPkg());
+    }
+    // start app
+    public Page<Review> searchByCreatedDateBeforeAndAppPkg(Pageable pageable, SearchForm form){
+        String end = getFormattedDate(form.getEnd().toString());
+        return reviewRepository.findByCreatedDateBeforeAndAppPkg(pageable, end, form.getAppPkg());
+    }
+    // end app
+    public Page<Review> searchByCreatedDateAfterAndAppPkg(Pageable pageable, SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        return reviewRepository.findByCreatedDateAfterAndAppPkg(pageable, start, form.getAppPkg());
+    }
+    // start end app
+    public Page<Review> searchByDateAndAppPkg(Pageable pageable, SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        String end = getFormattedDate(form.getEnd().toString());
+        return reviewRepository.searchByDateAndAppPkg(pageable, start, end, form.getAppPkg());
+    }
+    // start os app
+    public Page<Review> searchByCreatedDateAfterAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        return reviewRepository.findByCreatedDateAfterAndOsTypeAndAppPkg(pageable, start, form.getOs().getNumber(), form.getAppPkg());
+    }
+    // end os app
+    public Page<Review> searchByCreatedDateBeforeAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
+        String end = getFormattedDate(form.getEnd().toString());
+        return reviewRepository.findByCreatedDateBeforeAndOsTypeAndAppPkg(pageable, end, form.getOs().getNumber(), form.getAppPkg());
+    }
+
+    // start end os app
+    public Page<Review> searchByDateAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        String end = getFormattedDate(form.getEnd().toString());
+        return reviewRepository.searchByDateAAndOsTypeAndAppPkg(pageable, start, end, form.getOs().getNumber(), form.getAppPkg());
+    }
+
+
 
     private String getFormattedDate(String dates) {
         dates = dates.replaceAll("-","");

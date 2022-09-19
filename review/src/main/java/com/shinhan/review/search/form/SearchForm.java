@@ -13,6 +13,7 @@ public class SearchForm {
     private LocalDate end;
 
     private OS os;
+    private String appPkg;
 
     public SearchForm() {
     }
@@ -26,6 +27,21 @@ public class SearchForm {
         this.start = start;
         this.end = end;
         this.os = os;
+    }
+
+    public SearchForm(LocalDate start, LocalDate end, OS os, String appPkg) {
+        this.start = start;
+        this.end = end;
+        this.os = os;
+        this.appPkg = appPkg;
+    }
+
+    public String getAppPkg() {
+        return appPkg;
+    }
+
+    public void setAppPkg(String appPkg) {
+        this.appPkg = appPkg;
     }
 
     public OS getOs() {
