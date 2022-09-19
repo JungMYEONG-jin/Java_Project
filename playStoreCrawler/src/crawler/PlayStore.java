@@ -1,14 +1,9 @@
 package crawler;
 
-import com.beust.ah.A;
-import crawler.apple.api.AppleApi;
-import crawler.apple.api.AppleAppId;
-import org.json.simple.JSONArray;
+import crawler.api.apple.api.AppleApi;
+import crawler.api.apple.api.AppleAppId;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -28,10 +23,9 @@ public class PlayStore {
 //        wikiManager.addSolution("22216948", res);
 //        wikiManager.addMiniCategory(mainID);
         AppleApi api = new AppleApi();
-        String jwt = api.createJWT();
         try {
             long start = new Date().getTime();
-            List<JSONObject> allReviews = api.getAllReviews(jwt, AppleAppId.sbankmini_ios.getAppPkg());
+            List<JSONObject> allReviews = api.getAllReviews(AppleAppId.sbizbank_ios.getAppPkg());
             for (JSONObject allReview : allReviews) {
                 System.out.println("allReview = " + allReview);
             }

@@ -1,21 +1,17 @@
 package com.market.daemon.sender;
 
 import com.market.crawling.IntegratedCrawler;
-import com.market.crawling.MarketCrawler;
 import com.market.crawling.data.CrawlingResultData;
 import com.market.daemon.dto.SendInfo;
-import com.market.daemon.pool.MyThreadPoolConfig;
 import com.market.daemon.service.MarketService;
 import com.market.errorcode.ErrorCode;
-import com.market.exception.CrawlingException;
 import com.market.exception.CreateFileException;
 import com.market.exception.GetSendInfoListException;
 import com.market.exception.SendInfoListException;
 import com.market.property.MarketProperty;
+import com.market.provider.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,7 +30,6 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author parkyk
@@ -43,12 +38,13 @@ import java.util.concurrent.CountDownLatch;
 public class MarketSender extends Thread {
 
 	public Logger m_log = LoggerFactory.getLogger(getClass());
+	public Logger mj = LoggerFactory.getLogger("mjError");
 
 	private MarketProperty propertyMarket;
 
 	private MarketService serviceMarket;
 
-	private MarketCrawler crawler = new IntegratedCrawler();
+	private IntegratedCrawler crawler;
 
 	private long regTime = MarketProperty.INIT_VALUE;
 
@@ -66,12 +62,14 @@ public class MarketSender extends Thread {
 	private int myArraySeqCount;
 	private int mCheckCnt;
 
+	
+
+
 	public MarketSender(MarketService marketService, MarketProperty marketProperty){
 		this.propertyMarket = marketProperty;
 		this.serviceMarket = marketService;
 		// 수동 주입
-		ApplicationContext context = new AnnotationConfigApplicationContext(MyThreadPoolConfig.class);
-		threadPoolExecutor = context.getBean("taskExecutor", ThreadPoolTaskExecutor.class);
+		crawler = (IntegratedCrawler) ApplicationContextProvider.getBean(IntegratedCrawler.class);
 		System.out.println("marketSender init");
 		initialize();
 	}
@@ -162,7 +160,7 @@ public class MarketSender extends Thread {
 		try {
 			if (sendInfo != null) {
 				m_log.info("sendInfo = {}", sendInfo);
-
+				mj.error("hello!!!!");
 				regTime = System.currentTimeMillis();
 				// 이 부분이 크롤링 동작 인듯
 				CrawlingResultData ret = null;
@@ -188,7 +186,6 @@ public class MarketSender extends Thread {
 					++myArraySeqCount;
 
 					if (myArraySeqCount >= m_nMaxArraySendSeqCnt) {
-
 						updateSendInfoArray(myArraySeq);
 						myArraySeqCount = 0;
 						myArraySeq = "";
@@ -205,14 +202,7 @@ public class MarketSender extends Thread {
 				m_log.info("Market Entity is null...");
 			}
 
-		} catch (CrawlingException e) {
-			ErrorCode.LogError(getClass(), "B1002", e);
-			sendInfo.setErrorMsg(e.getMessage());
-			sendInfo.setSendStatus(SendInfo.SEND_RESULT_CRAWLING_FAIL);
-
-			updateSendInfoError(sendInfo, sendInfo.getSeq());
-
-		} catch (Exception e) {
+		}  catch (Exception e) {
 			ErrorCode.LogError(getClass(), "B1001", e);
 			sendInfo.setErrorMsg(e.getMessage());
 			sendInfo.setSendStatus(SendInfo.SEND_RESULT_ERROR);
@@ -224,61 +214,89 @@ public class MarketSender extends Thread {
 	public void processSendInfoList(List<SendInfo> sendInfoList) throws SendInfoListException {
 
 		try {
-				if (sendInfoList.isEmpty() == false) {
-					Date date = new Date(System.currentTimeMillis());
-					SimpleDateFormat sdf = new SimpleDateFormat(
-							"yyyyMMddHHmmSS");
-					String startTime = sdf.format(date);
+			// 여기 synchronized(sendInfoList)
+			if (sendInfoList.isEmpty() == false) {
 
-					m_log.info("ProcessSendInfo Start Time : {}", startTime);
-					/**
-					 * java6에서는 람다가 안됨.. 따라서 전역변수로 myArraySeq, myArraySeqCount를 관리해야함.
-					 */
-					myArraySeq = "";
-					myArraySeqCount = 0;
 
-					m_log.info("Crawling Start");
-					int threadSize = sendInfoList.size();
-					final CountDownLatch countDownLatch = new CountDownLatch(threadSize);
-					for (SendInfo sendInfo : sendInfoList) {
-						mySendInfo = sendInfo;
-						threadPoolExecutor.execute(new Runnable() {
-							@Override
-							public void run() {
-								m_log.info("thread number {}", threadPoolExecutor.getActiveCount());
-								doCrawling(mySendInfo);
-								countDownLatch.countDown();
+				int nArraySendSeqCnt = 0;
+				String arraySendSeq = "";
+
+				m_log.info("Crawling Start");
+				System.out.println("Crawling Start");
+				for (SendInfo sendInfo : sendInfoList) {
+
+					try {
+						if (sendInfo != null) {
+							System.out.println("sendInfo = " + sendInfo);
+							// set ��Ͻð�
+							regTime = System.currentTimeMillis();
+							// 이 부분이 크롤링 동작 인듯
+							CrawlingResultData ret = null;
+							ret = crawler.getData(sendInfo);
+							System.out.println("ret = " + ret);
+							if (ret != null) {
+								m_log.info("Crawling 시작 : "
+										+ ret.toString());
+								mapResCrawling.put(ret.getAppId(), ret);
+
+								// Max Seqence
+
+								// TODO parkyk
+								if (nArraySendSeqCnt == 0) {
+									arraySendSeq = arraySendSeq
+											+ sendInfo.getSeq();
+								} else {
+									arraySendSeq = arraySendSeq + ","
+											+ sendInfo.getSeq();
+								}
+
+								++nArraySendSeqCnt;
+
+								if (nArraySendSeqCnt >= m_nMaxArraySendSeqCnt) {
+
+									updateSendInfoArray(arraySendSeq);
+									nArraySendSeqCnt = 0;
+									arraySendSeq = "";
+								}
+
+							} else {
+								m_log.info("Crawling ����");
+								sendInfo.setSendStatus(SendInfo.SEND_RESULT_CRAWLING_FAIL);
+								updateSendInfoError(sendInfo,
+										sendInfo.getSeq());
 							}
-						});
 
+						} else {
+							m_log.info("Market�����Ͱ� �����ϴ�. (object is null)");
+						}
+
+					}catch (Exception e) {
+						ErrorCode.LogError(getClass(), "B1001", e);
+						sendInfo.setErrorMsg(e.getMessage());
+						sendInfo.setSendStatus(SendInfo.SEND_RESULT_ERROR);
+						updateSendInfoError(sendInfo, sendInfo.getSeq());
+					}
+
+					try {
+						Thread.sleep(MarketProperty.SEND_DAEMON_MARKET_SEND_DELAY_SEC);
+					} catch (InterruptedException e) {
 						try {
-							Thread.sleep(MarketProperty.SEND_DAEMON_MARKET_SEND_DELAY_SEC);
-						} catch (InterruptedException e) {
-							try {
-								Thread.sleep(MarketProperty.DEFAULT_SEND_DAEMON_MARKET_SEND_DELAY_SEC);
-							} catch (InterruptedException e1) {
-							}
+							Thread.sleep(MarketProperty.DEFAULT_SEND_DAEMON_MARKET_SEND_DELAY_SEC);
+						} catch (InterruptedException e1) {
 						}
 					}
-
-					try{
-						countDownLatch.await(); // 크롤링 다 돌때까지 대기
-					}catch (InterruptedException e){
-						e.printStackTrace();
-					}
-
-//					threadPoolExecutor.shutdown(); // 모두 돌면 종료
-
-					m_log.info("Crawling End");
-
-					if (myArraySeqCount > 0 && !myArraySeq.equals("")) {
-						updateSendInfoArray(myArraySeq);
-						sendInfoList.clear();
-					}
-
-
-
 				}
+
+				m_log.info("Crawling End");
+
+				/**
+				 * HIST ���̺�� �ű�� ���� �ϱ�
+				 */
+				if (nArraySendSeqCnt > 0 && !arraySendSeq.equals("")) {
+					updateSendInfoArray(arraySendSeq);
+					sendInfoList.clear();
+				}
+			}
 
 		} catch (Exception e) {
 

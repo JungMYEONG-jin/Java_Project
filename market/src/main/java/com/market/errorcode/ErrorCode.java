@@ -91,7 +91,7 @@ public class ErrorCode {
 	public static String LogError(Class<?> clazz, String code, Exception e){
 		try {
 			String data = get(code);
-			LoggerFactory.getLogger(clazz).error(data + " Exception : "+ e.getMessage());
+			LoggerFactory.getLogger("mjError").error(data + " Exception : "+ e.getMessage());
 			return data;
 			
 		} catch (Exception ex) {

@@ -18,9 +18,10 @@ public class SendInfo implements CrawlingData {
 	public static final String SEND_RESULT_OK="1";
 	public static final String SEND_RESULT_CRAWLING_FAIL="2";
 	
-	public static String OS_TYPE_AND = "0";
-	public static String OS_TYPE_IOS = "1";
-	public static String OS_TYPE_IOS_API = "3";
+	public static String OS_TYPE_AND = "1";
+	public static String OS_TYPE_IOS = "2";
+	public static String OS_TYPE_AND_API = "3";
+	public static String OS_TYPE_IOS_API = "4";
 
 	public static String METHOD_TYPE_GET = "1";
 	public static String METHOD_TYPE_POST = "2";
@@ -90,6 +91,7 @@ public class SendInfo implements CrawlingData {
 		this.titleNode = market.getTitleNode();
 		this.versionNode = market.getVersionNode();
 		this.methodType = market.getEtc3Node();
+		this.updateNode = market.getUpdateNode();
 	}
 
 	public String getSeq() {

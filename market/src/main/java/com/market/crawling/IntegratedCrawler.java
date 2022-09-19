@@ -1,26 +1,26 @@
 package com.market.crawling;
 
 import com.market.api.apple.AppleApi;
+import com.market.api.google.GoogleApi;
 import com.market.crawling.data.CrawlingResultData;
 import com.market.daemon.dto.SendInfo;
-import com.market.exception.CrawlingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class IntegratedCrawler implements MarketCrawler {
+@Component
+public class IntegratedCrawler{
+    @Autowired
+    GoogleApi googleApi;
 
-    private Crawling crawling;
-    private AppleApi appleApi;
-    
-    public IntegratedCrawler() {
-        crawling = new Crawling();
-        appleApi = new AppleApi();
-    }
-
-    @Override
-    public CrawlingResultData getData(SendInfo sendInfo) throws CrawlingException, Exception {
+    public CrawlingResultData getData(SendInfo sendInfo) {
+        ICrawling crawling = null;
         if(sendInfo.getOsType().equals(SendInfo.OS_TYPE_IOS_API)){
-            return appleApi.getCrawlingResult(sendInfo.getAppPkg());
-        } else {
-            return crawling.crawling(sendInfo);
+            crawling = new AppleApi();
+        } else if(sendInfo.getOsType().equals(SendInfo.OS_TYPE_AND_API)){
+            crawling = googleApi;
+        } else{
+            crawling = new Crawling();
         }
+        return crawling.crawling(sendInfo);
     }
 }

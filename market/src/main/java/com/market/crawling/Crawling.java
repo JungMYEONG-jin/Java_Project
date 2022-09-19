@@ -3,6 +3,7 @@ package com.market.crawling;
 
 import com.market.crawling.data.CrawlingData;
 import com.market.crawling.data.CrawlingResultData;
+import com.market.daemon.dto.SendInfo;
 import com.market.errorcode.ErrorCode;
 import com.market.exception.CrawlingException;
 import org.apache.http.HttpEntity;
@@ -27,7 +28,7 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 
 @Component
-public class Crawling {
+public class Crawling implements ICrawling{
 
 	private int CONN_TIME_OUT = 1000 * 30;
 	
@@ -42,7 +43,12 @@ public class Crawling {
 			
 		return stringBuffer;
 	}
-	
+
+	@Override
+	public CrawlingResultData crawling(SendInfo sendInfo) {
+		return crawling(sendInfo);
+	}
+
 	public CrawlingResultData crawling(CrawlingData crawlingData) throws CrawlingException, Exception {
 		try {		
 			if(crawlingData == null){
@@ -241,4 +247,6 @@ public class Crawling {
 		}
 		return result;
 	}
+
+
 }

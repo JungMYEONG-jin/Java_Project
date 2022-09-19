@@ -1,6 +1,7 @@
 package com.market.daemon;
 
 import com.market.api.apple.AppleAppId;
+import com.market.api.google.GoogleAppId;
 import com.market.daemon.dao.MarketInfo;
 import com.market.daemon.dto.SendInfo;
 import com.market.entity.Market;
@@ -46,6 +47,14 @@ public class DaemonStarter {
 	@Transactional
 	public void fillSendRepository(){
 		sendRepository.deleteAll(); // 모두 제거 후 새로 삽입
+		for(GoogleAppId value : GoogleAppId.values()){
+			Send send = new Send();
+			send.setAppId(value.name());
+			send.setSendStatus(SendInfo.SEND_RESULT_OK);
+			send.setUserId("1111");
+			send.setErrorMsg("");
+			sendRepository.save(send);
+		}
 		for(AppleAppId value : AppleAppId.values()){
 			Send send = new Send();
 			send.setAppId(value.name());
@@ -54,24 +63,27 @@ public class DaemonStarter {
 			send.setErrorMsg("");
 			sendRepository.save(send);
 		}
+
+
 	}
 
 	@Transactional
 	public void updateMarketRepository(){
+		for(GoogleAppId value : GoogleAppId.values()){
+			Market market = new Market();
+			market.setAppId(value.name());
+			market.setAppPkg(value.getAppPkg());
+			market.setOsType(SendInfo.OS_TYPE_AND_API);
+			marketRepository.save(market);
+		}
 		for(AppleAppId value : AppleAppId.values()){
 			Market market = new Market();
 			market.setAppId(value.name());
 			market.setAppPkg(value.getAppPkg());
-			market.setOsType(MarketInfo.OS_TYPE_IOS_API);
+			market.setOsType(SendInfo.OS_TYPE_IOS_API);
 			marketRepository.save(market);
 		}
 
-		List<Market> all = marketRepository.findAll(); //매일 업데이트하기 위해...
-		for (Market market : all) {
-			market.setUptDt("1"); // 변경을 줌
-			// enable 모드라 자동으로 trace하여 다시 수정일 setting 됨.
-			marketRepository.save(market);
-		}
 
 	}
 
