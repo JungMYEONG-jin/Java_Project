@@ -1,5 +1,6 @@
 package com.shinhan.review.web.service;
 
+import com.shinhan.review.crawler.AppList;
 import com.shinhan.review.crawler.ConcreteCrawler;
 import com.shinhan.review.crawler.OS;
 import com.shinhan.review.crawler.apple.AppleAppId;
@@ -30,6 +31,15 @@ public class ReviewService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public void getAllReviews(){
+        logger.info("정기 크롤링이 시작됩니다.");
+        Arrays.stream(AppList.values()).forEach(app -> {
+            saveReviews(app.getAppPkg(), OS.AND.getNumber()); // for and
+            saveReviews(app.getAppPkg(), OS.IOS.getNumber()); // for iOS
+        });
+        logger.info("정기 크롤링이 완료되었습니다.");
+    }
+
     public void saveAll(List<Review> reviews){
         reviewRepository.saveAll(reviews);
     }
@@ -55,23 +65,9 @@ public class ReviewService {
         if (osType.equals("1")){
             GoogleAppId id = Arrays.stream(GoogleAppId.values()).filter(app -> app.name().equals(packageName)).findAny().orElse(null);
             pack = id.getAppPkg();
-//            for(GoogleAppId google : GoogleAppId.values()){
-//                if(google.name().equals(packageName))
-//                {
-//                    pack = google.getAppPkg();
-//                    break;
-//                }
-//            }
         }else if(osType.equals("2")){
             AppleAppId id = Arrays.stream(AppleAppId.values()).filter(app -> app.name().equals(packageName)).findAny().orElse(null);
             pack = id.getAppPkg();
-//            for(AppleAppId apple : AppleAppId.values()){
-//                if(apple.name().equals(packageName))
-//                {
-//                    pack = apple.getAppPkg();
-//                    break;
-//                }
-//            }
         }
         return pack;
     }

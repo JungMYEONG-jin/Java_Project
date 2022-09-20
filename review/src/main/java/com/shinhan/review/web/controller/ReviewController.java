@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,19 +56,23 @@ public class ReviewController {
     }
 
     @PostMapping("/crawling/search")
-    public String postCrawlingSearchForm(Model model, @ModelAttribute("crawlingForm") CrawlingForm crawlingForm){
-        logger.info("크롤링을 시작합니다...");
+    public String postCrawlingSearchForm(@ModelAttribute("crawlingForm") CrawlingForm crawlingForm, BindingResult result, Model model){
+        logger.info("수동 크롤링을 시작합니다...");
+        if (result.hasErrors()){
+            logger.info("수동 크롤링 실패...옵션을 확인해주세요");
+            return "review/searchForm";
+        }
         reviewService.saveReviews(crawlingForm.getAppId(), crawlingForm.getOs().getNumber());
         return "redirect:/";
     }
 
 
-    @GetMapping("/reviews")
-    public String getReviewList(Model model, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
-        Page<Review> reviews = reviewService.findAll(pageable);
-        model.addAttribute("reviews", reviews);
-        return "review/reviewList";
-    }
+//    @GetMapping("/reviews")
+//    public String getReviewList(Model model, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
+//        Page<Review> reviews = reviewService.findAll(pageable);
+//        model.addAttribute("reviews", reviews);
+//        return "review/reviewList";
+//    }
 
     @GetMapping("/reviews/search")
     public String searchReviewListGet(Model model, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){

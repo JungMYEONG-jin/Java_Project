@@ -1,12 +1,9 @@
 package com.shinhan.review.search.form;
 
 import com.shinhan.review.crawler.OS;
-import com.shinhan.review.crawler.google.GoogleAppId;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDate;
 
 public class CrawlingForm {
+
     private OS os;
     private String appId;
 

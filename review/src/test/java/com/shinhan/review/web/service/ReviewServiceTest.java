@@ -27,29 +27,36 @@ class ReviewServiceTest {
     @Autowired
     ConcreteCrawler crawler;
 
-    @BeforeEach
-    void init(){
-        List<JSONObject> reviewList = crawler.getReviewList(AppleAppId.O2O.getAppPkg(), OS.IOS.getNumber());
-        List<Review> reviews = new ArrayList<>();
-        if (!reviewList.isEmpty()) {
-            for (JSONObject jsonObject : reviewList) {
-                ReviewDto reviewDto = new ReviewDto(jsonObject);
-                reviewDto.setAppPkg(AppleAppId.O2O.name());
-                reviewDto.setOsType(OS.IOS.getNumber());
-                reviews.add(reviewDto.toEntity());
-            }
-        }
-        reviewList = crawler.getReviewList(GoogleAppId.sbank.getAppPkg(), OS.AND.getNumber());
-        if (!reviewList.isEmpty()) {
-            for (JSONObject jsonObject : reviewList) {
-                ReviewDto reviewDto = new ReviewDto(jsonObject);
-                reviewDto.setAppPkg(GoogleAppId.sbank.name());
-                reviewDto.setOsType(OS.AND.getNumber());
-                reviews.add(reviewDto.toEntity());
-            }
-        }
-        service.saveAll(reviews);
+//    @BeforeEach
+//    void init(){
+//        List<JSONObject> reviewList = crawler.getReviewList(AppleAppId.O2O.getAppPkg(), OS.IOS.getNumber());
+//        List<Review> reviews = new ArrayList<>();
+//        if (!reviewList.isEmpty()) {
+//            for (JSONObject jsonObject : reviewList) {
+//                ReviewDto reviewDto = new ReviewDto(jsonObject);
+//                reviewDto.setAppPkg(AppleAppId.O2O.name());
+//                reviewDto.setOsType(OS.IOS.getNumber());
+//                reviews.add(reviewDto.toEntity());
+//            }
+//        }
+////        reviewList = crawler.getReviewList(GoogleAppId.sbank.getAppPkg(), OS.AND.getNumber());
+////        if (!reviewList.isEmpty()) {
+////            for (JSONObject jsonObject : reviewList) {
+////                ReviewDto reviewDto = new ReviewDto(jsonObject);
+////                reviewDto.setAppPkg(GoogleAppId.sbank.name());
+////                reviewDto.setOsType(OS.AND.getNumber());
+////                reviews.add(reviewDto.toEntity());
+////            }
+////        }
+//        service.saveAll(reviews);
+//    }
+
+    @Test
+    void doAllPackage(){
+        service.getAllReviews();
     }
+
+
 
 
     @Description("android")
