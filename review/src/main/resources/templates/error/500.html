@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-500 error
-</body>
-</html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<meta charset=utf-8>
+<meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+<title>Error 500 (Not Found)!!</title>
+<style>
+    *{margin:0;padding:0}html,
+                         code{font:15px/22px arial,sans-serif}
+    html{background:#fff;color:#222;padding:15px}
+    body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(images/robot.jpeg) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(images/logo150x54.jpg) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(images/logo150x54.jpg) no-repeat 0% 0%/100% 100%;-moz-border-image:url(images/logo150x54.jpg) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(images/logo150x54.jpg) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}
+</style>
+<a th:href="@{/}"><span id=logo aria-label=SHB></span></a>
+<p><b>500.</b> <ins>That’s an error.</ins>
+<p>현재 서버에 문제가 발생했습니다.<ins>디지털개발부 정명진 선임에게 문의 바랍니다...
+TEL 010-4674-0554</ins>
