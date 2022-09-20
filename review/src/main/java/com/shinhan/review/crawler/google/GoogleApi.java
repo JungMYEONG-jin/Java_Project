@@ -118,10 +118,26 @@ public class GoogleApi implements Crawler {
                     attr.put("createdDate", dateFormat.format(new Date(userSec * 1000)).toString());
                     String starRating = userComment.get("starRating").toString();
                     attr.put("rating", starRating);
-                    if (userComment.containsKey("device")) {
-                        String device = userComment.get("device").toString();
-                        attr.put("device", device);
+
+
+                    // 핸드폰 기종
+                    attr.put("device","");
+                    if (userComment.containsKey("deviceMetadata")){
+                        JSONObject deviceMetadata = (JSONObject)userComment.get("deviceMetadata");
+                        if (deviceMetadata.containsKey("productName") && deviceMetadata.get("productName")!=null){
+                            String phone = deviceMetadata.get("productName").toString();
+                            if (phone.contains("(") && phone.contains(")")){
+                                int idx = phone.indexOf("(");
+                                int lastIdx = phone.indexOf(")");
+                                phone = phone.substring(idx+1,lastIdx-1);
+                            }
+                            attr.put("device",phone);
+                        }
                     }
+//                    if (userComment.containsKey("device")) {
+//                        String device = userComment.get("device").toString();
+//                        attr.put("device", device);
+//                    }
                     if (userComment.containsKey("appVersionName")) {
                         String appVersionName = userComment.get("appVersionName").toString();
                         attr.put("appVersion", appVersionName);
