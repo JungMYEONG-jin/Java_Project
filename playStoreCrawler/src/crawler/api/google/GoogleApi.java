@@ -107,6 +107,15 @@ public class GoogleApi {
                 JSONArray comments = (JSONArray)val.get("comments");
                 JSONObject comment = (JSONObject)comments.get(0);
                 JSONObject userComment = (JSONObject)comment.get("userComment");
+                attr.put("device","");
+                if (userComment.containsKey("deviceMetadata")){
+                    JSONObject deviceMetadata = (JSONObject)userComment.get("deviceMetadata");
+                    if (deviceMetadata.containsKey("productName") && deviceMetadata.get("productName")!=null){
+                        String phone = deviceMetadata.get("productName").toString();
+                        attr.put("device",phone);
+                    }
+                }
+
                 String userText = userComment.get("text").toString();
                 attr.put("body", userText);
                 JSONObject userLastModified = (JSONObject)userComment.get("lastModified");
@@ -114,10 +123,11 @@ public class GoogleApi {
                 attr.put("createdDate", dateFormat.format(new Date(userSec*1000)).toString());
                 String starRating = userComment.get("starRating").toString();
                 attr.put("rating", starRating);
-                if (userComment.containsKey("device")){
-                    String device = userComment.get("device").toString();
-                    attr.put("device", device);
-                }
+
+//                if (userComment.containsKey("device")){
+//                    String device = userComment.get("device").toString();
+//                    attr.put("device", device);
+//                }
                 if(userComment.containsKey("appVersionName")) {
                     String appVersionName = userComment.get("appVersionName").toString();
                     attr.put("appVersion", appVersionName);

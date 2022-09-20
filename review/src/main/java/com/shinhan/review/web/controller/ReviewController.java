@@ -83,8 +83,8 @@ public class ReviewController {
     }
 
     @PostMapping("/reviews/search")
-    public String searchReviewListPost(Model model, @ModelAttribute("searchForm") SearchForm dateSearch, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
-        this.form = dateSearch;
+    public String searchReviewListPost(Model model, @ModelAttribute("searchForm") SearchForm searchForm, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
+        this.form = searchForm;
         Page<Review> reviews = reviewService.searchByCondition(pageable, form);
         model.addAttribute("reviews",reviews);
         return "review/searchPage";
