@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +33,8 @@ public class ReviewService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Transactional
+    @Scheduled(cron = "0 30 0 * * *") // 0시 30분 크롤링 시작
     public void getAllReviews(){
         logger.info("정기 크롤링이 시작됩니다.");
         Arrays.stream(AppList.values()).forEach(app -> {
@@ -40,10 +44,7 @@ public class ReviewService {
         logger.info("정기 크롤링이 완료되었습니다.");
     }
 
-    public void saveAll(List<Review> reviews){
-        reviewRepository.saveAll(reviews);
-    }
-
+    @Transactional
     public void saveReviews(String appName, String osType){
         String packageName = getPackageName(appName, osType);
         List<JSONObject> reviewList = crawler.getReviewList(packageName, osType);
@@ -84,14 +85,17 @@ public class ReviewService {
         return reviewRepository.findAll();
     }
 
+    @Transactional
     public Page<Review> findAll(Pageable pageable){
         return reviewRepository.findAll(pageable);
     }
 
+    @Transactional
     public List<Review> findByAppPkg(String appPkg){
         return reviewRepository.findByAppPkg(appPkg);
     }
 
+    @Transactional
     public List<Review> findByType(String osType){
         return reviewRepository.findByOsType(osType);
     }
@@ -102,6 +106,7 @@ public class ReviewService {
         return false;
     }
 
+    @Transactional
     public Page<Review> searchByCondition(Pageable pageable, SearchForm form){
         // 날짜 지정 안했을때
         if (form.getStart()==null && form.getEnd()==null)
@@ -155,86 +160,92 @@ public class ReviewService {
         throw new IllegalStateException("검색 조건이 잘못되었습니다...");
     }
 
-
+    @Transactional
     public Page<Review> searchByOsType(Pageable pageable, SearchForm form){
         return reviewRepository.findByOsType(pageable, form.getOs().getNumber());
     }
-
+    @Transactional
     public Page<Review> searchByDate(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.searchByDate(pageable, start, end);
     }
-
+    @Transactional
     public Page<Review> searchByDateAndOsType(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.searchByDateAndOsType(pageable, start, end, form.getOs().getNumber());
     }
-
+    @Transactional
     public Page<Review> searchByCreatedDateAfter(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         return reviewRepository.findByCreatedDateAfter(pageable, start);
     }
-
+    @Transactional
     public Page<Review> searchByCreatedDateBefore(Pageable pageable, SearchForm form){
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.findByCreatedDateBefore(pageable, end);
     }
-
+    @Transactional
     public Page<Review> searchByCreatedDateAfterAndOSType(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         return reviewRepository.findByCreatedDateAfterAndOsType(pageable, start, form.getOs().getNumber());
     }
-
+    @Transactional
     public Page<Review> searchByCreatedDateBeforeAndOSType(Pageable pageable, SearchForm form){
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.findByCreatedDateBeforeAndOsType(pageable, end, form.getOs().getNumber());
     }
 
     // app
+    @Transactional
     public Page<Review> searchByAppPkg(Pageable pageable, SearchForm form){
         return reviewRepository.findByAppPkg(pageable,  form.getAppPkg());
     }
     // os app
+    @Transactional
     public Page<Review> searchByOsTypeAndAppPkg(Pageable pageable, SearchForm form){
         return reviewRepository.findByOsTypeAndAppPkg(pageable, form.getOs().getNumber(), form.getAppPkg());
     }
     // start app
+    @Transactional
     public Page<Review> searchByCreatedDateBeforeAndAppPkg(Pageable pageable, SearchForm form){
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.findByCreatedDateBeforeAndAppPkg(pageable, end, form.getAppPkg());
     }
     // end app
+    @Transactional
     public Page<Review> searchByCreatedDateAfterAndAppPkg(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         return reviewRepository.findByCreatedDateAfterAndAppPkg(pageable, start, form.getAppPkg());
     }
     // start end app
+    @Transactional
     public Page<Review> searchByDateAndAppPkg(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.searchByDateAndAppPkg(pageable, start, end, form.getAppPkg());
     }
     // start os app
+    @Transactional
     public Page<Review> searchByCreatedDateAfterAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         return reviewRepository.findByCreatedDateAfterAndOsTypeAndAppPkg(pageable, start, form.getOs().getNumber(), form.getAppPkg());
     }
     // end os app
+    @Transactional
     public Page<Review> searchByCreatedDateBeforeAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.findByCreatedDateBeforeAndOsTypeAndAppPkg(pageable, end, form.getOs().getNumber(), form.getAppPkg());
     }
 
     // start end os app
+    @Transactional
     public Page<Review> searchByDateAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.searchByDateAAndOsTypeAndAppPkg(pageable, start, end, form.getOs().getNumber(), form.getAppPkg());
     }
-
-
 
     private String getFormattedDate(String dates) {
         dates = dates.replaceAll("-","");

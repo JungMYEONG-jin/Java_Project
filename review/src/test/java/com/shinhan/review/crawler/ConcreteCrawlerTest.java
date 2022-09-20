@@ -26,17 +26,10 @@ class ConcreteCrawlerTest {
     @Description("android")
     @Test
     void andTest() {
-        List<JSONObject> reviewList = crawler.getReviewList(GoogleAppId.sbank.getAppPkg(), OS.AND.getNumber());
-        List<Review> reviews = new ArrayList<>();
-        if (!reviewList.isEmpty()) {
-            for (JSONObject jsonObject : reviewList) {
-                ReviewDto reviewDto = new ReviewDto(jsonObject);
-                reviewDto.setAppPkg(GoogleAppId.sbank.getAppPkg());
-                reviewDto.setOsType(OS.AND.getNumber());
-                reviews.add(reviewDto.toEntity());
-            }
+        List<JSONObject> reviewList = crawler.getReviewList(GoogleAppId.sbizbank.getAppPkg(), OS.AND.getNumber());
+        for (JSONObject jsonObject : reviewList) {
+            System.out.println("jsonObject = " + jsonObject);
         }
-        reviewRepository.saveAll(reviews);
     }
 
     @Description("ios")
