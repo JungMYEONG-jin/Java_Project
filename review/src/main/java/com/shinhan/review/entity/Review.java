@@ -6,20 +6,27 @@ import java.util.Objects;
 @Entity
 @IdClass(ReviewId.class)
 public class Review {
-
+    @Column(length = 60)
     private String appVersion;
     @Id
+    @Column(length = 12)
     private String createdDate; // 리뷰 작성일
     @Id
+    @Column(length = 60)
     private String nickname;
+    @Column(length=1)
     private String rating;
     @Column(length = 4000)
     private String body; // 리뷰
     @Column(length = 4000)
     private String responseBody;
+    @Column(length=12)
     private String answeredDate; // 답변일
+    @Column(length=60)
     private String device;
+    @Column(length = 60)
     private String appPkg;
+    @Column(length=1)
     private String osType;
 
     public Review() {

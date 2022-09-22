@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -56,12 +57,14 @@ public class ReviewController {
     }
 
     @PostMapping("/crawling/search")
-    public String postCrawlingSearchForm(@ModelAttribute("crawlingForm") CrawlingForm crawlingForm, BindingResult result, Model model){
+    public String postCrawlingSearchForm(@ModelAttribute("crawlingForm") CrawlingForm crawlingForm, BindingResult result, Model model, RedirectAttributes redirectAttributes){
         logger.info("수동 크롤링을 시작합니다...");
         if (result.hasErrors()){
             logger.info("수동 크롤링 실패...옵션을 확인해주세요");
             return "review/searchForm";
         }
+        redirectAttributes.addAttribute("app", crawlingForm.getAppId());
+        redirectAttributes.addAttribute("osType", crawlingForm.getOs().getNumber());
         reviewService.saveReviews(crawlingForm.getAppId(), crawlingForm.getOs().getNumber());
         return "redirect:/";
     }

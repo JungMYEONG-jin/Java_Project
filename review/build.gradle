@@ -17,7 +17,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	runtimeOnly 'com.h2database:h2:1.4.200'
+	implementation 'mysql:mysql-connector-java'
+//	runtimeOnly 'com.h2database:h2:1.4.200'
 	implementation 'org.apache.httpcomponents:httpmime:4.2.4'
 	implementation('com.googlecode.json-simple:json-simple:1.1.1')
 	implementation('com.nimbusds:nimbus-jose-jwt:3.10')
