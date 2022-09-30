@@ -32,8 +32,6 @@ public class MarketDaemon implements Runnable {
 	@Autowired MarketProperty propertyMarket;
 	@Autowired MarketService serviceMarket;
 
-
-
 	private MarketSender senderThread;
 
 	private LinkedList<TimeCheker> listDateTime = new LinkedList<TimeCheker>();

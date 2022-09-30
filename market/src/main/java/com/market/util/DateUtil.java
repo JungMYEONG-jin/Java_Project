@@ -9,7 +9,10 @@ public class DateUtil {
         Date now = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         return format.format(now);
+    }
 
+    public String removeChars(String date){
+       return date.replaceAll("[^0-9]+", "");
     }
 
 }

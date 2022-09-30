@@ -6,6 +6,7 @@ import com.market.daemon.dto.SendInfo;
 import com.market.exception.AppleAPIException;
 import com.market.exception.JWTException;
 import com.market.exception.KeyReadException;
+import com.market.util.DateUtil;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -57,7 +58,7 @@ public class AppleApi implements ICrawling {
     public static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
     public static final String keyId = "7JL62P566N";
     public static final String keyPath = "static/apple/AuthKey_7JL62P566N.p8";
-
+    private static final DateUtil util = new DateUtil();
 
     private int CONN_TIME_OUT = 1000 * 30;
     public String getAppVersions(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException {
@@ -212,7 +213,9 @@ public class AppleApi implements ICrawling {
     public CrawlingResultData getCrawlingResult(String id) throws MalformedURLException, NoSuchAlgorithmException, ParseException {
             Map<String, String> crawlingInfo = getCrawlingInfo(id);
             String realAppID = getRealAppID(id);
-            return new CrawlingResultData(realAppID, id, crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));
+            String createdDate = util.removeChars(crawlingInfo.get("createdDate"));
+            createdDate = createdDate.substring(0, 14);
+            return new CrawlingResultData(realAppID, id, crawlingInfo.get("name"), crawlingInfo.get("versionString"), createdDate);
 //        return new CrawlingResultData(id, MarketInfo.OS_TYPE_IOS_API, crawlingInfo.get("name"), crawlingInfo.get("versionString"), crawlingInfo.get("createdDate"));
     }
 

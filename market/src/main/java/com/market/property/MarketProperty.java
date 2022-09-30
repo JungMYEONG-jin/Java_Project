@@ -34,9 +34,7 @@ public class MarketProperty {
 	
 	/******************* Setter/Getter **********************/
 
-	public void setbReal(boolean bReal) {
-		this.bReal = bReal;
-	}
+
 
 	public void setDaemon_code(String daemon_code) {
 		this.daemon_code = daemon_code;

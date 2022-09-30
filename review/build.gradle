@@ -10,15 +10,23 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 apply plugin: 'war' // 외부 was에 사용할거니까 war로
 
+
+war{
+	archiveName("review.war")
+}
+
 repositories {
 	mavenCentral()
 }
+
+bootWar.enabled=false
+war.enabled=true
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.springframework.boot:spring-boot-starter-tomcat' // same as maven provided
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat' // same as maven provided
 	implementation 'mysql:mysql-connector-java'
 //	runtimeOnly 'com.h2database:h2:1.4.200'
 	implementation 'org.apache.httpcomponents:httpmime:4.2.4'
