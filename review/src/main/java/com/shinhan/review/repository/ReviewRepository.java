@@ -16,6 +16,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByAppPkg(String appPkg);
     List<Review> findByOsType(String osType);
 
+    // for excel download
+    List<Review> findAll();
+
+
     // 전체 반환
     Page<Review> findAll(Pageable pageable);
 

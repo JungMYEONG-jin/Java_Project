@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
@@ -61,6 +62,21 @@ public class ReviewService {
         logger.info("{} 크롤링 완료", packageName);
     }
 
+    @Transactional
+    public List<ReviewDto> getReviewsForExcel(){
+        List<Review> all = reviewRepository.findAll();
+        return all.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
+    }
+
+    public String getMatchedName(String number){
+        if (number.equals("1"))
+            return OS.AND.name();
+        else if (number.equals("2"))
+            return OS.IOS.name();
+        return "존재하지 않는 앱";
+    }
+
+
     private String getPackageName(String packageName, String osType) {
         String pack = "";
         if (osType.equals("1")){
@@ -73,6 +89,7 @@ public class ReviewService {
         return pack;
     }
 
+    @Transactional
     public void saveOne(Review review){
         reviewRepository.save(review);
     }

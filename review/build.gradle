@@ -28,7 +28,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat' // same as maven provided
 	implementation 'mysql:mysql-connector-java'
-//	runtimeOnly 'com.h2database:h2:1.4.200'
+	runtimeOnly 'com.h2database:h2:1.4.200'
 	implementation 'org.apache.httpcomponents:httpmime:4.2.4'
 	implementation('com.googlecode.json-simple:json-simple:1.1.1')
 	implementation('com.nimbusds:nimbus-jose-jwt:3.10')
@@ -36,6 +36,13 @@ dependencies {
 	implementation('log4j:log4j:1.2.11')
 	implementation('org.jsoup:jsoup:1.10.3')
 	implementation('org.apache.httpcomponents:httpclient:4.2.4')
+
+	// https://mvnrepository.com/artifact/org.apache.poi/poi
+	implementation 'org.apache.poi:poi:3.11'
+	// https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+	implementation 'org.apache.poi:poi-ooxml:3.11'
+
+
 	fileTree(dir: 'src/main/resources/lib/', include:['*.jar'])
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 

@@ -15,6 +15,22 @@ public class ReviewDto {
     private String appPkg;
     private String osType;
 
+    public ReviewDto() {
+    }
+
+    public ReviewDto(String appVersion, String createdDate, String nickname, String rating, String body, String responseBody, String answeredDate, String device, String appPkg, String osType) {
+        this.appVersion = appVersion;
+        this.createdDate = createdDate;
+        this.nickname = nickname;
+        this.rating = rating;
+        this.body = body;
+        this.responseBody = responseBody;
+        this.answeredDate = answeredDate;
+        this.device = device;
+        this.appPkg = appPkg;
+        this.osType = osType;
+    }
+
     public Review toEntity(){
         return new Review(appVersion, createdDate, nickname, rating, body,responseBody, answeredDate, device, appPkg, osType);
     }
@@ -37,7 +53,6 @@ public class ReviewDto {
                 answeredDate = jsonObject.get("answeredDate").toString();
             if (jsonObject.containsKey("device"))
                 device = jsonObject.get("device").toString();
-
         }
     }
 
