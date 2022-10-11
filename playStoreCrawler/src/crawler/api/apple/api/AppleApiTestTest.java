@@ -7,8 +7,6 @@ import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class AppleApiTestTest {
     AppleApi controller = new AppleApi();
 
@@ -20,4 +18,5 @@ class AppleApiTestTest {
 
         }
     }
+
 }

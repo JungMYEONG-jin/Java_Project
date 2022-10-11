@@ -15,6 +15,8 @@ scopee는 Google의 여러 API중 저희는 play store와 관련된 API만 호�
 
 https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/androidpublisher&response_type=code&access_type=offline&redirect_uri={redirect_uri}&client_id={client_id}
 
+https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/androidpublisher&response_type=code&access_type=offline&redirect_uri=http://localhost:8080/login/oauth2/code/google&client_id=118014375029-dbm5681oth7fahbsl5eog9kq72mtv8ac.apps.googleusercontent.com
+
 GET 하는 방법은 java code로 구현해도 되고 PostMan을 이용해 획득해도 됩니다. 단 java code를 이용해 구현하려면 redirect_uri 페이지를 생성하고 연결해줘야 합니다.
 이 과정이 귀찮다면 인터넷 PC에서 PostMan을 이용해 token을 얻었습니다. (refresh_token 한번 얻으면 6개월간 위 과정 없이 토큰 생성 가능.)
 
@@ -22,9 +24,8 @@ GET 하는 방법은 java code로 구현해도 되고 PostMan을 이용해 획�
 제 경우 4/0AdQt8qhBtjt-Q4UWzEP2XH1GSnQx0aQm4fm5mTqAOUC-IsNBppln_rnrYj847zRbv6XP6A 입니다.
 
 이제 이 code를 이용해 access_token을 얻어야 합니다.
-
 ```shell
-POST: https://oauth2.googleapis.com/token
+POST: https://oauth2.googleapis.com/oauth2/v4/token
 form-data
 redirect_uri: ${redirect_uri}
 code: 아까 얻은 code 저의 경우 4/0AdQt8qhBtjt-Q4UWzEP2XH1GSnQx0aQm4fm5mTqAOUC-IsNBppln_rnrYj847zRbv6XP6A
@@ -36,11 +37,11 @@ grant_type: authorization_code
 
 ```json
 {
-    "access_token": "~~~~~~~~~~~",
-    "expires_in": 3599,
-    "refresh_token": "~~~~~~~~~",
-    "scope": "https://www.googleapis.com/auth/androidpublisher",
-    "token_type": "Bearer"
+  "access_token": "ya29.a0Aa4xrXOjHPm-8SNzgaHS9x89wR_q3_yeyZJKAwpw9jDuvZwKDg8QhtLVW1NF9w2HX2Pzg6sLmAcPKRvOFcAR3YcLD8UjiwZ1HVXpskuNBSK3PEhtrkF-K_onh0Oh5mOMWF11hsjqCqMikpEvO9sn-1F_DoblaCgYKATASARESFQEjDvL9odlPpNBs2mdRuzbsRsNRgQ0163",
+  "expires_in": 3599,
+  "refresh_token": "1//0eczvvh3OJuh5CgYIARAAGA4SNwF-L9IrCDNuPJFJ-hrdFIS6JcHFjnMniYof97nx3NtwgyDaOb48cvO6DpeovrOWwPxVOd6I570",
+  "scope": "https://www.googleapis.com/auth/androidpublisher",
+  "token_type": "Bearer"
 }
 ```
 이제 이 refresh_token을 저장하고 간직하면 위 과정을 거치지 않고 access_token 생성이 가능합니다.
@@ -57,10 +58,10 @@ grant_type: refresh_token
 
 ```json
 {
-    "access_token": "ya29.a0AVA9y1v7oTDTa2mBSCkAtaJDo_sDMGMMetcDDLJ8ihRnowSvOq9JdZCCRjj1wmWzFeIUhwGccVScIMDuiFpQV95J66es9JdGIHxnt9TdVrwIMXOxXj2YDQ3svuih_fyFrYdfDuu_W03dMrGf6NCwoCjPb6fZaCgYKATASAQASFQE65dr8w8YAR7TckN-IS4NtYQ00FA0163",
-    "expires_in": 3599,
-    "scope": "https://www.googleapis.com/auth/androidpublisher",
-    "token_type": "Bearer"
+  "access_token": "ya29.a0Aa4xrXOKe4VDEYTqqbBCDlaUjMIJRvFppYPxFCYoH4A3yozSeGOoG-0csGcoJHokfLaGrDhFLeB9EZF9vLNPT7x5niCZ2xAbYCfTaxhzCjjBVreP5D7nuK_peK8FOVsPd4agDWZ1AWX7j_ad3TKQJZ8Ve23faCgYKATASARISFQEjDvL95fjJQ4wbzJi_Vn8RHNbB_Q0163",
+  "expires_in": 3599,
+  "scope": "https://www.googleapis.com/auth/androidpublisher",
+  "token_type": "Bearer"
 }
 ```
 
