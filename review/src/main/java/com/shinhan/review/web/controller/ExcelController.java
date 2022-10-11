@@ -1,6 +1,7 @@
 package com.shinhan.review.web.controller;
 
 import com.shinhan.review.entity.dto.ReviewDto;
+import com.shinhan.review.excel.ReviewColumnInfo;
 import com.shinhan.review.web.service.ReviewService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ExcelController {
@@ -23,8 +25,6 @@ public class ExcelController {
     private static final Logger log = LoggerFactory.getLogger(ExcelController.class);
     @Autowired
     ReviewService reviewService;
-
-
 
     @GetMapping("/api/v1/excel/review")
     public void downloadReviewInfo(HttpServletResponse response) throws IOException{
@@ -40,26 +40,15 @@ public class ExcelController {
         // create header
         int rowIdx = 0;
         Row headerRow = sheet.createRow(rowIdx++);
-        Cell cell1 = headerRow.createCell(0);
-        cell1.setCellValue("앱이름");
-        Cell cell2 = headerRow.createCell(1);
-        cell2.setCellValue("버전");
-        Cell cell3 = headerRow.createCell(2);
-        cell3.setCellValue("OS");
-        Cell cell4 = headerRow.createCell(3);
-        cell4.setCellValue("디바이스");
-        Cell cell5 = headerRow.createCell(4);
-        cell5.setCellValue("닉네임");
-        Cell cell6 = headerRow.createCell(5);
-        cell6.setCellValue("작성일");
-        Cell cell7 = headerRow.createCell(6);
-        cell7.setCellValue("평점");
-        Cell cell8 = headerRow.createCell(7);
-        cell8.setCellValue("리뷰");
-        Cell cell9 = headerRow.createCell(8);
-        cell9.setCellValue("답변일");
-        Cell cell10 = headerRow.createCell(9);
-        cell10.setCellValue("답변");
+
+        Map<Integer, List<ReviewColumnInfo>> allColumns = ReviewColumnInfo.getAllColumns();
+        List<ReviewColumnInfo> headerColumns = allColumns.get(0); // get header column
+        // set header
+        headerColumns.forEach(reviewColumnInfo -> {
+            Cell cell = headerRow.createCell(reviewColumnInfo.getCol());
+            cell.setCellValue(reviewColumnInfo.getText());
+        });
+
 
         for (ReviewDto reviewDto : reviewsForExcel) {
             Row bodyRow = sheet.createRow(rowIdx++);
