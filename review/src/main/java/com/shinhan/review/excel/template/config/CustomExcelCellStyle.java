@@ -11,6 +11,8 @@ public abstract class CustomExcelCellStyle implements ExcelCellStyle {
         configure(configurer);
     }
 
+    public CustomExcelCellStyle() {
+    }
 
     public abstract void configure(ExcelCellStyleConfigurer configurer);
 

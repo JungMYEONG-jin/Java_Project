@@ -10,7 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 /**
  * 배경색을 지정받아 배경색을 지정하는 class
  */
-public class RgbExcelBackgroundColor implements ExcelColor{
+public class RgbExcelBackgroundColor implements ExcelBackgroundColor{
 
     private static final int MIN_RGB = 0;
     private static final int MAX_RGB = 255;
