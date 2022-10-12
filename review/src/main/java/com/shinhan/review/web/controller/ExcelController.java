@@ -2,6 +2,7 @@ package com.shinhan.review.web.controller;
 
 import com.shinhan.review.entity.dto.ReviewDto;
 import com.shinhan.review.excel.ReviewColumnInfo;
+import com.shinhan.review.excel.template.SimpleExcelFile;
 import com.shinhan.review.web.service.ReviewService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletResponse;
@@ -76,6 +78,20 @@ public class ExcelController {
         workbook.write(response.getOutputStream());
         workbook.close();
     }
+
+
+    @GetMapping("/api/v2/excel/review")
+    public void downloadReviewInfo2(HttpServletResponse response) throws IOException{
+        response.setContentType("application/vnd.ms-excel; charset=euc-kr");
+        List<ReviewDto> reviews = reviewService.getReviewsForExcel();
+        SimpleExcelFile<ReviewDto> excelFile = new SimpleExcelFile<>(reviews, ReviewDto.class);
+        excelFile.write(response.getOutputStream());
+    }
+
+
+
+
+
 
 
 }

@@ -9,16 +9,16 @@ import java.util.stream.Collectors;
 
 public enum ReviewColumnInfo implements ExcelColumnInfo{
 
-    APP("앱이름", 0, 0, ColumnType.TEXT),
-    VERSION("버전", 0, 1, ColumnType.NUMBER),
-    OS("OS", 0, 2, ColumnType.TEXT),
-    DEVICE("디바이스", 0, 3, ColumnType.TEXT),
-    NICKNAME("닉네임", 0, 4, ColumnType.TEXT),
-    CREATEDDATE("작성일", 0, 5, ColumnType.TEXT),
-    RATING("평점", 0, 6, ColumnType.TEXT),
-    REVIEW("리뷰", 0, 7, ColumnType.TEXT),
-    ANSWEREDDATE("답변일", 0, 8, ColumnType.TEXT),
-    RESPONSE("답변", 0, 9, ColumnType.TEXT);
+    appPkg("앱이름", 0, 0, ColumnType.TEXT),
+    appVersion("버전", 0, 1, ColumnType.NUMBER),
+    osType("OS", 0, 2, ColumnType.TEXT),
+    device("디바이스", 0, 3, ColumnType.TEXT),
+    nickname("닉네임", 0, 4, ColumnType.TEXT),
+    createdDate("작성일", 0, 5, ColumnType.TEXT),
+    rating("평점", 0, 6, ColumnType.TEXT),
+    body("리뷰", 0, 7, ColumnType.TEXT),
+    answeredDate("답변일", 0, 8, ColumnType.TEXT),
+    responseBody("답변", 0, 9, ColumnType.TEXT);
 
 
     private final String text;

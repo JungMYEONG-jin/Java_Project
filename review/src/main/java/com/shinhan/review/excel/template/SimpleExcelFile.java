@@ -9,6 +9,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ public class SimpleExcelFile<T> {
     private void renderExcel(List<T> data){
         // Create sheet and render headers
         sheet = wb.createSheet();
+        renderHeaders(sheet, ROW_START_IDX);
 
         if (data.isEmpty())
             return;
@@ -62,11 +64,14 @@ public class SimpleExcelFile<T> {
     private void renderBody(Object data, int rowIdx, int colStartIdx){
         Row row = sheet.createRow(rowIdx);
         int colIdx = colStartIdx;
+        // 순서대로 enum type 이라 idx ++ 로 가능
         ReviewColumnInfo[] values = ReviewColumnInfo.values();
         for (ReviewColumnInfo value : values) {
             Cell cell = row.createCell(colIdx++);
             try{
-
+                Field field = getField(data.getClass(), value.name());
+                field.setAccessible(true);
+                renderCellValue(cell, field.get(data));
             }catch (Exception e){
                 throw new ExcelInternalException(e.getMessage(), e);
             }
@@ -88,5 +93,17 @@ public class SimpleExcelFile<T> {
         wb.dispose();
         stream.close();
     }
+
+    private Field getField(Class<?> object, String fieldName){
+        Field field = null;
+        try {
+            field = object.getField(fieldName);
+            return field;
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

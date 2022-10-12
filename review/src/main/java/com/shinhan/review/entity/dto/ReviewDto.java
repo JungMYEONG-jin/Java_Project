@@ -1,19 +1,30 @@
 package com.shinhan.review.entity.dto;
 
 import com.shinhan.review.entity.Review;
+import com.shinhan.review.excel.annotation.ExcelColumn;
 import org.json.simple.JSONObject;
 
 public class ReviewDto {
-    private String appVersion;
-    private String createdDate; // 리뷰 작성일
-    private String nickname;
-    private String rating;
-    private String body; // 리뷰
-    private String responseBody;
-    private String answeredDate; // 답변일
-    private String device;
-    private String appPkg;
-    private String osType;
+    @ExcelColumn(headerName = "버전")
+    public String appVersion;
+    @ExcelColumn(headerName = "작성일")
+    public String createdDate; // 리뷰 작성일
+    @ExcelColumn(headerName = "닉네임")
+    public String nickname;
+    @ExcelColumn(headerName = "평점")
+    public String rating;
+    @ExcelColumn(headerName = "리뷰")
+    public String body; // 리뷰
+    @ExcelColumn(headerName = "답변")
+    public String responseBody;
+    @ExcelColumn(headerName = "답변일")
+    public String answeredDate; // 답변일
+    @ExcelColumn(headerName = "디바이스")
+    public String device;
+    @ExcelColumn(headerName = "앱이름")
+    public String appPkg;
+    @ExcelColumn(headerName = "OS")
+    public String osType;
 
     public ReviewDto() {
     }
