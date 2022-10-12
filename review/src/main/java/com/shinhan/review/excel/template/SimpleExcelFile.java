@@ -7,6 +7,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +80,13 @@ public class SimpleExcelFile<T> {
             return;
         }
         cell.setCellValue(cellValue == null ? "" : cellValue.toString());
+    }
+
+    public void write(OutputStream stream) throws IOException{
+        wb.write(stream);
+        wb.close();
+        wb.dispose();
+        stream.close();
     }
 
 }
