@@ -1,9 +1,13 @@
 package com.shinhan.review.entity.dto;
 
 import com.shinhan.review.entity.Review;
+import com.shinhan.review.excel.annotation.DefaultHeaderStyle;
 import com.shinhan.review.excel.annotation.ExcelColumn;
+import com.shinhan.review.excel.annotation.ExcelColumnStyle;
+import com.shinhan.review.excel.template.style.custom.BlueHeaderStyle;
 import org.json.simple.JSONObject;
 
+@DefaultHeaderStyle(style = @ExcelColumnStyle(excelCellStyleClass = BlueHeaderStyle.class))
 public class ReviewDto {
     @ExcelColumn(headerName = "버전")
     public String appVersion;

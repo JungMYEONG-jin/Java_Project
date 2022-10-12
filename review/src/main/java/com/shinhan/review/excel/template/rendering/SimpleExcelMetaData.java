@@ -1,4 +1,4 @@
-package com.shinhan.review.excel.template;
+package com.shinhan.review.excel.template.rendering;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -35,5 +35,8 @@ public class SimpleExcelMetaData {
                 throw new IllegalArgumentException("기준 메타 필드와 받아온 데이터가 일치하지 않습니다...");
         });
 
+    }
+
+    public SimpleExcelMetaData(Map<String, String> headerNameMap) {
     }
 }

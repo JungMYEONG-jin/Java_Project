@@ -1,4 +1,4 @@
-package com.shinhan.review.excel.template;
+package com.shinhan.review.exception;
 
 public class ExcelInternalException extends RuntimeException {
     public ExcelInternalException() {

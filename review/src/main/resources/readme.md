@@ -199,10 +199,12 @@ public class ExcelController {
 
 template은 header, body, 작성 그리고 excel 파일을 write 하는 크게 3부분으로 나눌수 있다.
 이렇게 template을 만들어 놓음으로써 하드코딩을 피할 수 있다는 장점이 생겼다.
+
 ```java
 package com.shinhan.review.excel.template;
 
 import com.shinhan.review.excel.ReviewColumnInfo;
+import com.shinhan.review.exception.ExcelInternalException;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -225,19 +227,19 @@ public class SimpleExcelFile<T> {
     private Sheet sheet;
 //    private SimpleExcelMetaData excelMetaData;
 
-    public SimpleExcelFile(List<T> data, Class<T> type){
+    public SimpleExcelFile(List<T> data, Class<T> type) {
         validateMaxRow(data);
         this.wb = new SXSSFWorkbook();
         renderExcel(data);
     }
 
-    private void validateMaxRow(List<T> data){
+    private void validateMaxRow(List<T> data) {
         int maxRows = supplyExcelVersion.getMaxRows();
         if (data.size() > maxRows)
             throw new IllegalArgumentException(String.format("This Excel Version does not support over %s rows", maxRows));
     }
 
-    private void renderExcel(List<T> data){
+    private void renderExcel(List<T> data) {
         // Create sheet and render headers
         sheet = wb.createSheet();
         renderHeaders(sheet, ROW_START_IDX);
@@ -252,7 +254,7 @@ public class SimpleExcelFile<T> {
         }
     }
 
-    private void renderHeaders(Sheet sheet, int rowIdx){
+    private void renderHeaders(Sheet sheet, int rowIdx) {
         Row row = sheet.createRow(rowIdx);
         Map<Integer, List<ReviewColumnInfo>> allColumns = ReviewColumnInfo.getAllColumns();
         List<ReviewColumnInfo> headerColumns = allColumns.get(0); // get header column
@@ -263,25 +265,25 @@ public class SimpleExcelFile<T> {
         });
     }
 
-    private void renderBody(Object data, int rowIdx, int colStartIdx){
+    private void renderBody(Object data, int rowIdx, int colStartIdx) {
         Row row = sheet.createRow(rowIdx);
         int colIdx = colStartIdx;
         // 순서대로 enum type 이라 idx ++ 로 가능
         ReviewColumnInfo[] values = ReviewColumnInfo.values();
         for (ReviewColumnInfo value : values) {
             Cell cell = row.createCell(colIdx++);
-            try{
+            try {
                 Field field = getField(data.getClass(), value.name());
                 field.setAccessible(true);
                 renderCellValue(cell, field.get(data));
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new ExcelInternalException(e.getMessage(), e);
             }
         }
     }
 
-    private void renderCellValue(Cell cell, Object cellValue){
-        if (cellValue instanceof Number){
+    private void renderCellValue(Cell cell, Object cellValue) {
+        if (cellValue instanceof Number) {
             Number numberValue = (Number) cellValue;
             cell.setCellValue(numberValue.doubleValue());
             return;
@@ -289,14 +291,14 @@ public class SimpleExcelFile<T> {
         cell.setCellValue(cellValue == null ? "" : cellValue.toString());
     }
 
-    public void write(OutputStream stream) throws IOException{
+    public void write(OutputStream stream) throws IOException {
         wb.write(stream);
         wb.close();
         wb.dispose();
         stream.close();
     }
 
-    private Field getField(Class<?> object, String fieldName){
+    private Field getField(Class<?> object, String fieldName) {
         Field field = null;
         try {
             field = object.getField(fieldName);
