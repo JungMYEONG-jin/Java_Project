@@ -98,4 +98,213 @@ war 파일을 아래와 같이 webapps 폴더에 복사하게 되면 demo폴더�
 
 
 이렇게 작성한 프로젝트를 외장 Tomcat에 배포하는 것 까지 실습을 완료하였다. 포트 지정 및 접속 URL지정, 로깅 설정들을 부가적으로 진행할 필요가 있기 때문에 차근차근 정리해 볼 것이다.
-출처: https://hye0-log.tistory.com/29#recentComments [Verity's Daily Logs_:티스토리]
+
+
+## excel template 작성하기
+java reflection을 이용하면 필드값을 가져올 수 있다.
+필드명과 동일한 enum 타입을 만들고 ReviewDto class의 field.get을 통해 해당 변수의 값을 가져와 엑셀에 저장한다.
+기존은 일일이 수동으로 작성해야 했지만 template을 작성하고 나서 잘못 타이핑해서 실패하거나 그럴일이 없음.
+
+```java
+package com.shinhan.review.web.controller;
+
+import com.shinhan.review.entity.dto.ReviewDto;
+import com.shinhan.review.excel.ReviewColumnInfo;
+import com.shinhan.review.excel.template.SimpleExcelFile;
+import com.shinhan.review.web.service.ReviewService;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+@Controller
+public class ExcelController {
+
+    private static final Logger log = LoggerFactory.getLogger(ExcelController.class);
+    @Autowired
+    ReviewService reviewService;
+
+    @GetMapping("/api/v1/excel/review")
+    public void downloadReviewInfo(HttpServletResponse response) throws IOException{
+
+        response.setContentType("application/vnd.ms-excel; charset=euc-kr"); // 한글 깨짐
+        // get review list to transfer excel file
+        List<ReviewDto> reviewsForExcel = reviewService.getReviewsForExcel();
+        // create excel file
+        Workbook workbook = new SXSSFWorkbook();
+        // create a sheet in excel file
+        Sheet sheet = workbook.createSheet();
+
+        // create header
+        int rowIdx = 0;
+        Row headerRow = sheet.createRow(rowIdx++);
+
+        Map<Integer, List<ReviewColumnInfo>> allColumns = ReviewColumnInfo.getAllColumns();
+        List<ReviewColumnInfo> headerColumns = allColumns.get(0); // get header column
+        // set header
+        headerColumns.forEach(reviewColumnInfo -> {
+            Cell cell = headerRow.createCell(reviewColumnInfo.getCol());
+            cell.setCellValue(reviewColumnInfo.getText());
+        });
+
+
+        for (ReviewDto reviewDto : reviewsForExcel) {
+            Row bodyRow = sheet.createRow(rowIdx++);
+            Cell bodyCell = bodyRow.createCell(0);
+            bodyCell.setCellValue(reviewDto.getAppPkg());
+            Cell bodyCell2 = bodyRow.createCell(1);
+            bodyCell2.setCellValue(reviewDto.getAppVersion());
+            Cell bodyCell3 = bodyRow.createCell(2);
+            bodyCell3.setCellValue(reviewService.getMatchedName(reviewDto.getOsType()));
+            Cell bodyCell4 = bodyRow.createCell(3);
+            bodyCell4.setCellValue(reviewDto.getDevice());
+            Cell bodyCell5 = bodyRow.createCell(4);
+            bodyCell5.setCellValue(reviewDto.getNickname());
+            Cell bodyCell6 = bodyRow.createCell(5);
+            bodyCell6.setCellValue(reviewDto.getCreatedDate());
+            Cell bodyCell7 = bodyRow.createCell(6);
+            bodyCell7.setCellValue(reviewDto.getRating());
+            Cell bodyCell8 = bodyRow.createCell(7);
+            bodyCell8.setCellValue(reviewDto.getBody());
+            Cell bodyCell9 = bodyRow.createCell(8);
+            bodyCell9.setCellValue(reviewDto.getAnsweredDate());
+            Cell bodyCell10 = bodyRow.createCell(9);
+            bodyCell10.setCellValue(reviewDto.getResponseBody());
+        }
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+
+    @GetMapping("/api/v2/excel/review")
+    public void downloadReviewInfo2(HttpServletResponse response) throws IOException{
+        response.setContentType("application/vnd.ms-excel; charset=euc-kr");
+        List<ReviewDto> reviews = reviewService.getReviewsForExcel();
+        SimpleExcelFile<ReviewDto> excelFile = new SimpleExcelFile<>(reviews, ReviewDto.class);
+        excelFile.write(response.getOutputStream());
+    }
+}
+```
+
+template은 header, body, 작성 그리고 excel 파일을 write 하는 크게 3부분으로 나눌수 있다.
+이렇게 template을 만들어 놓음으로써 하드코딩을 피할 수 있다는 장점이 생겼다.
+```java
+package com.shinhan.review.excel.template;
+
+import com.shinhan.review.excel.ReviewColumnInfo;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+
+public class SimpleExcelFile<T> {
+
+    private static final SpreadsheetVersion supplyExcelVersion = SpreadsheetVersion.EXCEL2007;
+    private static final int ROW_START_IDX = 0;
+    private static final int COL_START_IDX = 0;
+
+    private SXSSFWorkbook wb;
+    private Sheet sheet;
+//    private SimpleExcelMetaData excelMetaData;
+
+    public SimpleExcelFile(List<T> data, Class<T> type){
+        validateMaxRow(data);
+        this.wb = new SXSSFWorkbook();
+        renderExcel(data);
+    }
+
+    private void validateMaxRow(List<T> data){
+        int maxRows = supplyExcelVersion.getMaxRows();
+        if (data.size() > maxRows)
+            throw new IllegalArgumentException(String.format("This Excel Version does not support over %s rows", maxRows));
+    }
+
+    private void renderExcel(List<T> data){
+        // Create sheet and render headers
+        sheet = wb.createSheet();
+        renderHeaders(sheet, ROW_START_IDX);
+
+        if (data.isEmpty())
+            return;
+
+        // render body
+        int rowIdx = ROW_START_IDX + 1;
+        for (Object renderData : data) {
+            renderBody(renderData, rowIdx++, COL_START_IDX);
+        }
+    }
+
+    private void renderHeaders(Sheet sheet, int rowIdx){
+        Row row = sheet.createRow(rowIdx);
+        Map<Integer, List<ReviewColumnInfo>> allColumns = ReviewColumnInfo.getAllColumns();
+        List<ReviewColumnInfo> headerColumns = allColumns.get(0); // get header column
+        // set header
+        headerColumns.forEach(reviewColumnInfo -> {
+            Cell cell = row.createCell(reviewColumnInfo.getCol());
+            cell.setCellValue(reviewColumnInfo.getText());
+        });
+    }
+
+    private void renderBody(Object data, int rowIdx, int colStartIdx){
+        Row row = sheet.createRow(rowIdx);
+        int colIdx = colStartIdx;
+        // 순서대로 enum type 이라 idx ++ 로 가능
+        ReviewColumnInfo[] values = ReviewColumnInfo.values();
+        for (ReviewColumnInfo value : values) {
+            Cell cell = row.createCell(colIdx++);
+            try{
+                Field field = getField(data.getClass(), value.name());
+                field.setAccessible(true);
+                renderCellValue(cell, field.get(data));
+            }catch (Exception e){
+                throw new ExcelInternalException(e.getMessage(), e);
+            }
+        }
+    }
+
+    private void renderCellValue(Cell cell, Object cellValue){
+        if (cellValue instanceof Number){
+            Number numberValue = (Number) cellValue;
+            cell.setCellValue(numberValue.doubleValue());
+            return;
+        }
+        cell.setCellValue(cellValue == null ? "" : cellValue.toString());
+    }
+
+    public void write(OutputStream stream) throws IOException{
+        wb.write(stream);
+        wb.close();
+        wb.dispose();
+        stream.close();
+    }
+
+    private Field getField(Class<?> object, String fieldName){
+        Field field = null;
+        try {
+            field = object.getField(fieldName);
+            return field;
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+}
+```

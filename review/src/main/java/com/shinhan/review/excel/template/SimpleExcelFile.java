@@ -21,11 +21,12 @@ public class SimpleExcelFile<T> {
 
     private SXSSFWorkbook wb;
     private Sheet sheet;
-//    private SimpleExcelMetaData excelMetaData;
+    private SimpleExcelMetaData excelMetaData;
 
     public SimpleExcelFile(List<T> data, Class<T> type){
         validateMaxRow(data);
         this.wb = new SXSSFWorkbook();
+        this.excelMetaData = new SimpleExcelMetaData(type);
         renderExcel(data);
     }
 
