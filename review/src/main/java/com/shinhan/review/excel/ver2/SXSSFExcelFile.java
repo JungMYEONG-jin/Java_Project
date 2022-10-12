@@ -3,7 +3,9 @@ package com.shinhan.review.excel.ver2;
 import com.shinhan.review.excel.ReviewColumnInfo;
 import com.shinhan.review.excel.ver2.decider.DataFormatDecider;
 import com.shinhan.review.excel.ver2.decider.DefaultDataFormatDecider;
+import com.shinhan.review.excel.ver2.resource.ExcelRenderLocation;
 import com.shinhan.review.excel.ver2.resource.ExcelRenderResource;
+import com.shinhan.review.excel.ver2.util.ClassFieldUtils;
 import com.shinhan.review.exception.ExcelInternalException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -17,6 +19,7 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 
 public abstract class SXSSFExcelFile<T> implements ExcelFile<T> {
 
@@ -50,15 +53,14 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile<T> {
 
     protected abstract void renderExcel(List<T> data);
 
-    protected void renderHeaders(org.apache.poi.ss.usermodel.Sheet sheet, int rowIdx){
+    protected void renderHeadersWithNewSheet(Sheet sheet, int rowIdx, int colStartIdx){
         Row row = sheet.createRow(rowIdx);
-        Map<Integer, List<ReviewColumnInfo>> allColumns = ReviewColumnInfo.getAllColumns();
-        List<ReviewColumnInfo> headerColumns = allColumns.get(0); // get header column
-        // set header
-        headerColumns.forEach(reviewColumnInfo -> {
-            Cell cell = row.createCell(reviewColumnInfo.getCol());
-            cell.setCellValue(reviewColumnInfo.getText());
-        });
+        int colIdx = colStartIdx;
+        for (String fieldName : resource.getDataFieldNames()){
+            Cell cell = row.createCell(colIdx++);
+            cell.setCellStyle(resource.getCellStyle(fieldName, ExcelRenderLocation.HEADER));
+            cell.setCellValue(resource.getHeaderName(fieldName));
+        }
     }
 
     protected void renderBody(Object data, int rowIdx, int colStartIdx){
@@ -68,7 +70,13 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile<T> {
         for (String fieldName : resource.getDataFieldNames()){
             Cell cell = row.createCell(colIdx++);
             try{
-                getF
+                Field field = ClassFieldUtils.getField(data.getClass(), fieldName);
+                field.setAccessible(true);
+                cell.setCellStyle(resource.getCellStyle(fieldName, ExcelRenderLocation.BODY));
+                Object cellValue = field.get(data);
+                renderCellValue(cell, cellValue);
+            } catch (Exception e) {
+                throw new ExcelInternalException(e.getMessage(), e);
             }
         }
     }
