@@ -3,6 +3,8 @@ package com.shinhan.review.web.controller;
 import com.shinhan.review.entity.dto.ReviewDto;
 import com.shinhan.review.excel.ReviewColumnInfo;
 import com.shinhan.review.excel.template.SimpleExcelFile;
+import com.shinhan.review.excel.ver2.ExcelFile;
+import com.shinhan.review.excel.ver2.single.SingleExcelFile;
 import com.shinhan.review.web.service.ReviewService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -87,6 +89,18 @@ public class ExcelController {
         SimpleExcelFile<ReviewDto> excelFile = new SimpleExcelFile<>(reviews, ReviewDto.class);
         excelFile.write(response.getOutputStream());
     }
+    /**
+     * template 버전
+     */
+    @GetMapping("/api/v3/excel/review")
+    public void downloadReviewInfo3(HttpServletResponse response) throws IOException{
+        log.info("Excel Template Version 3 start...");
+        response.setContentType("application/vnd.ms-excel; charset=euc-kr");
+        List<ReviewDto> reviews = reviewService.getReviewsForExcel();
+        ExcelFile<ReviewDto> excelFile = new SingleExcelFile<>(reviews, ReviewDto.class);
+        excelFile.write(response.getOutputStream());
+    }
+
 
 
 }
