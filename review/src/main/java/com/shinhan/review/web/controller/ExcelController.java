@@ -3,9 +3,11 @@ package com.shinhan.review.web.controller;
 import com.shinhan.review.entity.dto.ReviewDto;
 import com.shinhan.review.excel.ReviewColumnInfo;
 import com.shinhan.review.excel.template.SimpleExcelFile;
+import com.shinhan.review.excel.ver2.ExcelException;
 import com.shinhan.review.excel.ver2.excel.ExcelFile;
 import com.shinhan.review.excel.ver2.excel.multiplesheet.MultiSheetExcelFile;
 import com.shinhan.review.excel.ver2.excel.singlesheet.SingleSheetExcelFile;
+import com.shinhan.review.search.form.DownloadForm;
 import com.shinhan.review.web.service.ReviewService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,10 +18,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +37,32 @@ public class ExcelController {
     private static final Logger log = LoggerFactory.getLogger(ExcelController.class);
     @Autowired
     ReviewService reviewService;
+
+    @GetMapping("/review/excel")
+    public String goDownloadPage(Model model){
+        model.addAttribute("downloadForm", new DownloadForm());
+        return "review/excel/downloadExcel";
+    }
+
+    @PostMapping("/review/excel")
+    public void goDownloadPage(@ModelAttribute("downloadForm") DownloadForm downloadForm, BindingResult result, HttpServletResponse response){
+        log.info("리뷰 다운로드를 시작합니다...");
+        if (result.hasErrors()){
+            log.info("리뷰 다운로드 실패...옵션을 확인해주세요");
+        }
+        List<ReviewDto> reviews = reviewService.getReviewsForExcelByCondition(downloadForm);
+        // 파일명 지정
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + "review_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE).toString()+".xls" + "\";");
+        // 인코딩
+        response.setContentType("application/vnd.ms-excel; charset=euc-kr");
+        ExcelFile excelFile = new MultiSheetExcelFile<>(reviews, ReviewDto.class);
+        try {
+            excelFile.write(response.getOutputStream());
+        } catch (IOException e) {
+            throw new ExcelException(String.format("%s %s 조건 다운로드 처리중 에러가 발생했습니다.", downloadForm.getAppId(), downloadForm.getOs().name()), e);
+        }
+    }
+
 
     @GetMapping("/api/v1/excel/review")
     public void downloadReviewInfo(HttpServletResponse response) throws IOException{
@@ -108,6 +142,9 @@ public class ExcelController {
     @GetMapping("/api/v4/excel/review")
     public void downloadReviewInfoByMulti(HttpServletResponse response) throws IOException {
         log.info("Excel Multi Sheet Version");
+        // 파일명 지정
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + "review_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE).toString()+".xls" + "\";");
+        // 인코딩
         response.setContentType("application/vnd.ms-excel; charset=euc-kr");
         List<ReviewDto> reviews = reviewService.getReviewsForExcel();
         ExcelFile excelFile = new MultiSheetExcelFile<>(reviews, ReviewDto.class);

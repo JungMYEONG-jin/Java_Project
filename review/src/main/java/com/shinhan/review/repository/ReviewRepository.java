@@ -15,6 +15,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByAppPkg(String appPkg);
     List<Review> findByOsType(String osType);
+    List<Review> findByAppPkgAndOsType(String appPkg, String osType);
 
     // for excel download
     List<Review> findAll();

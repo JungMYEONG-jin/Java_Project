@@ -8,6 +8,7 @@ import com.shinhan.review.crawler.google.GoogleAppId;
 import com.shinhan.review.entity.Review;
 import com.shinhan.review.entity.dto.ReviewDto;
 import com.shinhan.review.repository.ReviewRepository;
+import com.shinhan.review.search.form.DownloadForm;
 import com.shinhan.review.search.form.SearchForm;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -68,6 +69,41 @@ public class ReviewService {
         return all.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
     }
 
+    @Transactional
+    public List<ReviewDto> getReviewsForExcelByOS(DownloadForm form){
+        List<Review> byOsType = reviewRepository.findByOsType(form.getOs().getNumber());
+        return byOsType.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<ReviewDto> getReviewsForExcelByApp(DownloadForm form){
+        List<Review> byAppPkg = reviewRepository.findByAppPkg(form.getAppId());
+        return byAppPkg.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<ReviewDto> getReviewsForExcelByAppAndOS(DownloadForm form){
+        List<Review> byAppPkgAndOsType = reviewRepository.findByAppPkgAndOsType(form.getAppId(), form.getOs().getNumber());
+        return byAppPkgAndOsType.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<ReviewDto> getReviewsForExcelByCondition(DownloadForm form){
+            if (form == null)
+                return getReviewsForExcel();
+            if (form.getOs()==null && isEmpty(form.getAppId()))
+                return getReviewsForExcel();
+            else if (form.getOs()==null && !isEmpty(form.getAppId()))
+                return getReviewsForExcelByApp(form);
+            else if(form.getOs()!=null && isEmpty(form.getAppId()))
+                return getReviewsForExcelByOS(form);
+            else if(form.getOs()!=null && !isEmpty(form.getAppId()))
+                return getReviewsForExcelByAppAndOS(form);
+            return getReviewsForExcel();
+    }
+
+
+
     public String getMatchedName(String number){
         if (number.equals("1"))
             return OS.AND.name();
@@ -122,6 +158,7 @@ public class ReviewService {
             return true;
         return false;
     }
+
 
     @Transactional
     public Page<Review> searchByCondition(Pageable pageable, SearchForm form){
