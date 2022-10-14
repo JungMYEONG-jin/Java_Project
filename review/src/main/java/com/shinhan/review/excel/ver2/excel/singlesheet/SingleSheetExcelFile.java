@@ -1,4 +1,4 @@
-package com.shinhan.review.excel.ver2.excel.onesheet;
+package com.shinhan.review.excel.ver2.excel.singlesheet;
 
 import com.shinhan.review.excel.ver2.excel.SXSSFExcelFile;
 import com.shinhan.review.excel.ver2.resource.DataFormatDecider;
@@ -13,21 +13,21 @@ import java.util.List;
  * - support different DataFormat by Class Type
  * - support Custom CellStyle according to (header or body) and data field
  */
-public final class OneSheetExcelFile<T> extends SXSSFExcelFile<T> {
+public final class SingleSheetExcelFile<T> extends SXSSFExcelFile<T> {
 
 	private static final int ROW_START_INDEX = 0;
 	private static final int COLUMN_START_INDEX = 0;
 	private int currentRowIndex = ROW_START_INDEX;
 
-	public OneSheetExcelFile(Class<T> type) {
+	public SingleSheetExcelFile(Class<T> type) {
 		super(type);
 	}
 
-	public OneSheetExcelFile(List<T> data, Class<T> type) {
+	public SingleSheetExcelFile(List<T> data, Class<T> type) {
 		super(data, type);
 	}
 
-	public OneSheetExcelFile(List<T> data, Class<T> type, DataFormatDecider dataFormatDecider) {
+	public SingleSheetExcelFile(List<T> data, Class<T> type, DataFormatDecider dataFormatDecider) {
 		super(data, type, dataFormatDecider);
 	}
 

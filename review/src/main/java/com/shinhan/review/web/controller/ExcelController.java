@@ -4,7 +4,8 @@ import com.shinhan.review.entity.dto.ReviewDto;
 import com.shinhan.review.excel.ReviewColumnInfo;
 import com.shinhan.review.excel.template.SimpleExcelFile;
 import com.shinhan.review.excel.ver2.excel.ExcelFile;
-import com.shinhan.review.excel.ver2.excel.onesheet.OneSheetExcelFile;
+import com.shinhan.review.excel.ver2.excel.multiplesheet.MultiSheetExcelFile;
+import com.shinhan.review.excel.ver2.excel.singlesheet.SingleSheetExcelFile;
 import com.shinhan.review.web.service.ReviewService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -90,14 +91,26 @@ public class ExcelController {
         excelFile.write(response.getOutputStream());
     }
     /**
-     * template 버전
+     * single sheet 버전
      */
     @GetMapping("/api/v3/excel/review")
     public void downloadReviewInfo3(HttpServletResponse response) throws IOException{
         log.info("Excel Template Version 3 start...");
         response.setContentType("application/vnd.ms-excel; charset=euc-kr");
         List<ReviewDto> reviews = reviewService.getReviewsForExcel();
-        ExcelFile excelFile = new OneSheetExcelFile<>(reviews, ReviewDto.class);
+        ExcelFile excelFile = new SingleSheetExcelFile<>(reviews, ReviewDto.class);
+        excelFile.write(response.getOutputStream());
+    }
+
+    /**
+     * multi sheet
+     */
+    @GetMapping("/api/v4/excel/review")
+    public void downloadReviewInfoByMulti(HttpServletResponse response) throws IOException {
+        log.info("Excel Multi Sheet Version");
+        response.setContentType("application/vnd.ms-excel; charset=euc-kr");
+        List<ReviewDto> reviews = reviewService.getReviewsForExcel();
+        ExcelFile excelFile = new MultiSheetExcelFile<>(reviews, ReviewDto.class);
         excelFile.write(response.getOutputStream());
     }
 
