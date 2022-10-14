@@ -5,24 +5,9 @@ import org.apache.poi.ss.usermodel.CellStyle;
 /**
  * basic setting,, do nothing
  */
-public class NoExcelBorders implements ExcelBorder{
+public class NoExcelBorders implements ExcelBorders{
     @Override
-    public void applyTop(CellStyle cellStyle) {
-
-    }
-
-    @Override
-    public void applyBottom(CellStyle cellStyle) {
-
-    }
-
-    @Override
-    public void applyRight(CellStyle cellStyle) {
-
-    }
-
-    @Override
-    public void applyLeft(CellStyle cellStyle) {
+    public void apply(CellStyle cellStyle) {
 
     }
 }

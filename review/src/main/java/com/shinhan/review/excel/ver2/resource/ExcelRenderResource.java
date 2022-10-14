@@ -1,5 +1,6 @@
 package com.shinhan.review.excel.ver2.resource;
 
+import com.shinhan.review.excel.ver2.resource.collection.PreCalculatedCellStyleMap;
 import org.apache.poi.ss.usermodel.CellStyle;
 
 import java.util.List;
@@ -7,28 +8,29 @@ import java.util.Map;
 
 public class ExcelRenderResource {
 
-    private PreCalculatedCellStyleMap calculatedCellStyleMap;
+	private PreCalculatedCellStyleMap styleMap;
 
-    // data field name to excel header name
-    private Map<String, String > headerNames;
-    private List<String> dataFieldNames;
+	// TODO dataFieldName -> excelHeaderName Map Abstraction
+	private Map<String, String> excelHeaderNames;
+	private List<String> dataFieldNames;
 
+	public ExcelRenderResource(PreCalculatedCellStyleMap styleMap,
+							   Map<String, String> excelHeaderNames, List<String> dataFieldNames) {
+		this.styleMap = styleMap;
+		this.excelHeaderNames = excelHeaderNames;
+		this.dataFieldNames = dataFieldNames;
+	}
 
-    public ExcelRenderResource(PreCalculatedCellStyleMap calculatedCellStyleMap, Map<String, String> headerNames, List<String> dataFieldNames) {
-        this.calculatedCellStyleMap = calculatedCellStyleMap;
-        this.headerNames = headerNames;
-        this.dataFieldNames = dataFieldNames;
-    }
+	public CellStyle getCellStyle(String dataFieldName, ExcelRenderLocation excelRenderLocation) {
+		return styleMap.get(ExcelCellKey.of(dataFieldName, excelRenderLocation));
+	}
 
-    public CellStyle getCellStyle(String fieldName, ExcelRenderLocation excelRenderLocation) {
-        return calculatedCellStyleMap.get(ExcelCellKey.of(fieldName, excelRenderLocation));
-    }
+	public String getExcelHeaderName(String dataFieldName) {
+		return excelHeaderNames.get(dataFieldName);
+	}
 
-    public String getHeaderName(String fieldName) {
-        return headerNames.get(fieldName);
-    }
+	public List<String> getDataFieldNames() {
+		return dataFieldNames;
+	}
 
-    public List<String> getDataFieldNames() {
-        return dataFieldNames;
-    }
 }
