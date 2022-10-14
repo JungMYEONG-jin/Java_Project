@@ -28,13 +28,17 @@ public class ExcelRenderResourceFactory {
         List<String> fieldNames = new ArrayList<>();
 
 
+        ExcelColumnStyle headerStyle = getHeaderStyle(type);
+        ExcelColumnStyle bodyStyle = getBodyStyle(type);
+
+
         List<Field> allFields = getAllFields(type);
         for (Field field : allFields) {
             if (field.isAnnotationPresent(ExcelColumn.class)){
                 ExcelColumn annotation = field.getAnnotation(ExcelColumn.class);
-                preCalculatedCellStyleMap.put(String.class, ExcelCellKey.of(field.getName(), ExcelRenderLocation.HEADER), );
+                preCalculatedCellStyleMap.put(String.class, ExcelCellKey.of(field.getName(), ExcelRenderLocation.HEADER),getCellStyle(decideAppliedStyleAnnotation(headerStyle, annotation.headerStyle())),wb);
                 Class<?> fieldType = field.getType();
-                preCalculatedCellStyleMap.put(fieldType, ExcelCellKey.of(field.getName(), ExcelRenderLocation.BODY), );
+                preCalculatedCellStyleMap.put(fieldType, ExcelCellKey.of(field.getName(), ExcelRenderLocation.BODY), getCellStyle(decideAppliedStyleAnnotation(bodyStyle, annotation.bodyStyle())), wb);
                 fieldNames.add(field.getName());
                 headerNameMap.put(field.getName(), annotation.headerName());
             }

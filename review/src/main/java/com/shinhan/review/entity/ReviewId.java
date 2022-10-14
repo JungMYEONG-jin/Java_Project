@@ -4,6 +4,9 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * 복합키
+ */
 public class ReviewId implements Serializable {
 
     @Id

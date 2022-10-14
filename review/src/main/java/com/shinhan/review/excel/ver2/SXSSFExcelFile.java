@@ -4,6 +4,7 @@ import com.shinhan.review.excel.ver2.decider.DataFormatDecider;
 import com.shinhan.review.excel.ver2.decider.DefaultDataFormatDecider;
 import com.shinhan.review.excel.ver2.resource.ExcelRenderLocation;
 import com.shinhan.review.excel.ver2.resource.ExcelRenderResource;
+import com.shinhan.review.excel.ver2.resource.ExcelRenderResourceFactory;
 import com.shinhan.review.excel.ver2.util.ClassFieldUtils;
 import com.shinhan.review.exception.ExcelInternalException;
 import org.apache.poi.ss.SpreadsheetVersion;
