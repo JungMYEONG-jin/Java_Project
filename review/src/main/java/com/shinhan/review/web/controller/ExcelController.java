@@ -8,6 +8,7 @@ import com.shinhan.review.excel.ver2.excel.ExcelFile;
 import com.shinhan.review.excel.ver2.excel.multiplesheet.MultiSheetExcelFile;
 import com.shinhan.review.excel.ver2.excel.singlesheet.SingleSheetExcelFile;
 import com.shinhan.review.search.form.DownloadForm;
+import com.shinhan.review.search.form.SearchForm;
 import com.shinhan.review.web.service.ReviewService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -47,6 +48,7 @@ public class ExcelController {
     @PostMapping("/review/excel")
     public void goDownloadPage(@ModelAttribute("downloadForm") DownloadForm downloadForm, BindingResult result, HttpServletResponse response){
         log.info("리뷰 다운로드를 시작합니다...");
+        log.info("downloadForm OS {}, appPkg {}", downloadForm.getOs().name(), downloadForm.getAppId());
         if (result.hasErrors()){
             log.info("리뷰 다운로드 실패...옵션을 확인해주세요");
         }
@@ -62,7 +64,6 @@ public class ExcelController {
             throw new ExcelException(String.format("%s %s 조건 다운로드 처리중 에러가 발생했습니다.", downloadForm.getAppId(), downloadForm.getOs().name()), e);
         }
     }
-
 
     @GetMapping("/api/v1/excel/review")
     public void downloadReviewInfo(HttpServletResponse response) throws IOException{

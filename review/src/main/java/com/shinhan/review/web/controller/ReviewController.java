@@ -1,9 +1,15 @@
 package com.shinhan.review.web.controller;
 
 import com.shinhan.review.entity.Review;
+import com.shinhan.review.entity.dto.ReviewDto;
+import com.shinhan.review.excel.ver2.ExcelException;
+import com.shinhan.review.excel.ver2.excel.ExcelFile;
+import com.shinhan.review.excel.ver2.excel.multiplesheet.MultiSheetExcelFile;
 import com.shinhan.review.search.form.CrawlingForm;
+import com.shinhan.review.search.form.DownloadForm;
 import com.shinhan.review.search.form.SearchForm;
 import com.shinhan.review.web.service.ReviewService;
+import com.sun.javafx.font.directwrite.DWFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +26,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -80,6 +91,7 @@ public class ReviewController {
     @GetMapping("/reviews/search")
     public String searchReviewListGet(Model model, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
         Page<Review> reviews = reviewService.searchByCondition(pageable, form); //처음만 init 하면
+        logger.info("reviews page size {}", reviews.getTotalElements());
         model.addAttribute("searchForm", form);
         model.addAttribute("reviews", reviews);
         return "review/searchPage";
@@ -92,5 +104,22 @@ public class ReviewController {
         model.addAttribute("reviews",reviews);
         return "review/searchPage";
     }
+
+    @GetMapping("/reviews/download")
+    public void goDownloadPage(HttpServletResponse response){
+        List<ReviewDto> reviews = reviewService.searchByCondition(form);
+        logger.info("reviews size {} ", reviews.size());
+        // 파일명 지정
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + "review_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE).toString()+".xls" + "\";");
+        // 인코딩
+        response.setContentType("application/vnd.ms-excel; charset=euc-kr");
+        ExcelFile excelFile = new MultiSheetExcelFile<>(reviews, ReviewDto.class);
+        try {
+            excelFile.write(response.getOutputStream());
+        } catch (IOException e) {
+            throw new ExcelException(String.format("%s %s 조건 다운로드 처리중 에러가 발생했습니다.", form.getAppPkg(), form.getOs().name()), e);
+        }
+    }
+
 
 }

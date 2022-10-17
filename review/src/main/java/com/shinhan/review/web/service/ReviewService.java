@@ -63,6 +63,158 @@ public class ReviewService {
         logger.info("{} 크롤링 완료", packageName);
     }
 
+    // for excel rendering
+
+    @Transactional
+    public List<ReviewDto> searchByCondition(SearchForm form){
+        // 날짜 지정 안했을때
+        if (form.getStart()==null && form.getEnd()==null)
+        {
+            if (form.getOs()==null && isEmpty(form.getAppPkg()))
+                return getReviewsForExcel();
+            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
+                return searchByAppPkg(form);
+            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
+                return searchByOsType(form);
+            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
+                return searchByOsTypeAndAppPkg(form);
+        }
+
+        // 시작일만 지정한경우
+        if(form.getStart()!=null && form.getEnd()==null){
+            if (form.getOs()==null && isEmpty(form.getAppPkg()))
+                return searchByCreatedDateAfter(form);
+            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
+                return searchByCreatedDateAfterAndAppPkg(form);
+            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
+                return searchByCreatedDateAfterAndOSType(form);
+            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
+                return searchByCreatedDateAfterAndOsTypeAndAppPkg(form);
+        }
+
+        // 종료일만 지정한 경우
+        if(form.getStart()==null && form.getEnd()!=null){
+            if (form.getOs()==null && isEmpty(form.getAppPkg()))
+                return searchByCreatedDateBefore(form);
+            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
+                return searchByCreatedDateBeforeAndAppPkg(form);
+            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
+                return searchByCreatedDateBeforeAndOSType(form);
+            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
+                return searchByCreatedDateBeforeAndOsTypeAndAppPkg(form);
+        }
+
+        // 시작, 종료 지정 했을때
+        if (form.getStart()!=null && form.getEnd()!=null) {
+            if (form.getOs()==null && isEmpty(form.getAppPkg()))
+                return searchByDate(form);
+            else if(form.getOs()==null && !isEmpty(form.getAppPkg()))
+                return searchByDateAndAppPkg(form);
+            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
+                return searchByDateAndOsType(form);
+            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
+                return searchByDateAndOsTypeAndAppPkg(form);
+        }
+
+        throw new IllegalStateException("검색 조건이 잘못되었습니다...");
+    }
+
+    @Transactional
+    public List<ReviewDto> searchByOsType(SearchForm form){
+        return listToDtoList(reviewRepository.findByOsType(form.getOs().getNumber()));
+    }
+    @Transactional
+    public List<ReviewDto> searchByDate(SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        String end = getFormattedDate(form.getEnd().toString());
+        return listToDtoList(reviewRepository.searchByDate(start, end));
+    }
+    @Transactional
+    public List<ReviewDto> searchByDateAndOsType(SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        String end = getFormattedDate(form.getEnd().toString());
+        return listToDtoList(reviewRepository.searchByDateAndOsType(start, end, form.getOs().getNumber()));
+    }
+    @Transactional
+    public List<ReviewDto> searchByCreatedDateAfter(SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        return listToDtoList(reviewRepository.findByCreatedDateAfter(start));
+    }
+    @Transactional
+    public List<ReviewDto> searchByCreatedDateBefore(SearchForm form){
+        String end = getFormattedDate(form.getEnd().toString());
+        return listToDtoList(reviewRepository.findByCreatedDateBefore(end));
+    }
+    @Transactional
+    public List<ReviewDto> searchByCreatedDateAfterAndOSType(SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        return listToDtoList(reviewRepository.findByCreatedDateAfterAndOsType(start, form.getOs().getNumber()));
+    }
+    @Transactional
+    public List<ReviewDto> searchByCreatedDateBeforeAndOSType(SearchForm form){
+        String end = getFormattedDate(form.getEnd().toString());
+        return listToDtoList(reviewRepository.findByCreatedDateBeforeAndOsType(end, form.getOs().getNumber()));
+    }
+
+    // app
+    @Transactional
+    public List<ReviewDto> searchByAppPkg(SearchForm form){
+        return listToDtoList(reviewRepository.findByAppPkg( form.getAppPkg()));
+    }
+    // os app
+    @Transactional
+    public List<ReviewDto> searchByOsTypeAndAppPkg(SearchForm form){
+        return listToDtoList(reviewRepository.findByOsTypeAndAppPkg(form.getOs().getNumber(), form.getAppPkg()));
+    }
+    // start app
+    @Transactional
+    public List<ReviewDto> searchByCreatedDateBeforeAndAppPkg(SearchForm form){
+        String end = getFormattedDate(form.getEnd().toString());
+        return listToDtoList(reviewRepository.findByCreatedDateBeforeAndAppPkg(end, form.getAppPkg()));
+    }
+    // end app
+    @Transactional
+    public List<ReviewDto> searchByCreatedDateAfterAndAppPkg(SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        return listToDtoList(reviewRepository.findByCreatedDateAfterAndAppPkg(start, form.getAppPkg()));
+    }
+    // start end app
+    @Transactional
+    public List<ReviewDto> searchByDateAndAppPkg(SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        String end = getFormattedDate(form.getEnd().toString());
+        return listToDtoList(reviewRepository.searchByDateAndAppPkg(start, end, form.getAppPkg()));
+    }
+    // start os app
+    @Transactional
+    public List<ReviewDto> searchByCreatedDateAfterAndOsTypeAndAppPkg(SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        return listToDtoList(reviewRepository.findByCreatedDateAfterAndOsTypeAndAppPkg(start, form.getOs().getNumber(), form.getAppPkg()));
+    }
+    // end os app
+    @Transactional
+    public List<ReviewDto> searchByCreatedDateBeforeAndOsTypeAndAppPkg(SearchForm form){
+        String end = getFormattedDate(form.getEnd().toString());
+        return listToDtoList(reviewRepository.findByCreatedDateBeforeAndOsTypeAndAppPkg(end, form.getOs().getNumber(), form.getAppPkg()));
+    }
+
+    // start end os app
+    @Transactional
+    public List<ReviewDto> searchByDateAndOsTypeAndAppPkg(SearchForm form){
+        String start = getFormattedDate(form.getStart().toString());
+        String end = getFormattedDate(form.getEnd().toString());
+        return listToDtoList(reviewRepository.searchByDateAAndOsTypeAndAppPkg(start, end, form.getOs().getNumber(), form.getAppPkg()));
+    }
+    
+
+    public List<ReviewDto> pageToList(Page<Review> reviews){
+        return reviews.getContent().stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
+    }
+
+    public List<ReviewDto> listToDtoList(List<Review> reviews){
+        return reviews.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
+    }
+
     @Transactional
     public List<ReviewDto> getReviewsForExcel(){
         List<Review> all = reviewRepository.findAll();
@@ -158,8 +310,8 @@ public class ReviewService {
             return true;
         return false;
     }
-
-
+    // for page rendering
+    
     @Transactional
     public Page<Review> searchByCondition(Pageable pageable, SearchForm form){
         // 날짜 지정 안했을때
@@ -300,6 +452,7 @@ public class ReviewService {
         String end = getFormattedDate(form.getEnd().toString());
         return reviewRepository.searchByDateAAndOsTypeAndAppPkg(pageable, start, end, form.getOs().getNumber(), form.getAppPkg());
     }
+
 
     private String getFormattedDate(String dates) {
         dates = dates.replaceAll("-","");

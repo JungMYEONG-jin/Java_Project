@@ -13,9 +13,44 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
+    // 1
     List<Review> findByAppPkg(String appPkg);
     List<Review> findByOsType(String osType);
+    List<Review> findByCreatedDateAfter(String createdDate);
+    List<Review> findByCreatedDateBefore(String createdDate);
+
+    // 2
     List<Review> findByAppPkgAndOsType(String appPkg, String osType);
+    List<Review> findByCreatedDateAfterAndOsType(String createdDate, String osType);
+    // 종료 OS
+    List<Review> findByCreatedDateBeforeAndOsType(String createdDate, String osType);
+    // 시작 종료
+    @Query("select r from Review r where r.createdDate between :start and :end")
+    List<Review> searchByDate(@Param("start") String start, @Param("end") String end); // 날짜 기반 검색
+    // 시작 app
+    List<Review> findByCreatedDateAfterAndAppPkg(String createdDate, String appPkg);
+    // 종료 app
+    List<Review> findByCreatedDateBeforeAndAppPkg(String createdDate, String appPkg);
+    // OS app
+    List<Review> findByOsTypeAndAppPkg(String osType, String appPkg);
+
+    // 조건 3
+    // 시작 종료 OS
+    @Query("select r from Review r where r.createdDate between :start and :end and r.osType = :type")
+    List<Review> searchByDateAndOsType(@Param("start") String start, @Param("end") String end, @Param("type") String type);
+    // 시작 종료 app
+    @Query("select r from Review r where r.createdDate between :start and :end and r.appPkg = :appPkg")
+    List<Review> searchByDateAndAppPkg(@Param("start") String start, @Param("end") String end, @Param("appPkg") String appPkg);
+    // 시작 os app
+    List<Review> findByCreatedDateAfterAndOsTypeAndAppPkg(String createdDate, String osType, String appPkg);
+    // 종료 os app
+    List<Review> findByCreatedDateBeforeAndOsTypeAndAppPkg(String createdDate, String osType, String appPkg);
+
+    // 조건 4
+    // 시작 종료 os app
+    @Query("select r from Review r where r.createdDate between :start and :end and r.osType = :type and r.appPkg = :appPkg")
+    List<Review> searchByDateAAndOsTypeAndAppPkg(@Param("start") String start, @Param("end") String end, @Param("type") String type, @Param("appPkg") String appPkg);
+
 
     // for excel download
     List<Review> findAll();
