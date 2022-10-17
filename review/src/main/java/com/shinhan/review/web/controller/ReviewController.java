@@ -91,7 +91,6 @@ public class ReviewController {
     @GetMapping("/reviews/search")
     public String searchReviewListGet(Model model, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
         Page<Review> reviews = reviewService.searchByCondition(pageable, form); //처음만 init 하면
-        logger.info("reviews page size {}", reviews.getTotalElements());
         model.addAttribute("searchForm", form);
         model.addAttribute("reviews", reviews);
         return "review/searchPage";
@@ -108,7 +107,6 @@ public class ReviewController {
     @GetMapping("/reviews/download")
     public void goDownloadPage(HttpServletResponse response){
         List<ReviewDto> reviews = reviewService.searchByCondition(form);
-        logger.info("reviews size {} ", reviews.size());
         // 파일명 지정
         response.setHeader("Content-Disposition", "attachment; filename=\"" + "review_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE).toString()+".xls" + "\";");
         // 인코딩
