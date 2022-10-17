@@ -316,3 +316,7 @@ public class SimpleExcelFile<T> {
 ## Join VS Fetch Join
 Join은 관심 entity만 영속화 시키고 그외 연관 관계에 있는 애들이 Lazy 타입이면 가져오지 않는다. 따라서 만약 fetch type lazy 일때 연관관계는 proxy 를 통해 가져오게 되는데 이미 영속화가 종료된 상태이기 때문에
 LazyInitializationException이 발생하게 된다. 이를 해결하기 위해 fetch join을 사용할 수 있다. fetch join 사용시 연관관계에 있는 엔터티도 동시에 영속화 하기 때문에 영속화 관련 오류가 발생하지 않게 된다.
+
+## Spring MVC
+Model의 생명주기는 하나의 요청마다 한번이다. 즉 한 메소드에서 요청했을때 Model이 생성되고 이게 끝이란 의미이다. 다른 메소드에서 model.getAttribute 시 null 이 나오는 이유는 해당 메소드의 model은 set했던 모델과 전혀 
+다른 Model 이기 때문이다. 즉 model에 값을 넣으면 그 메소드에 해당하는 view에만 값이 전달됨.
