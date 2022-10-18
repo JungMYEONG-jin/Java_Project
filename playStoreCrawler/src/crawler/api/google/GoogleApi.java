@@ -335,7 +335,7 @@ public class GoogleApi {
         return res;
     }
 
-    private String getNextToken(JSONObject parseResult, JSONObject next, String nextToken) {
+     private String getNextToken(JSONObject parseResult, JSONObject next, String nextToken) {
         if(parseResult.containsKey("tokenPagination"))
             next = (JSONObject) parseResult.get("tokenPagination");
         if (next !=null && next.containsKey("nextPageToken"))

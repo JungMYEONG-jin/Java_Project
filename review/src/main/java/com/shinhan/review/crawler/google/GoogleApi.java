@@ -250,16 +250,20 @@ public class GoogleApi implements Crawler {
             try {
                 HttpPost httpPost = new HttpPost(url.toURI());
                 MultipartEntity multipartEntity = new MultipartEntity();
+                // set string body
                 StringBody grantBody = new StringBody("refresh_token");
                 StringBody tokenBdoy = new StringBody(refresh_token);
                 StringBody idBody = new StringBody(clientId);
                 StringBody secretBody = new StringBody(clientSecret);
                 StringBody redirectBody = new StringBody(redirectURI);
+
+                // set parameter
                 multipartEntity.addPart("refresh_token", tokenBdoy);
                 multipartEntity.addPart("client_id", idBody);
                 multipartEntity.addPart("client_secret", secretBody);
                 multipartEntity.addPart("redirect_uri", redirectBody);
                 multipartEntity.addPart("grant_type", grantBody);
+                // set form data
                 httpPost.setEntity(multipartEntity);
                 http = httpPost;
             } catch (Exception e) {

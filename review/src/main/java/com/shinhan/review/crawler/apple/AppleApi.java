@@ -45,9 +45,9 @@ import java.util.*;
 
 public class AppleApi implements Crawler {
 
-    public static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
-    public static final String keyId = "7JL62P566N";
-    public static final String keyPath = "static/apple/AuthKey_7JL62P566N.p8";
+    private static final String issuer_Id = "69a6de70-3bc8-47e3-e053-5b8c7c11a4d1";
+    private static final String keyId = "7JL62P566N";
+    private static final String keyPath = "static/apple/AuthKey_7JL62P566N.p8";
 
 
     private int CONN_TIME_OUT = 1000 * 30;
