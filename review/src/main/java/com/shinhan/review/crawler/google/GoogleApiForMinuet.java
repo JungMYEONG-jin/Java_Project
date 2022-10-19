@@ -1,78 +1,44 @@
-# Google Play Developer API 가이드
+package com.shinhan.review.crawler.google;
 
-Google Play Developer API는 API key를 이용하는 방식과 OAuth 인증을 통해 권한을 획득하는 방식이 있습니다.
-본 가이드라인은 OAuth 인증을 이용한 샘플입니다.
-1. 사용자는 인증 코드를 획득합니다.
-2. 인증 코드를 다시 google에 보내 유효한지 검증받습니다.
-3. 유효한 사용자라면 google에서 redirect_uri에 code를 보내줍니다.
-4. 해당 코드를 가지고 다시 google에 보내 access_token과 refresh_token을 획득합니다.
-5. refresh_token을 얻게 되면 위와 같은 인증 과정을 거치지 않고 access_token을 계속 획득 가능합니다.
-6. token을 api 요청시 보내 인증을 받고 값을 return 받으면 완료입니다.
+import com.shinhan.review.crawler.Crawler;
+import com.shinhan.review.exception.GooleAPIException;
+import com.shinhan.review.exception.KeyReadException;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-사용자는 인증 코드를 획득하고 그 인증코드를 다시 보내 구글에서는 그 코드를 가지고 해당 유저의 정보가 유효한지 확인합니다. 그리고 유효하다면 redirect_uri뒤에 code=값 형태로 return 하게 됩니다.
-인증 코드를 획득하려면 해당 주소에 parameter를 채워 GET 호출을 해야합니다. 만약 자체적으로 운영중인 로그인 페이지가 있다면 redirect_uri를 저에게 회신해주시면 계정 생성시 해당 uri를 넣어드리겠습니다.
-scopee는 Google의 여러 API중 저희는 play store와 관련된 API만 호출할 것이므로 해당 scope{scope=https://www.googleapis.com/auth/androidpublisher}를 그대로 사용하시면 됩니다.
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/androidpublisher&response_type=code&access_type=offline&redirect_uri={redirect_uri}&client_id={client_id}
+public class GoogleApiForMinuet implements Crawler {
 
-https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/androidpublisher&response_type=code&access_type=offline&redirect_uri=http://localhost:8080/login/oauth2/code/google&client_id=118014375029-dbm5681oth7fahbsl5eog9kq72mtv8ac.apps.googleusercontent.com
-
-GET 하는 방법은 java code로 구현해도 되고 PostMan을 이용해 획득해도 됩니다. 단 java code를 이용해 구현하려면 redirect_uri 페이지를 생성하고 연결해줘야 합니다.
-이 과정이 귀찮다면 인터넷 PC에서 PostMan을 이용해 token을 얻었습니다. (refresh_token 한번 얻으면 6개월간 위 과정 없이 토큰 생성 가능.)
-
-위 주소에 client_json의 값을 채워서 GET 하면 아래와 같이 본인에게 맞는 Code가 생성됩니다.
-제 경우 4/0AdQt8qhBtjt-Q4UWzEP2XH1GSnQx0aQm4fm5mTqAOUC-IsNBppln_rnrYj847zRbv6XP6A 입니다.
-
-이제 이 code를 이용해 access_token을 얻어야 합니다.
-```shell
-POST: https://oauth2.googleapis.com/oauth2/v4/token
-form-data
-redirect_uri: ${redirect_uri}
-code: 아까 얻은 code 저의 경우 4/0AdQt8qhBtjt-Q4UWzEP2XH1GSnQx0aQm4fm5mTqAOUC-IsNBppln_rnrYj847zRbv6XP6A
-client_id: ${client_id}
-client_secret: ${client_secret}
-grant_type: authorization_code
-```
-성공시 아래와 같은 결과를 얻습니다.
-
-```json
-{
-  "access_token": "ya29.a0Aa4xrXOjHPm-8SNzgaHS9x89wR_q3_yeyZJKAwpw9jDuvZwKDg8QhtLVW1NF9w2HX2Pzg6sLmAcPKRvOFcAR3YcLD8UjiwZ1HVXpskuNBSK3PEhtrkF-K_onh0Oh5mOMWF11hsjqCqMikpEvO9sn-1F_DoblaCgYKATASARESFQEjDvL9odlPpNBs2mdRuzbsRsNRgQ0163",
-  "expires_in": 3599,
-  "refresh_token": "1//0eczvvh3OJuh5CgYIARAAGA4SNwF-L9IrCDNuPJFJ-hrdFIS6JcHFjnMniYof97nx3NtwgyDaOb48cvO6DpeovrOWwPxVOd6I570",
-  "scope": "https://www.googleapis.com/auth/androidpublisher",
-  "token_type": "Bearer"
-}
-```
-이제 이 refresh_token을 저장하고 간직하면 위 과정을 거치지 않고 access_token 생성이 가능합니다.
-
-```shell
-POST: https://www.googleapis.com/oauth2/v4/token
-form-data
-redirect_uri: ${redirect_uri}
-refresh_token: ${refresh_token}
-client_id: ${client_id}
-client_secret: ${client_secret}
-grant_type: refresh_token
-```
-
-```json
-{
-  "access_token": "ya29.a0Aa4xrXOKe4VDEYTqqbBCDlaUjMIJRvFppYPxFCYoH4A3yozSeGOoG-0csGcoJHokfLaGrDhFLeB9EZF9vLNPT7x5niCZ2xAbYCfTaxhzCjjBVreP5D7nuK_peK8FOVsPd4agDWZ1AWX7j_ad3TKQJZ8Ve23faCgYKATASARISFQEjDvL95fjJQ4wbzJi_Vn8RHNbB_Q0163",
-  "expires_in": 3599,
-  "scope": "https://www.googleapis.com/auth/androidpublisher",
-  "token_type": "Bearer"
-}
-```
-
-##sample code
-```java
-package crawler;
-
-public class Sample {
-
-    private static final String keyPath = "my.json";
-    private static final String refresh_token = "my_value";
+    private static final String keyPath = "static/google/client_secret_minuet.json";
+    private static final String refresh_token = "1//0eP7_uSPhe1yZCgYIARAAGA4SNwF-L9Ir0-RDx7bWjJU88vHYV8-PGpbWRpAwXXp7e1cYYsmJNTPCwnlwlmsbcXDFX5EXnyhTsn8";
     private static final int CONN_TIME_OUT = 1000 * 30;
     // 권한 획득 범위 https://www.googleapis.com/auth/androidpublisher
 
@@ -84,10 +50,6 @@ public class Sample {
         return new HashMap<String, String>(attr);
     }
 
-    /**
-     * refresh token을 이용해 access token 발급
-     * @return
-     */
     public String getAccessToken(){
         Map<String, String> clientInfo = getClientInfo(); // client json parsing
         URL url = null;
@@ -115,14 +77,98 @@ public class Sample {
         return resToken;
     }
 
+    /**
+     * 해당 메소드로 정해진 형식으로 리뷰 정제해서 가져
+     * @param packageName
+     * @return
+     * @throws MalformedURLException
+     */
+    public List<JSONObject> getReviewList(String packageName) throws MalformedURLException{
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        Map<String, String> map = new HashMap<>();
+        map.put("createdDate", "");map.put("nickName", "");map.put("rating", "");map.put("body", "");
+        map.put("responseBody", "");map.put("answeredDate", "");map.put("appVersion", "");map.put("device", "");
 
+        // token 생성
+        String accessToken = getAccessToken();
+        System.out.println("accessToken = " + accessToken);
+        // 리뷰 가져오기
+        List<JSONObject> reviewDetails = getReviewDetails(packageName, accessToken);
+        if (reviewDetails.isEmpty()){
+            System.out.println("reviewDetails is empty");
+            return null;
+        }
+
+        List<JSONObject> res = new ArrayList<>();
+
+        for (JSONObject reviewDetail : reviewDetails) {
+            System.out.println("reviewDetail = " + reviewDetail);
+            JSONArray reviews = (JSONArray) reviewDetail.get("reviews");
+            if (reviews != null) {
+                for (Object review : reviews) {
+                    JSONObject attr = new JSONObject(map);
+                    JSONObject val = (JSONObject) review;
+                    if (val.containsKey("authorName")) {
+                        String authorName = val.get("authorName").toString();
+                        attr.put("nickName", authorName);
+                    }
+                    JSONArray comments = (JSONArray) val.get("comments");
+                    JSONObject comment = (JSONObject) comments.get(0);
+                    JSONObject userComment = (JSONObject) comment.get("userComment");
+                    String userText = userComment.get("text").toString();
+                    attr.put("body", userText);
+                    JSONObject userLastModified = (JSONObject) userComment.get("lastModified");
+                    Long userSec = Long.parseLong(userLastModified.get("seconds").toString());
+                    attr.put("createdDate", dateFormat.format(new Date(userSec * 1000)).toString());
+                    String starRating = userComment.get("starRating").toString();
+                    attr.put("rating", starRating);
+
+
+                    // 핸드폰 기종
+                    attr.put("device","");
+                    if (userComment.containsKey("deviceMetadata")){
+                        JSONObject deviceMetadata = (JSONObject)userComment.get("deviceMetadata");
+                        if (deviceMetadata.containsKey("productName") && deviceMetadata.get("productName")!=null){
+                            String phone = deviceMetadata.get("productName").toString();
+                            if (phone.contains("(") && phone.contains(")")){
+                                int idx = phone.indexOf("(");
+                                int lastIdx = phone.indexOf(")");
+                                phone = phone.substring(idx+1,lastIdx-1);
+                            }
+                            attr.put("device",phone);
+                        }
+                    }
+//                    if (userComment.containsKey("device")) {
+//                        String device = userComment.get("device").toString();
+//                        attr.put("device", device);
+//                    }
+                    if (userComment.containsKey("appVersionName")) {
+                        String appVersionName = userComment.get("appVersionName").toString();
+                        attr.put("appVersion", appVersionName);
+                    }
+                    if (userComment.containsKey("androidOsVersion")) {
+                        String androidOsVersion = userComment.get("androidOsVersion").toString();
+                        attr.put("osVersion", androidOsVersion);
+                    }
+                    if (comment.containsKey("developerComment")) {
+                        JSONObject developerComment = (JSONObject) comment.get("developerComment");
+                        String text = developerComment.get("text").toString();
+                        attr.put("responseBody", text);
+                        attr.put("answeredDate", dateFormat.format(new Date(userSec * 1000)).toString());
+
+                    }
+                    res.add(attr);
+                }
+            }
+        }
+        return res;
+    }
 
     public List<JSONObject> getReviewDetails(String packageName, String token) throws MalformedURLException {
         String link = "https://www.googleapis.com/androidpublisher/v3/applications/"+packageName+"/reviews?access_token="+token;
         List<JSONObject> res = commonJsonTask(link);
         return res;
     }
-
 
     private List<JSONObject> commonJsonTask(String link) throws MalformedURLException {
         URL url = null;
@@ -142,8 +188,10 @@ public class Sample {
             res.add(parseResult);
             JSONObject next = null;
             nextToken = getNextToken(parseResult, next, nextToken);
-            System.out.println("nextToken = " + nextToken);
-            while(!nextToken.isEmpty()) {
+            while(nextToken!=null) {
+
+                if (nextToken==null)
+                    break;
                 reviewDetails = getConnectResultByX509(new URL(link +"&token="+nextToken));
                 parseResult = (JSONObject) parser.parse(reviewDetails);
                 res.add(parseResult);
@@ -151,8 +199,6 @@ public class Sample {
                 next = null;
                 nextToken = null;
                 nextToken = getNextToken(parseResult, next, nextToken);
-                if (nextToken==null)
-                    break;
             }
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -162,15 +208,6 @@ public class Sample {
         return res;
     }
 
-    /**
-     * 리뷰 크롤링을 하다보면 최대 100개까지 나오고 나머지는 다음 페이지에서 가져와야함.
-     * 다음 페이지 리뷰를 호출하려면 nextPageToken을 얻어야 함.
-     * 해당 기능 구현
-     * @param parseResult
-     * @param next
-     * @param nextToken
-     * @return
-     */
     private String getNextToken(JSONObject parseResult, JSONObject next, String nextToken) {
         if(parseResult.containsKey("tokenPagination"))
             next = (JSONObject) parseResult.get("tokenPagination");
@@ -179,16 +216,6 @@ public class Sample {
         return nextToken;
     }
 
-    /**
-     * refresh token으로 access token 생성하기
-     * @param url
-     * @param token
-     * @param clientId
-     * @param clientSecret
-     * @param redirectURI
-     * @return
-     * @throws NoSuchAlgorithmException
-     */
     private String getAccessTokenX509Post(URL url, String token, String clientId, String clientSecret, String redirectURI) throws NoSuchAlgorithmException {
 
         String result = "";
@@ -227,16 +254,20 @@ public class Sample {
             try {
                 HttpPost httpPost = new HttpPost(url.toURI());
                 MultipartEntity multipartEntity = new MultipartEntity();
+                // set string body
                 StringBody grantBody = new StringBody("refresh_token");
                 StringBody tokenBdoy = new StringBody(refresh_token);
                 StringBody idBody = new StringBody(clientId);
                 StringBody secretBody = new StringBody(clientSecret);
                 StringBody redirectBody = new StringBody(redirectURI);
+
+                // set parameter
                 multipartEntity.addPart("refresh_token", tokenBdoy);
                 multipartEntity.addPart("client_id", idBody);
                 multipartEntity.addPart("client_secret", secretBody);
                 multipartEntity.addPart("redirect_uri", redirectBody);
                 multipartEntity.addPart("grant_type", grantBody);
+                // set form data
                 httpPost.setEntity(multipartEntity);
                 http = httpPost;
             } catch (Exception e) {
@@ -258,19 +289,13 @@ public class Sample {
             result = responseBody; // json 형식
 
         } catch (Exception e) {
-            throw new AppleAPIException(e);
+            throw new GooleAPIException(e);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
         return result;
     }
 
-    /**
-     * api 호출
-     * @param url
-     * @return
-     * @throws NoSuchAlgorithmException
-     */
     private String getConnectResultByX509(URL url) throws NoSuchAlgorithmException {
         String result = "";
         DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -329,18 +354,14 @@ public class Sample {
             result = responseBody; // json 형식
 
         } catch (Exception e) {
-            throw new AppleAPIException(e);
+            throw new GooleAPIException(e);
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
         return result;
     }
 
-    /**
-     * client json 파일을 읽어오는 기능
-     * @param keyPath
-     * @return
-     */
+
     private JSONObject readJson(String keyPath)
     {
         InputStream inputStream = null;
@@ -360,12 +381,13 @@ public class Sample {
         return content;
     }
 
+    @Override
+    public List<JSONObject> getReview(String packageName) {
+        try {
+            return getReviewList(packageName);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
-
-```
-
-
-토큰을 프로그래매틱 방식으로 취소하려면 애플리케이션에서 https://oauth2.googleapis.com/revoke를 요청하고 토큰을 매개변수로 포함합니다.
-
-curl -d -X -POST --header "Content-type:application/x-www-form-urlencoded" \
-https://oauth2.googleapis.com/revoke?token={token}
