@@ -67,4 +67,11 @@ public class SearchForm {
     public void setEnd(LocalDate end) {
         this.end = end;
     }
+
+    public void clear(){
+        start = null;
+        end = null;
+        os = null;
+        appPkg = "";
+    }
 }

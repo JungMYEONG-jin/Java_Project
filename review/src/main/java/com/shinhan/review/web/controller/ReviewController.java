@@ -51,6 +51,7 @@ public class ReviewController {
     @GetMapping("/")
     public String goHome(){
         logger.info("home controller");
+        form.clear();
         return "home";
     }
 
@@ -89,9 +90,9 @@ public class ReviewController {
 //    }
 
     @GetMapping("/reviews/search")
-    public String searchReviewListGet(Model model, @ModelAttribute("searchForm") SearchForm searchForm, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
-        Page<Review> reviews = reviewService.searchByCondition(pageable, searchForm); //처음만 init 하면
-//        model.addAttribute("searchForm", form);
+    public String searchReviewListGet(Model model, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
+        Page<Review> reviews = reviewService.searchByCondition(pageable, form); //처음만 init 하면
+        model.addAttribute("searchForm", form);
         model.addAttribute("reviews", reviews);
         model.addAttribute("totalCnt", reviews.getTotalElements());
         return "review/searchPage";
