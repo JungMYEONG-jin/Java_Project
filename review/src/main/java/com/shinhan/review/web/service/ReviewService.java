@@ -20,6 +20,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,56 +70,79 @@ public class ReviewService {
 
     @Transactional
     public List<ReviewDto> searchByCondition(SearchForm form){
-        // 날짜 지정 안했을때
-        if (form.getStart()==null && form.getEnd()==null)
-        {
-            if (form.getOs()==null && isEmpty(form.getAppPkg()))
-                return getReviewsForExcel();
-            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
-                return searchByAppPkg(form);
-            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
-                return searchByOsType(form);
-            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
-                return searchByOsTypeAndAppPkg(form);
-        }
 
-        // 시작일만 지정한경우
-        if(form.getStart()!=null && form.getEnd()==null){
-            if (form.getOs()==null && isEmpty(form.getAppPkg()))
-                return searchByCreatedDateAfter(form);
-            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
-                return searchByCreatedDateAfterAndAppPkg(form);
-            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
-                return searchByCreatedDateAfterAndOSType(form);
-            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
-                return searchByCreatedDateAfterAndOsTypeAndAppPkg(form);
-        }
-
-        // 종료일만 지정한 경우
-        if(form.getStart()==null && form.getEnd()!=null){
-            if (form.getOs()==null && isEmpty(form.getAppPkg()))
-                return searchByCreatedDateBefore(form);
-            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
-                return searchByCreatedDateBeforeAndAppPkg(form);
-            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
-                return searchByCreatedDateBeforeAndOSType(form);
-            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
-                return searchByCreatedDateBeforeAndOsTypeAndAppPkg(form);
-        }
-
-        // 시작, 종료 지정 했을때
-        if (form.getStart()!=null && form.getEnd()!=null) {
-            if (form.getOs()==null && isEmpty(form.getAppPkg()))
-                return searchByDate(form);
-            else if(form.getOs()==null && !isEmpty(form.getAppPkg()))
-                return searchByDateAndAppPkg(form);
-            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
-                return searchByDateAndOsType(form);
-            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
-                return searchByDateAndOsTypeAndAppPkg(form);
-        }
-
-        throw new IllegalStateException("검색 조건이 잘못되었습니다...");
+        return getReviewsForExcel().stream().filter(review -> {
+            if (form.getOs() == null)
+                return true;
+            return review.getOsType().equals(form.getOs().getNumber());
+        }).filter(review -> {
+            if (isEmpty(form.getAppPkg()))
+                return true;
+            return review.getAppPkg().equals(form.getAppPkg());
+        }).filter(review -> {
+            String createdDate = review.getCreatedDate();
+            LocalDate localDate = LocalDate.of(Integer.parseInt(createdDate.substring(0, 4)), Integer.parseInt(createdDate.substring(4, 6)), Integer.parseInt(createdDate.substring(6, 8)));
+            if (form.getStart() == null)
+                return true;
+            else
+                return (localDate.isAfter(form.getStart()) || localDate.isEqual(form.getStart()));
+        }).filter(review->{
+            String createdDate = review.getCreatedDate();
+            LocalDate localDate = LocalDate.of(Integer.parseInt(createdDate.substring(0, 4)), Integer.parseInt(createdDate.substring(4, 6)), Integer.parseInt(createdDate.substring(6, 8)));
+            if (form.getEnd()==null)
+                return true;
+            return localDate.isBefore(form.getEnd());
+        }).collect(Collectors.toList());
+//
+//        if (form.getStart()==null && form.getEnd()==null)
+//        {
+//            if (form.getOs()==null && isEmpty(form.getAppPkg()))
+//                return getReviewsForExcel();
+//            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
+//                return searchByAppPkg(form);
+//            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
+//                return searchByOsType(form);
+//            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
+//                return searchByOsTypeAndAppPkg(form);
+//        }
+//
+//        // 시작일만 지정한경우
+//        if(form.getStart()!=null && form.getEnd()==null){
+//            if (form.getOs()==null && isEmpty(form.getAppPkg()))
+//                return searchByCreatedDateAfter(form);
+//            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
+//                return searchByCreatedDateAfterAndAppPkg(form);
+//            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
+//                return searchByCreatedDateAfterAndOSType(form);
+//            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
+//                return searchByCreatedDateAfterAndOsTypeAndAppPkg(form);
+//        }
+//
+//        // 종료일만 지정한 경우
+//        if(form.getStart()==null && form.getEnd()!=null){
+//            if (form.getOs()==null && isEmpty(form.getAppPkg()))
+//                return searchByCreatedDateBefore(form);
+//            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
+//                return searchByCreatedDateBeforeAndAppPkg(form);
+//            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
+//                return searchByCreatedDateBeforeAndOSType(form);
+//            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
+//                return searchByCreatedDateBeforeAndOsTypeAndAppPkg(form);
+//        }
+//
+//        // 시작, 종료 지정 했을때
+//        if (form.getStart()!=null && form.getEnd()!=null) {
+//            if (form.getOs()==null && isEmpty(form.getAppPkg()))
+//                return searchByDate(form);
+//            else if(form.getOs()==null && !isEmpty(form.getAppPkg()))
+//                return searchByDateAndAppPkg(form);
+//            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
+//                return searchByDateAndOsType(form);
+//            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
+//                return searchByDateAndOsTypeAndAppPkg(form);
+//        }
+//
+//        throw new IllegalStateException("검색 조건이 잘못되었습니다...");
     }
 
     @Transactional
