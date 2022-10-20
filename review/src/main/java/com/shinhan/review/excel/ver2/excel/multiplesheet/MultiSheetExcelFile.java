@@ -35,7 +35,7 @@ public final class MultiSheetExcelFile<T> extends SXSSFExcelFile<T> {
         for (Object it : data) {
             renderBody(it, currentIdx++, COL_START_IDX);
             if (currentIdx == maxRows){
-                currentIdx = 1;
+                currentIdx = 0;
                 createNewSheetWithHeader();
             }
         }
