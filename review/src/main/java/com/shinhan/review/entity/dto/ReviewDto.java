@@ -12,25 +12,25 @@ import org.json.simple.JSONObject;
 @DefaultBodyStyle(style = @ExcelColumnStyle(excelCellStyleClass = DefaultExcelCellStyle.class, enumName = "BODY"))
 public class ReviewDto {
     @ExcelColumn(headerName = "버전")
-    public String appVersion;
+    private String appVersion;
     @ExcelColumn(headerName = "작성일")
-    public String createdDate; // 리뷰 작성일
+    private String createdDate; // 리뷰 작성일
     @ExcelColumn(headerName = "닉네임")
-    public String nickname;
+    private String nickname;
     @ExcelColumn(headerName = "평점")
-    public String rating;
+    private String rating;
     @ExcelColumn(headerName = "리뷰")
-    public String body; // 리뷰
+    private String body; // 리뷰
     @ExcelColumn(headerName = "답변")
-    public String responseBody;
+    private String responseBody;
     @ExcelColumn(headerName = "답변일")
-    public String answeredDate; // 답변일
+    private String answeredDate; // 답변일
     @ExcelColumn(headerName = "디바이스")
-    public String device;
+    private String device;
     @ExcelColumn(headerName = "앱이름")
-    public String appPkg;
+    private String appPkg;
     @ExcelColumn(headerName = "OS")
-    public String osType;
+    private String osType;
 
     public ReviewDto() {
     }
@@ -72,6 +72,7 @@ public class ReviewDto {
                 device = jsonObject.get("device").toString();
         }
     }
+
 
     public String getResponseBody() {
         return responseBody;

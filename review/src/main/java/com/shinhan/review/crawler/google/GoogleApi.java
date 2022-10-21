@@ -104,6 +104,7 @@ public class GoogleApi implements Crawler {
                 for (Object review : reviews) {
                     JSONObject attr = new JSONObject(map);
                     JSONObject val = (JSONObject) review;
+
                     if (val.containsKey("authorName")) {
                         String authorName = val.get("authorName").toString();
                         attr.put("nickName", authorName);

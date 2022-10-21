@@ -9,7 +9,7 @@ public class Review {
     @Column(length = 60)
     private String appVersion;
     @Id
-    @Column(length = 12)
+    @Column(length = 14)
     private String createdDate; // 리뷰 작성일
     @Id
     @Column(length = 60)
@@ -20,7 +20,7 @@ public class Review {
     private String body; // 리뷰
     @Column(length = 4000)
     private String responseBody;
-    @Column(length=12)
+    @Column(length=14)
     private String answeredDate; // 답변일
     @Column(length=60)
     private String device;
