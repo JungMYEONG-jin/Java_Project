@@ -126,7 +126,19 @@ public class ReviewExcelDto {
         this.setOsType(review.getOsType());
         this.setOsVer(review.getOsVer());
         this.setResponseBody(review.getResponseBody());
-        this.setRating(review.getRating());
+        String excelRating = getStar(Integer.parseInt(review.getRating()));
+        this.setRating(excelRating);
+    }
+
+    private String getStar(int stars) {
+        String excelRating="";
+        for(int i=0;i<stars;i++){
+            excelRating+="★";
+        }
+        for(int i=0;i<5-stars;i++){
+            excelRating+="☆";
+        }
+        return excelRating;
     }
 
     public Long getId() {

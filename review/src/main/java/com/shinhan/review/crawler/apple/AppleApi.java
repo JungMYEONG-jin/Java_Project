@@ -378,6 +378,7 @@ public class AppleApi implements Crawler {
                     attributes.remove("reviewerNickname");
                     attributes.put("device", "");
                     attributes.put("appVersion","");
+                    attributes.put("osVersion", "");
                     result.add(attributes);
                 }
             }

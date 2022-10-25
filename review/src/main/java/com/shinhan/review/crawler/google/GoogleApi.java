@@ -88,7 +88,8 @@ public class GoogleApi implements Crawler {
         Map<String, String> map = new HashMap<>();
         map.put("createdDate", "");map.put("nickName", "");map.put("rating", "");map.put("body", "");
         map.put("responseBody", "");map.put("answeredDate", "");map.put("appVersion", "");map.put("device", "");
-
+        // 추가
+        map.put("osVersion", "");
         // token 생성
         String accessToken = getAccessToken();
         // 리뷰 가져오기
@@ -135,10 +136,7 @@ public class GoogleApi implements Crawler {
                             attr.put("device",phone);
                         }
                     }
-//                    if (userComment.containsKey("device")) {
-//                        String device = userComment.get("device").toString();
-//                        attr.put("device", device);
-//                    }
+
                     if (userComment.containsKey("appVersionName")) {
                         String appVersionName = userComment.get("appVersionName").toString();
                         attr.put("appVersion", appVersionName);

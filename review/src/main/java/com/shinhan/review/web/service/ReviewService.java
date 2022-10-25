@@ -243,19 +243,14 @@ public class ReviewService {
     }
 
     public List<ReviewExcelDto> listToReviewExcel(List<Review> reviews){
-        Long cnt = 1L;
-        List<ReviewExcelDto> excelDtos = new ArrayList<>();
-        for (Review review : reviews) {
-            excelDtos.add(new ReviewExcelDto(cnt++, review));
-        }
-        return excelDtos;
+       return reviews.stream().map(review -> new ReviewExcelDto(review)).collect(Collectors.toList());
     }
 
     @Transactional
     public List<ReviewExcelDto> getExcelByCondition(SearchForm form){
 
         List<ReviewExcelDto> reviewExcelDtos = listToReviewExcel(findAll());
-        return reviewExcelDtos.stream().filter(review -> {
+        List<ReviewExcelDto> result = reviewExcelDtos.stream().filter(review -> {
             if (form.getOs() == null)
                 return true;
             return review.getOsType().equals(form.getOs().getNumber());
@@ -270,13 +265,19 @@ public class ReviewService {
                 return true;
             else
                 return (localDate.isAfter(form.getStart()) || localDate.isEqual(form.getStart()));
-        }).filter(review->{
+        }).filter(review -> {
             String createdDate = review.getCreatedDate(); // yyyy-mm-dd type
             LocalDate localDate = LocalDate.parse(createdDate, DateTimeFormatter.ISO_DATE);
-            if (form.getEnd()==null)
+            if (form.getEnd() == null)
                 return true;
             return localDate.isBefore(form.getEnd());
         }).collect(Collectors.toList());
+        // for 순번...
+        Long cnt = 1L;
+        for (ReviewExcelDto reviewExcelDto : result) {
+            reviewExcelDto.setId(cnt++);
+        }
+        return result;
     }
 
     /**

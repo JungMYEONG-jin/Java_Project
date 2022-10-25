@@ -1,36 +1,21 @@
 package com.shinhan.review.entity.dto;
 
 import com.shinhan.review.entity.Review;
-import com.shinhan.review.excel.ver2.DefaultBodyStyle;
-import com.shinhan.review.excel.ver2.DefaultHeaderStyle;
-import com.shinhan.review.excel.ver2.ExcelColumn;
-import com.shinhan.review.excel.ver2.ExcelColumnStyle;
-import com.shinhan.review.excel.ver2.style.DefaultExcelCellStyle;
 import org.json.simple.JSONObject;
 
-@DefaultHeaderStyle(style = @ExcelColumnStyle(excelCellStyleClass = DefaultExcelCellStyle.class, enumName = "BLUE_HEADER"))
-@DefaultBodyStyle(style = @ExcelColumnStyle(excelCellStyleClass = DefaultExcelCellStyle.class, enumName = "BODY"))
 public class ReviewDto {
-    @ExcelColumn(headerName = "버전")
     private String appVersion;
-    @ExcelColumn(headerName = "작성일")
     private String createdDate; // 리뷰 작성일
-    @ExcelColumn(headerName = "닉네임")
     private String nickname;
-    @ExcelColumn(headerName = "평점")
     private String rating;
-    @ExcelColumn(headerName = "리뷰")
     private String body; // 리뷰
-    @ExcelColumn(headerName = "답변")
     private String responseBody;
-    @ExcelColumn(headerName = "답변일")
     private String answeredDate; // 답변일
-    @ExcelColumn(headerName = "디바이스")
     private String device;
-    @ExcelColumn(headerName = "앱이름")
     private String appPkg;
-    @ExcelColumn(headerName = "OS")
     private String osType;
+
+    private String osVer;
 
     public ReviewDto() {
     }
@@ -48,8 +33,22 @@ public class ReviewDto {
         this.osType = osType;
     }
 
+    public ReviewDto(String appVersion, String createdDate, String nickname, String rating, String body, String responseBody, String answeredDate, String device, String appPkg, String osType, String osVer) {
+        this.appVersion = appVersion;
+        this.createdDate = createdDate;
+        this.nickname = nickname;
+        this.rating = rating;
+        this.body = body;
+        this.responseBody = responseBody;
+        this.answeredDate = answeredDate;
+        this.device = device;
+        this.appPkg = appPkg;
+        this.osType = osType;
+        this.osVer = osVer;
+    }
+
     public Review toEntity(){
-        return new Review(appVersion, createdDate, nickname, rating, body,responseBody, answeredDate, device, appPkg, osType);
+        return new Review(appVersion, createdDate, nickname, rating, body,responseBody, answeredDate, device, appPkg, osType, osVer);
     }
 
     public ReviewDto(JSONObject jsonObject){
@@ -70,6 +69,8 @@ public class ReviewDto {
                 answeredDate = jsonObject.get("answeredDate").toString();
             if (jsonObject.containsKey("device"))
                 device = jsonObject.get("device").toString();
+            if (jsonObject.containsKey("osVersion"))
+                osVer = jsonObject.get("osVersion").toString();
         }
     }
 

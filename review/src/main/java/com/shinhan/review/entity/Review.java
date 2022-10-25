@@ -47,6 +47,20 @@ public class Review {
         this.osType = osType;
     }
 
+    public Review(String appVersion, String createdDate, String nickname, String rating, String body, String responseBody, String answeredDate, String device, String appPkg, String osType, String osVer) {
+        this.appVersion = appVersion;
+        this.createdDate = createdDate;
+        this.nickname = nickname;
+        this.rating = rating;
+        this.body = body;
+        this.responseBody = responseBody;
+        this.answeredDate = answeredDate;
+        this.device = device;
+        this.appPkg = appPkg;
+        this.osType = osType;
+        this.osVer = osVer;
+    }
+
     public String getAppPkg() {
         return appPkg;
     }
