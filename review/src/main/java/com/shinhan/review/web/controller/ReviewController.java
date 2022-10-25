@@ -2,6 +2,7 @@ package com.shinhan.review.web.controller;
 
 import com.shinhan.review.entity.Review;
 import com.shinhan.review.entity.dto.ReviewDto;
+import com.shinhan.review.entity.dto.ReviewExcelDto;
 import com.shinhan.review.excel.ver2.ExcelException;
 import com.shinhan.review.excel.ver2.excel.ExcelFile;
 import com.shinhan.review.excel.ver2.excel.multiplesheet.MultiSheetExcelFile;
@@ -109,12 +110,13 @@ public class ReviewController {
 
     @GetMapping("/reviews/download")
     public void goDownloadPage(HttpServletResponse response){
-        List<ReviewDto> reviews = reviewService.searchByCondition(form);
+//        List<ReviewDto> reviews = reviewService.searchByCondition(form);
+        List<ReviewExcelDto> reviews = reviewService.getExcelByCondition(form);
         // 파일명 지정
         response.setHeader("Content-Disposition", "attachment; filename=\"" + "review_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE).toString()+".xls" + "\";");
         // 인코딩
         response.setContentType("application/vnd.ms-excel; charset=euc-kr");
-        ExcelFile excelFile = new MultiSheetExcelFile<>(reviews, ReviewDto.class);
+        ExcelFile excelFile = new MultiSheetExcelFile<>(reviews, ReviewExcelDto.class);
         try {
             excelFile.write(response.getOutputStream());
         } catch (IOException e) {

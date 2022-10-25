@@ -28,6 +28,8 @@ public class Review {
     private String appPkg;
     @Column(length=1)
     private String osType;
+    @Column
+    private String osVer;
 
     public Review() {
     }
@@ -98,7 +100,12 @@ public class Review {
                 ", device='" + device + '\'' +
                 ", appPkg='" + appPkg + '\'' +
                 ", osType='" + osType + '\'' +
+                ", osVer='" + osVer + '\'' +
                 '}';
+    }
+
+    public String getOsVer() {
+        return osVer;
     }
 
     @Override

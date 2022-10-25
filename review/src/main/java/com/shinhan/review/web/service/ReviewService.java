@@ -7,6 +7,7 @@ import com.shinhan.review.crawler.apple.AppleAppId;
 import com.shinhan.review.crawler.google.GoogleAppId;
 import com.shinhan.review.entity.Review;
 import com.shinhan.review.entity.dto.ReviewDto;
+import com.shinhan.review.entity.dto.ReviewExcelDto;
 import com.shinhan.review.repository.ReviewRepository;
 import com.shinhan.review.search.form.DownloadForm;
 import com.shinhan.review.search.form.SearchForm;
@@ -21,9 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -239,6 +242,47 @@ public class ReviewService {
         return reviews.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
     }
 
+    public List<ReviewExcelDto> listToReviewExcel(List<Review> reviews){
+        Long cnt = 1L;
+        List<ReviewExcelDto> excelDtos = new ArrayList<>();
+        for (Review review : reviews) {
+            excelDtos.add(new ReviewExcelDto(cnt++, review));
+        }
+        return excelDtos;
+    }
+
+    @Transactional
+    public List<ReviewExcelDto> getExcelByCondition(SearchForm form){
+
+        List<ReviewExcelDto> reviewExcelDtos = listToReviewExcel(findAll());
+        return reviewExcelDtos.stream().filter(review -> {
+            if (form.getOs() == null)
+                return true;
+            return review.getOsType().equals(form.getOs().getNumber());
+        }).filter(review -> {
+            if (isEmpty(form.getAppPkg()))
+                return true;
+            return review.getAppPkg().equals(form.getAppPkg());
+        }).filter(review -> {
+            String createdDate = review.getCreatedDate(); // yyyy-mm-dd type
+            LocalDate localDate = LocalDate.parse(createdDate, DateTimeFormatter.ISO_DATE);
+            if (form.getStart() == null)
+                return true;
+            else
+                return (localDate.isAfter(form.getStart()) || localDate.isEqual(form.getStart()));
+        }).filter(review->{
+            String createdDate = review.getCreatedDate(); // yyyy-mm-dd type
+            LocalDate localDate = LocalDate.parse(createdDate, DateTimeFormatter.ISO_DATE);
+            if (form.getEnd()==null)
+                return true;
+            return localDate.isBefore(form.getEnd());
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * 여기에 순번 추가 하면 될듯
+     * @return
+     */
     @Transactional
     public List<ReviewDto> getReviewsForExcel(){
         List<Review> all = reviewRepository.findAll();
