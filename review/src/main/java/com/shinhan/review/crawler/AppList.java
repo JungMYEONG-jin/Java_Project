@@ -1,5 +1,7 @@
 package com.shinhan.review.crawler;
 
+import java.util.Arrays;
+
 public enum AppList {
     스마트택스("smarttax"),
     비대면("noface"),
@@ -41,4 +43,5 @@ public enum AppList {
     public String getAppPkg(){
         return appPkg;
     }
+
 }

@@ -1,7 +1,10 @@
 package com.shinhan.review.entity.dto;
 
 import com.shinhan.review.entity.Review;
+import com.shinhan.review.util.DateUtil;
 import org.json.simple.JSONObject;
+
+import java.util.Date;
 
 public class ReviewDto {
     private String appVersion;
@@ -55,8 +58,9 @@ public class ReviewDto {
         if (jsonObject!=null){
             if (jsonObject.containsKey("appVersion"))
                 appVersion = jsonObject.get("appVersion").toString();
-            if (jsonObject.containsKey("createdDate"))
-                createdDate = jsonObject.get("createdDate").toString();
+            if (jsonObject.containsKey("createdDate")) {
+                this.createdDate = jsonObject.get("createdDate").toString();
+            }
             if (jsonObject.containsKey("nickName"))
                 nickname = jsonObject.get("nickName").toString();
             if (jsonObject.containsKey("rating"))
@@ -154,4 +158,6 @@ public class ReviewDto {
     public void setDevice(String device) {
         this.device = device;
     }
+
+
 }

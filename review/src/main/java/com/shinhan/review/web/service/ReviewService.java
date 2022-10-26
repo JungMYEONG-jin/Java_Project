@@ -26,7 +26,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,7 +70,6 @@ public class ReviewService {
 
     @Transactional
     public List<ReviewDto> searchByCondition(SearchForm form){
-
         return getReviewsForExcel().stream().filter(review -> {
             if (form.getOs() == null)
                 return true;
@@ -81,69 +79,21 @@ public class ReviewService {
                 return true;
             return review.getAppPkg().equals(form.getAppPkg());
         }).filter(review -> {
-            String createdDate = review.getCreatedDate();
-            LocalDate localDate = LocalDate.of(Integer.parseInt(createdDate.substring(0, 4)), Integer.parseInt(createdDate.substring(4, 6)), Integer.parseInt(createdDate.substring(6, 8)));
+            String createdDate = review.getCreatedDate(); // yyyyMMddHHmmss
+            createdDate = createdDate.substring(0,4)+"-"+createdDate.substring(4,6)+"-"+createdDate.substring(6,8);
+            LocalDate localDate = LocalDate.parse(createdDate, DateTimeFormatter.ISO_DATE);
             if (form.getStart() == null)
                 return true;
             else
                 return (localDate.isAfter(form.getStart()) || localDate.isEqual(form.getStart()));
         }).filter(review->{
             String createdDate = review.getCreatedDate();
-            LocalDate localDate = LocalDate.of(Integer.parseInt(createdDate.substring(0, 4)), Integer.parseInt(createdDate.substring(4, 6)), Integer.parseInt(createdDate.substring(6, 8)));
+            createdDate = createdDate.substring(0,4)+"-"+createdDate.substring(4,6)+"-"+createdDate.substring(6,8);
+            LocalDate localDate = LocalDate.parse(createdDate, DateTimeFormatter.ISO_DATE);
             if (form.getEnd()==null)
                 return true;
             return localDate.isBefore(form.getEnd());
         }).collect(Collectors.toList());
-//
-//        if (form.getStart()==null && form.getEnd()==null)
-//        {
-//            if (form.getOs()==null && isEmpty(form.getAppPkg()))
-//                return getReviewsForExcel();
-//            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
-//                return searchByAppPkg(form);
-//            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
-//                return searchByOsType(form);
-//            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
-//                return searchByOsTypeAndAppPkg(form);
-//        }
-//
-//        // 시작일만 지정한경우
-//        if(form.getStart()!=null && form.getEnd()==null){
-//            if (form.getOs()==null && isEmpty(form.getAppPkg()))
-//                return searchByCreatedDateAfter(form);
-//            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
-//                return searchByCreatedDateAfterAndAppPkg(form);
-//            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
-//                return searchByCreatedDateAfterAndOSType(form);
-//            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
-//                return searchByCreatedDateAfterAndOsTypeAndAppPkg(form);
-//        }
-//
-//        // 종료일만 지정한 경우
-//        if(form.getStart()==null && form.getEnd()!=null){
-//            if (form.getOs()==null && isEmpty(form.getAppPkg()))
-//                return searchByCreatedDateBefore(form);
-//            else if (form.getOs()==null && !isEmpty(form.getAppPkg()))
-//                return searchByCreatedDateBeforeAndAppPkg(form);
-//            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
-//                return searchByCreatedDateBeforeAndOSType(form);
-//            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
-//                return searchByCreatedDateBeforeAndOsTypeAndAppPkg(form);
-//        }
-//
-//        // 시작, 종료 지정 했을때
-//        if (form.getStart()!=null && form.getEnd()!=null) {
-//            if (form.getOs()==null && isEmpty(form.getAppPkg()))
-//                return searchByDate(form);
-//            else if(form.getOs()==null && !isEmpty(form.getAppPkg()))
-//                return searchByDateAndAppPkg(form);
-//            else if(form.getOs()!=null && isEmpty(form.getAppPkg()))
-//                return searchByDateAndOsType(form);
-//            else if(form.getOs()!=null && !isEmpty(form.getAppPkg()))
-//                return searchByDateAndOsTypeAndAppPkg(form);
-//        }
-//
-//        throw new IllegalStateException("검색 조건이 잘못되었습니다...");
     }
 
     @Transactional
@@ -246,9 +196,13 @@ public class ReviewService {
        return reviews.stream().map(review -> new ReviewExcelDto(review)).collect(Collectors.toList());
     }
 
+    /**
+     * excel dto -> excel file
+     * @param form
+     * @return
+     */
     @Transactional
     public List<ReviewExcelDto> getExcelByCondition(SearchForm form){
-
         List<ReviewExcelDto> reviewExcelDtos = listToReviewExcel(findAll());
         List<ReviewExcelDto> result = reviewExcelDtos.stream().filter(review -> {
             if (form.getOs() == null)
@@ -259,14 +213,14 @@ public class ReviewService {
                 return true;
             return review.getAppPkg().equals(form.getAppPkg());
         }).filter(review -> {
-            String createdDate = review.getCreatedDate(); // yyyy-mm-dd type
+            String createdDate = review.getCreatedDate(); // yyyy-MM-dd
             LocalDate localDate = LocalDate.parse(createdDate, DateTimeFormatter.ISO_DATE);
             if (form.getStart() == null)
                 return true;
             else
                 return (localDate.isAfter(form.getStart()) || localDate.isEqual(form.getStart()));
         }).filter(review -> {
-            String createdDate = review.getCreatedDate(); // yyyy-mm-dd type
+            String createdDate = review.getCreatedDate(); // yyyyMMddHHmmss
             LocalDate localDate = LocalDate.parse(createdDate, DateTimeFormatter.ISO_DATE);
             if (form.getEnd() == null)
                 return true;
@@ -276,6 +230,7 @@ public class ReviewService {
         Long cnt = 1L;
         for (ReviewExcelDto reviewExcelDto : result) {
             reviewExcelDto.setId(cnt++);
+            reviewExcelDto.upateAppPkgToExcelTemplate(); // excel 에 한글로 이름 보여주려고...
         }
         return result;
     }
@@ -307,23 +262,6 @@ public class ReviewService {
         List<Review> byAppPkgAndOsType = reviewRepository.findByAppPkgAndOsType(form.getAppId(), form.getOs().getNumber());
         return byAppPkgAndOsType.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
     }
-
-    @Transactional
-    public List<ReviewDto> getReviewsForExcelByCondition(DownloadForm form){
-            if (form == null)
-                return getReviewsForExcel();
-            if (form.getOs()==null && isEmpty(form.getAppId()))
-                return getReviewsForExcel();
-            else if (form.getOs()==null && !isEmpty(form.getAppId()))
-                return getReviewsForExcelByApp(form);
-            else if(form.getOs()!=null && isEmpty(form.getAppId()))
-                return getReviewsForExcelByOS(form);
-            else if(form.getOs()!=null && !isEmpty(form.getAppId()))
-                return getReviewsForExcelByAppAndOS(form);
-            return getReviewsForExcel();
-    }
-
-
 
     public String getMatchedName(String number){
         if (number.equals("1"))

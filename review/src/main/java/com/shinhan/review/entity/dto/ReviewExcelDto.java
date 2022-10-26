@@ -1,14 +1,17 @@
 package com.shinhan.review.entity.dto;
 
+import com.shinhan.review.crawler.AppList;
 import com.shinhan.review.entity.Review;
 import com.shinhan.review.excel.ver2.DefaultBodyStyle;
 import com.shinhan.review.excel.ver2.DefaultHeaderStyle;
 import com.shinhan.review.excel.ver2.ExcelColumn;
 import com.shinhan.review.excel.ver2.ExcelColumnStyle;
 import com.shinhan.review.excel.ver2.style.DefaultExcelCellStyle;
+import com.shinhan.review.exception.AppPkgNotFoundException;
 import org.json.simple.JSONObject;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 @DefaultHeaderStyle(style = @ExcelColumnStyle(excelCellStyleClass = DefaultExcelCellStyle.class, enumName = "BLUE_HEADER"))
 @DefaultBodyStyle(style = @ExcelColumnStyle(excelCellStyleClass = DefaultExcelCellStyle.class, enumName = "BODY"))
@@ -149,8 +152,17 @@ public class ReviewExcelDto {
         this.id = id;
     }
 
+    public void upateAppPkgToExcelTemplate(){
+        appPkg = getNormalAppPkgName(appPkg);
+    }
+
     public String getLocalDateToString(String value){
         return LocalDate.of(Integer.parseInt(value.substring(0, 4)), Integer.parseInt(value.substring(4, 6)), Integer.parseInt(value.substring(6, 8))).toString();
+    }
+
+    public String getNormalAppPkgName(String appPkg){
+        return Arrays.stream(AppList.values()).filter(appList -> appList.getAppPkg().equals(appPkg)).findAny().
+                orElseThrow(() -> new AppPkgNotFoundException(String.format("%s에 해당하는 앱을 찾을수 없습니다.",appPkg))).name();
     }
 
     public String getResponseBody() {
