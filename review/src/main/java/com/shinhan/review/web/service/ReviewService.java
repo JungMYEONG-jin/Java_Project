@@ -179,24 +179,8 @@ public class ReviewService {
         return pack;
     }
 
-    @Transactional
-    public void saveOne(Review review){
-        reviewRepository.save(review);
-    }
-
-    public Review findOne(Long id){
-        return reviewRepository.findById(id).orElse(null);
-    }
-
     public List<Review> findAll(){
         return reviewRepository.findAll();
-    }
-
-    private Page<ReviewDto> listReviewDtoToPage(Pageable pageable, List<ReviewDto> reviews) {
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), reviews.size());
-        Page<ReviewDto> page = new PageImpl<>(reviews.subList(start, end), pageable, reviews.size());
-        return page;
     }
 
     @Transactional

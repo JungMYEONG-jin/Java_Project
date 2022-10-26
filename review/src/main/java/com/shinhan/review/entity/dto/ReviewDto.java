@@ -1,11 +1,7 @@
 package com.shinhan.review.entity.dto;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.review.entity.Review;
-import com.shinhan.review.util.DateUtil;
 import org.json.simple.JSONObject;
-
-import java.util.Date;
 
 public class ReviewDto {
     private String appVersion;
@@ -67,6 +63,14 @@ public class ReviewDto {
 
     public Review toEntity(){
         return new Review(appVersion, createdDate, nickname, rating, body,responseBody, answeredDate, device, appPkg, osType, osVer);
+    }
+
+    public String getOsVer() {
+        return osVer;
+    }
+
+    public void setOsVer(String osVer) {
+        this.osVer = osVer;
     }
 
     public ReviewDto(JSONObject jsonObject){
