@@ -1,5 +1,6 @@
 package com.shinhan.review.entity.dto;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.review.entity.Review;
 import com.shinhan.review.util.DateUtil;
 import org.json.simple.JSONObject;
@@ -48,6 +49,20 @@ public class ReviewDto {
         this.appPkg = appPkg;
         this.osType = osType;
         this.osVer = osVer;
+    }
+
+    public ReviewDto(Review review){
+        this.appVersion = review.getAppVersion();
+        this.createdDate = review.getCreatedDate();
+        this.nickname = review.getNickname();
+        this.rating = review.getRating();
+        this.body = review.getBody();
+        this.responseBody = review.getResponseBody();
+        this.answeredDate = review.getAnsweredDate();
+        this.device = review.getDevice();
+        this.appPkg = review.getAppPkg();
+        this.osType = review.getOsType();
+        this.osVer = review.getOsVer();
     }
 
     public Review toEntity(){

@@ -113,7 +113,7 @@
   >
     <ul class="pagination ">
       <!-- 처음으로 이동 -->
-      <li class="page-item">
+      <li th:classappend="${pageNumber < pageSize} ? 'disabled'" class="page-item">
         <a class="page-link" th:href="@{/reviews/search/(page=0)}">
           <span>&laquo;</span>
           <span class="sr-only">First</span>
@@ -142,7 +142,7 @@
       </li>
 
       <!-- 마지막으로 이동 -->
-      <li class="page-item">
+      <li th:classappend=" ${T(java.lang.Math).floor(totalPages / pageSize) * pageSize - 1 <= startPage} ? 'disabled'" class="page-item">
         <a class="page-link" th:href="@{/reviews/search/(page=${totalPages - 1})}">
           <span>&raquo;</span>
           <span class="sr-only">Last</span>

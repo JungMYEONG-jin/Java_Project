@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -96,94 +97,6 @@ public class ReviewService {
         }).collect(Collectors.toList());
     }
 
-    @Transactional
-    public List<ReviewDto> searchByOsType(SearchForm form){
-        return listToDtoList(reviewRepository.findByOsType(form.getOs().getNumber()));
-    }
-    @Transactional
-    public List<ReviewDto> searchByDate(SearchForm form){
-        String start = getFormattedDate(form.getStart().toString());
-        String end = getFormattedDate(form.getEnd().toString());
-        return listToDtoList(reviewRepository.searchByDate(start, end));
-    }
-    @Transactional
-    public List<ReviewDto> searchByDateAndOsType(SearchForm form){
-        String start = getFormattedDate(form.getStart().toString());
-        String end = getFormattedDate(form.getEnd().toString());
-        return listToDtoList(reviewRepository.searchByDateAndOsType(start, end, form.getOs().getNumber()));
-    }
-    @Transactional
-    public List<ReviewDto> searchByCreatedDateAfter(SearchForm form){
-        String start = getFormattedDate(form.getStart().toString());
-        return listToDtoList(reviewRepository.findByCreatedDateAfter(start));
-    }
-    @Transactional
-    public List<ReviewDto> searchByCreatedDateBefore(SearchForm form){
-        String end = getFormattedDate(form.getEnd().toString());
-        return listToDtoList(reviewRepository.findByCreatedDateBefore(end));
-    }
-    @Transactional
-    public List<ReviewDto> searchByCreatedDateAfterAndOSType(SearchForm form){
-        String start = getFormattedDate(form.getStart().toString());
-        return listToDtoList(reviewRepository.findByCreatedDateAfterAndOsType(start, form.getOs().getNumber()));
-    }
-    @Transactional
-    public List<ReviewDto> searchByCreatedDateBeforeAndOSType(SearchForm form){
-        String end = getFormattedDate(form.getEnd().toString());
-        return listToDtoList(reviewRepository.findByCreatedDateBeforeAndOsType(end, form.getOs().getNumber()));
-    }
-
-    // app
-    @Transactional
-    public List<ReviewDto> searchByAppPkg(SearchForm form){
-        return listToDtoList(reviewRepository.findByAppPkg( form.getAppPkg()));
-    }
-    // os app
-    @Transactional
-    public List<ReviewDto> searchByOsTypeAndAppPkg(SearchForm form){
-        return listToDtoList(reviewRepository.findByOsTypeAndAppPkg(form.getOs().getNumber(), form.getAppPkg()));
-    }
-    // start app
-    @Transactional
-    public List<ReviewDto> searchByCreatedDateBeforeAndAppPkg(SearchForm form){
-        String end = getFormattedDate(form.getEnd().toString());
-        return listToDtoList(reviewRepository.findByCreatedDateBeforeAndAppPkg(end, form.getAppPkg()));
-    }
-    // end app
-    @Transactional
-    public List<ReviewDto> searchByCreatedDateAfterAndAppPkg(SearchForm form){
-        String start = getFormattedDate(form.getStart().toString());
-        return listToDtoList(reviewRepository.findByCreatedDateAfterAndAppPkg(start, form.getAppPkg()));
-    }
-    // start end app
-    @Transactional
-    public List<ReviewDto> searchByDateAndAppPkg(SearchForm form){
-        String start = getFormattedDate(form.getStart().toString());
-        String end = getFormattedDate(form.getEnd().toString());
-        return listToDtoList(reviewRepository.searchByDateAndAppPkg(start, end, form.getAppPkg()));
-    }
-    // start os app
-    @Transactional
-    public List<ReviewDto> searchByCreatedDateAfterAndOsTypeAndAppPkg(SearchForm form){
-        String start = getFormattedDate(form.getStart().toString());
-        return listToDtoList(reviewRepository.findByCreatedDateAfterAndOsTypeAndAppPkg(start, form.getOs().getNumber(), form.getAppPkg()));
-    }
-    // end os app
-    @Transactional
-    public List<ReviewDto> searchByCreatedDateBeforeAndOsTypeAndAppPkg(SearchForm form){
-        String end = getFormattedDate(form.getEnd().toString());
-        return listToDtoList(reviewRepository.findByCreatedDateBeforeAndOsTypeAndAppPkg(end, form.getOs().getNumber(), form.getAppPkg()));
-    }
-
-    // start end os app
-    @Transactional
-    public List<ReviewDto> searchByDateAndOsTypeAndAppPkg(SearchForm form){
-        String start = getFormattedDate(form.getStart().toString());
-        String end = getFormattedDate(form.getEnd().toString());
-        return listToDtoList(reviewRepository.searchByDateAAndOsTypeAndAppPkg(start, end, form.getOs().getNumber(), form.getAppPkg()));
-    }
-    
-
     public List<ReviewDto> pageToList(Page<Review> reviews){
         return reviews.getContent().stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
     }
@@ -245,24 +158,6 @@ public class ReviewService {
         return all.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
     }
 
-    @Transactional
-    public List<ReviewDto> getReviewsForExcelByOS(DownloadForm form){
-        List<Review> byOsType = reviewRepository.findByOsType(form.getOs().getNumber());
-        return byOsType.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<ReviewDto> getReviewsForExcelByApp(DownloadForm form){
-        List<Review> byAppPkg = reviewRepository.findByAppPkg(form.getAppId());
-        return byAppPkg.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<ReviewDto> getReviewsForExcelByAppAndOS(DownloadForm form){
-        List<Review> byAppPkgAndOsType = reviewRepository.findByAppPkgAndOsType(form.getAppId(), form.getOs().getNumber());
-        return byAppPkgAndOsType.stream().map(review -> new ReviewDto(review.getAppVersion(), review.getCreatedDate(), review.getNickname(), review.getRating(), review.getBody(), review.getResponseBody(), review.getAnsweredDate(), review.getDevice(), review.getAppPkg(), review.getOsType())).collect(Collectors.toList());
-    }
-
     public String getMatchedName(String number){
         if (number.equals("1"))
             return OS.AND.name();
@@ -297,9 +192,17 @@ public class ReviewService {
         return reviewRepository.findAll();
     }
 
+    private Page<ReviewDto> listReviewDtoToPage(Pageable pageable, List<ReviewDto> reviews) {
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), reviews.size());
+        Page<ReviewDto> page = new PageImpl<>(reviews.subList(start, end), pageable, reviews.size());
+        return page;
+    }
+
     @Transactional
-    public Page<Review> findAll(Pageable pageable){
-        return reviewRepository.findAll(pageable);
+    public Page<ReviewDto> findAll(Pageable pageable){
+        Page<ReviewDto> all = reviewRepository.findAll(pageable).map(review -> new ReviewDto(review));
+        return all;
     }
 
     @Transactional
@@ -320,8 +223,7 @@ public class ReviewService {
     // for page rendering
     
     @Transactional
-    public Page<Review> searchByCondition(Pageable pageable, SearchForm form){
-        // 날짜 지정 안했을때
+    public Page<ReviewDto> searchByCondition(Pageable pageable, SearchForm form){
         if (form.getStart()==null && form.getEnd()==null)
         {
             if (form.getOs()==null && isEmpty(form.getAppPkg()))
@@ -374,90 +276,90 @@ public class ReviewService {
     }
 
     @Transactional
-    public Page<Review> searchByOsType(Pageable pageable, SearchForm form){
-        return reviewRepository.findByOsType(pageable, form.getOs().getNumber());
+    public Page<ReviewDto> searchByOsType(Pageable pageable, SearchForm form){
+        return reviewRepository.findByOsType(pageable, form.getOs().getNumber()).map(review -> new ReviewDto(review));
     }
     @Transactional
-    public Page<Review> searchByDate(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByDate(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         String end = getFormattedDate(form.getEnd().toString());
-        return reviewRepository.searchByDate(pageable, start, end);
+        return reviewRepository.searchByDate(pageable, start, end).map(review -> new ReviewDto(review));
     }
     @Transactional
-    public Page<Review> searchByDateAndOsType(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByDateAndOsType(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         String end = getFormattedDate(form.getEnd().toString());
-        return reviewRepository.searchByDateAndOsType(pageable, start, end, form.getOs().getNumber());
+        return reviewRepository.searchByDateAndOsType(pageable, start, end, form.getOs().getNumber()).map(review -> new ReviewDto(review));
     }
     @Transactional
-    public Page<Review> searchByCreatedDateAfter(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByCreatedDateAfter(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
-        return reviewRepository.findByCreatedDateAfter(pageable, start);
+        return reviewRepository.findByCreatedDateAfter(pageable, start).map(review -> new ReviewDto(review));
     }
     @Transactional
-    public Page<Review> searchByCreatedDateBefore(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByCreatedDateBefore(Pageable pageable, SearchForm form){
         String end = getFormattedDate(form.getEnd().toString());
-        return reviewRepository.findByCreatedDateBefore(pageable, end);
+        return reviewRepository.findByCreatedDateBefore(pageable, end).map(review -> new ReviewDto(review));
     }
     @Transactional
-    public Page<Review> searchByCreatedDateAfterAndOSType(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByCreatedDateAfterAndOSType(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
-        return reviewRepository.findByCreatedDateAfterAndOsType(pageable, start, form.getOs().getNumber());
+        return reviewRepository.findByCreatedDateAfterAndOsType(pageable, start, form.getOs().getNumber()).map(review -> new ReviewDto(review));
     }
     @Transactional
-    public Page<Review> searchByCreatedDateBeforeAndOSType(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByCreatedDateBeforeAndOSType(Pageable pageable, SearchForm form){
         String end = getFormattedDate(form.getEnd().toString());
-        return reviewRepository.findByCreatedDateBeforeAndOsType(pageable, end, form.getOs().getNumber());
+        return reviewRepository.findByCreatedDateBeforeAndOsType(pageable, end, form.getOs().getNumber()).map(review -> new ReviewDto(review));
     }
 
     // app
     @Transactional
-    public Page<Review> searchByAppPkg(Pageable pageable, SearchForm form){
-        return reviewRepository.findByAppPkg(pageable,  form.getAppPkg());
+    public Page<ReviewDto> searchByAppPkg(Pageable pageable, SearchForm form){
+        return reviewRepository.findByAppPkg(pageable, form.getAppPkg()).map(review -> new ReviewDto(review));
     }
     // os app
     @Transactional
-    public Page<Review> searchByOsTypeAndAppPkg(Pageable pageable, SearchForm form){
-        return reviewRepository.findByOsTypeAndAppPkg(pageable, form.getOs().getNumber(), form.getAppPkg());
+    public Page<ReviewDto> searchByOsTypeAndAppPkg(Pageable pageable, SearchForm form){
+        return reviewRepository.findByOsTypeAndAppPkg(pageable, form.getOs().getNumber(), form.getAppPkg()).map(review -> new ReviewDto(review));
     }
     // start app
     @Transactional
-    public Page<Review> searchByCreatedDateBeforeAndAppPkg(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByCreatedDateBeforeAndAppPkg(Pageable pageable, SearchForm form){
         String end = getFormattedDate(form.getEnd().toString());
-        return reviewRepository.findByCreatedDateBeforeAndAppPkg(pageable, end, form.getAppPkg());
+        return reviewRepository.findByCreatedDateBeforeAndAppPkg(pageable, end, form.getAppPkg()).map(review -> new ReviewDto(review));
     }
     // end app
     @Transactional
-    public Page<Review> searchByCreatedDateAfterAndAppPkg(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByCreatedDateAfterAndAppPkg(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
-        return reviewRepository.findByCreatedDateAfterAndAppPkg(pageable, start, form.getAppPkg());
+        return reviewRepository.findByCreatedDateAfterAndAppPkg(pageable, start, form.getAppPkg()).map(review -> new ReviewDto(review));
     }
     // start end app
     @Transactional
-    public Page<Review> searchByDateAndAppPkg(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByDateAndAppPkg(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         String end = getFormattedDate(form.getEnd().toString());
-        return reviewRepository.searchByDateAndAppPkg(pageable, start, end, form.getAppPkg());
+        return reviewRepository.searchByDateAndAppPkg(pageable, start, end, form.getAppPkg()).map(review -> new ReviewDto(review));
     }
     // start os app
     @Transactional
-    public Page<Review> searchByCreatedDateAfterAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByCreatedDateAfterAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
-        return reviewRepository.findByCreatedDateAfterAndOsTypeAndAppPkg(pageable, start, form.getOs().getNumber(), form.getAppPkg());
+        return reviewRepository.findByCreatedDateAfterAndOsTypeAndAppPkg(pageable, start, form.getOs().getNumber(), form.getAppPkg()).map(review -> new ReviewDto(review));
     }
     // end os app
     @Transactional
-    public Page<Review> searchByCreatedDateBeforeAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByCreatedDateBeforeAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
         String end = getFormattedDate(form.getEnd().toString());
-        return reviewRepository.findByCreatedDateBeforeAndOsTypeAndAppPkg(pageable, end, form.getOs().getNumber(), form.getAppPkg());
+        return reviewRepository.findByCreatedDateBeforeAndOsTypeAndAppPkg(pageable, end, form.getOs().getNumber(), form.getAppPkg()).map(review -> new ReviewDto(review));
     }
 
     // start end os app
     @Transactional
-    public Page<Review> searchByDateAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
+    public Page<ReviewDto> searchByDateAndOsTypeAndAppPkg(Pageable pageable, SearchForm form){
         String start = getFormattedDate(form.getStart().toString());
         String end = getFormattedDate(form.getEnd().toString());
-        return reviewRepository.searchByDateAAndOsTypeAndAppPkg(pageable, start, end, form.getOs().getNumber(), form.getAppPkg());
+        return reviewRepository.searchByDateAAndOsTypeAndAppPkg(pageable, start, end, form.getOs().getNumber(), form.getAppPkg()).map(review -> new ReviewDto(review));
     }
 
 
