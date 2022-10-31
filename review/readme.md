@@ -1,5 +1,4 @@
-JSP를 사용한 Spring boot프로젝트에서 gradle + 내/외장 톰캣을 이용하여 서비스 배포하는 과정을 정리하고자 한다. 이전 포스팅(hye0-log.tistory.com/28)에서 WAR를 이용하여 배포하는 방법은 간단하다고 했지만, 사실 그것 외에도 부가적인 작업들이 필요하다.
-스프링 부트 애플리케이션을 로컬 - 내장톰캣 - 외장 톰캣순으로 모두 실행시켜 보면서 각각 필요한 설정이 무엇인지 정리할 것이다.
+>JSP를 사용한 Spring boot프로젝트에서 gradle + 내/외장 톰캣을 이용하여 서비스 배포하는 과정을 정리하고자 한다. WAR를 이용하여 배포하는 방법은 간단하다고 했지만, 사실 그것 외에도 부가적인 작업들이 필요하다. 스프링 부트 애플리케이션을 로컬 - 내장톰캣 - 외장 톰캣순으로 모두 실행시켜 보면서 각각 필요한 설정이 무엇인지 정리할 것이다.
 
 1. build.gradle 수정
    war로 빌드하기 위하여 build.gradle 파일을 수정한다. 아래 두 가지 방법 중 아무거나 사용하여도 war로 빌드하는 데에 문제는 없지만, 스프링 문서에서 소개하는 방법은 apply plugin: 'war' 를 추가하는 것으로, 다른 이슈가 없다면 이 방법을 사용하자.
@@ -33,9 +32,6 @@ JSP를 사용한 Spring boot프로젝트에서 gradle + 내/외장 톰캣을 이
 - WAR File 실행
   $ java -jar demo-0.0.1-SNAPSHOT.war
 
-
- 
- 
 4. SpringBootServletInitializer 상속 (외장톰캣)
    외장 톰캣으로 서비스를 제공하기 위해서는 SpringBootServletInitializer상속(configure 메서드 오버 라이딩)이 따로 필요하다. 기본 클래스에 SpringBootServletInitializer상속 시 SpringFramework의 Servlet 3.0 자원을 사용하고, 서블릿 컨테이너에 의해 시작될 때 애플리케이션이 구성된다.
 
