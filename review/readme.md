@@ -15,7 +15,7 @@
 > 해당 버전을 사용했습니다.(사실 lambda를 쓰고 싶어서...)
 
 ## 구조
-<img src="./review구조.key" width="700" height="370">
+<img src="./review.jpeg" width="500" height="270">
 > 간단한 구조는 위 그림과 같다. 리뷰 페이지의 대부분 작업은 Review Controller에서 처리한다.
 > 엑셀 다운로드 같은 경우는 Excel Controller에서 처리한다.
 > 크롤러는 매일 정해진 시간에 스프링 스케줄러를 통해 리뷰를 수집해 온다. 만약 특정 앱을 수동으로 크롤링 해오고 싶다면 수동 크롤링 기능을 사용하면 된다.
