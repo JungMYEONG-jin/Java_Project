@@ -1,5 +1,6 @@
 package com.shinhan.review.entity.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import com.shinhan.review.crawler.AppList;
 import com.shinhan.review.entity.Review;
 import com.shinhan.review.excel.ver2.DefaultBodyStyle;
@@ -106,6 +107,7 @@ public class ReviewExcelDto {
         this.workBody = workBody;
     }
 
+    @QueryProjection
     public ReviewExcelDto(Review review){
         this.setAppPkg(review.getAppPkg());
         this.setAppVersion(review.getAppVersion());

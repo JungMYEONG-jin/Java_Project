@@ -35,14 +35,16 @@
   </div>
 </header>
 
+<!--search form-->
 <article class="container">
   <div style="right">
     <p th:text="|검색 결과 : ${totalCnt}|"></p>
   </div>
 
-  <form th:action="@{/reviews/search}" th:object="${searchForm}" method="POST" style="display: flex; justify-content: flex-end; padding: 10px 0;">
+  <form name="search" th:action="@{/reviews/search}" th:object="${searchForm}" method="POST" style="display: flex; justify-content: flex-end; padding: 10px 0;">
     <input type="date" th:field="*{start}">
     <input type="date" th:field="*{end}">
+<!--    <p th:if="${#fields.hasErrors('dateEntity')}" th:errors="*{dateEntity}" class="fieldError">잘못된 입력</p>-->
     <select th:field="*{appPkg}" class="form-select">
       <option value="">==앱 선택==</option>
       <option th:each="type : ${T(com.shinhan.review.crawler.AppList).values()}"
@@ -64,6 +66,7 @@
   </form>
 </article>
 
+<!--body-->
 <div class="container">
   <div>
     <table class="table table-striped">

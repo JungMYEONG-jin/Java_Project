@@ -1,5 +1,6 @@
 package com.shinhan.review.entity.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import com.shinhan.review.entity.Review;
 import org.json.simple.JSONObject;
 
@@ -47,6 +48,7 @@ public class ReviewDto {
         this.osVer = osVer;
     }
 
+    @QueryProjection
     public ReviewDto(Review review){
         this.appVersion = review.getAppVersion();
         this.createdDate = review.getCreatedDate();

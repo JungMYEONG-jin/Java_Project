@@ -1,6 +1,8 @@
 plugins {
 	id 'org.springframework.boot' version '2.7.3'
 	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+	// querydsl
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
 }
 
@@ -10,6 +12,8 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 apply plugin: 'war' // 외부 was에 사용할거니까 war로
 
+// queryDSL 동적 쿼리 해결용
+ext["queryDslVersion"] = "5.0.0"
 
 war{
 	archiveName("review.war")
@@ -25,6 +29,7 @@ war.enabled=true
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat' // same as maven provided
 	implementation 'mysql:mysql-connector-java'
@@ -42,6 +47,11 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
 	implementation 'org.apache.poi:poi-ooxml:4.1.2'
 
+	// queryDSL Setting
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+
 
 	fileTree(dir: 'src/main/resources/lib/', include:['*.jar'])
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -51,6 +61,29 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-devtools'
 }
 
+
+// QueryDSL 적용시킬 범위...
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+
+// test
 tasks.named('test') {
 	useJUnitPlatform()
 }

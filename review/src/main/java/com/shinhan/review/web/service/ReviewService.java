@@ -9,14 +9,12 @@ import com.shinhan.review.entity.Review;
 import com.shinhan.review.entity.dto.ReviewDto;
 import com.shinhan.review.entity.dto.ReviewExcelDto;
 import com.shinhan.review.repository.ReviewRepository;
-import com.shinhan.review.search.form.DownloadForm;
 import com.shinhan.review.search.form.SearchForm;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -68,7 +66,6 @@ public class ReviewService {
     }
 
     // for excel rendering
-
     @Transactional
     public List<ReviewDto> searchByCondition(SearchForm form){
         return getReviewsForExcel().stream().filter(review -> {
@@ -111,6 +108,7 @@ public class ReviewService {
 
     /**
      * excel dto -> excel file
+     * no queryDSL
      * @param form
      * @return
      */
@@ -140,6 +138,22 @@ public class ReviewService {
             return localDate.isBefore(form.getEnd());
         }).collect(Collectors.toList());
         // for 순번...
+        Long cnt = 1L;
+        for (ReviewExcelDto reviewExcelDto : result) {
+            reviewExcelDto.setId(cnt++);
+            reviewExcelDto.upateAppPkgToExcelTemplate(); // excel 에 한글로 이름 보여주려고...
+        }
+        return result;
+    }
+
+    /**
+     * excel by queryDSL
+     * @param form
+     * @return
+     */
+    @Transactional
+    public List<ReviewExcelDto> getExcelByQueryDSL(SearchForm form){
+        List<ReviewExcelDto> result = reviewRepository.getExcelBySearchForm(form);
         Long cnt = 1L;
         for (ReviewExcelDto reviewExcelDto : result) {
             reviewExcelDto.setId(cnt++);
@@ -205,7 +219,28 @@ public class ReviewService {
         return false;
     }
     // for page rendering
-    
+
+    /**
+     * queryDSL 되는 환경
+     * @param searchForm
+     * @param pageable
+     * @return
+     */
+    @Transactional
+    public Page<ReviewDto> searchByConditionQueryDSL(SearchForm searchForm, Pageable pageable){
+        if (searchForm.getStart()!=null)
+            searchForm.setStrStart(getFormattedDate(searchForm.getStart().toString())); // queryDSL 날짜비교 위해
+        if (searchForm.getEnd()!=null)
+            searchForm.setStrEnd(getFormattedDate(searchForm.getEnd().toString()));
+        return reviewRepository.findAllBySearchForm(searchForm, pageable);
+    }
+
+    /**
+     * queryDSL 안될때
+     * @param pageable
+     * @param form
+     * @return
+     */
     @Transactional
     public Page<ReviewDto> searchByCondition(Pageable pageable, SearchForm form){
         if (form.getStart()==null && form.getEnd()==null)

@@ -1,19 +1,40 @@
 package com.shinhan.review.search.form;
 
 import com.shinhan.review.crawler.OS;
+import com.shinhan.review.custom.annotation.ValidDateRange;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
+//@ValidDateRange
 public class SearchForm {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate start;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate end;
-
     private OS os;
     private String appPkg;
+
+    // 12자리 review createdTime 과 비교하기 위해
+    private String strStart;
+    private String strEnd;
+
+    public String getStrStart() {
+        return strStart;
+    }
+
+    public void setStrStart(String strStart) {
+        this.strStart = strStart;
+    }
+
+    public String getStrEnd() {
+        return strEnd;
+    }
+
+    public void setStrEnd(String strEnd) {
+        this.strEnd = strEnd;
+    }
 
     public SearchForm() {
     }
@@ -74,4 +95,5 @@ public class SearchForm {
         os = null;
         appPkg = "";
     }
+
 }

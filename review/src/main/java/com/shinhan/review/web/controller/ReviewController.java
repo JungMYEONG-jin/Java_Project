@@ -7,10 +7,8 @@ import com.shinhan.review.excel.ver2.ExcelException;
 import com.shinhan.review.excel.ver2.excel.ExcelFile;
 import com.shinhan.review.excel.ver2.excel.multiplesheet.MultiSheetExcelFile;
 import com.shinhan.review.search.form.CrawlingForm;
-import com.shinhan.review.search.form.DownloadForm;
 import com.shinhan.review.search.form.SearchForm;
 import com.shinhan.review.web.service.ReviewService;
-import com.sun.javafx.font.directwrite.DWFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -82,17 +79,10 @@ public class ReviewController {
         return "redirect:/";
     }
 
-
-//    @GetMapping("/reviews")
-//    public String getReviewList(Model model, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
-//        Page<Review> reviews = reviewService.findAll(pageable);
-//        model.addAttribute("reviews", reviews);
-//        return "review/reviewList";
-//    }
-
     @GetMapping("/reviews/search")
     public String searchReviewListGet(Model model, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
-        Page<ReviewDto> reviews = reviewService.searchByCondition(pageable, form); //처음만 init 하면
+//        Page<ReviewDto> reviews = reviewService.searchByCondition(pageable, form); //처음만 init 하면
+        Page<ReviewDto> reviews = reviewService.searchByConditionQueryDSL(form, pageable);
         model.addAttribute("searchForm", form);
         model.addAttribute("reviews", reviews);
         model.addAttribute("totalCnt", reviews.getTotalElements());
@@ -100,18 +90,21 @@ public class ReviewController {
     }
 
     @PostMapping("/reviews/search")
-    public String searchReviewListPost(Model model, @ModelAttribute("searchForm") SearchForm searchForm, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
+    public String searchReviewListPost(@ModelAttribute("searchForm") SearchForm searchForm, Model model, @PageableDefault(page=0, size = 10, direction = Sort.Direction.DESC)Pageable pageable){
         this.form = searchForm;
-        Page<ReviewDto> reviews = reviewService.searchByCondition(pageable, form);
+//        Page<ReviewDto> reviews = reviewService.searchByCondition(pageable, form);
+        Page<ReviewDto> reviews = reviewService.searchByConditionQueryDSL(form, pageable);
         model.addAttribute("reviews",reviews);
         model.addAttribute("totalCnt", reviews.getTotalElements());
         return "review/searchPage";
     }
 
+
+
     @GetMapping("/reviews/download")
     public void goDownloadPage(HttpServletResponse response){
 //        List<ReviewDto> reviews = reviewService.searchByCondition(form);
-        List<ReviewExcelDto> reviews = reviewService.getExcelByCondition(form);
+        List<ReviewExcelDto> reviews = reviewService.getExcelByQueryDSL(form);
         // 파일명 지정
         response.setHeader("Content-Disposition", "attachment; filename=\"" + "review_" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE).toString()+".xls" + "\";");
         // 인코딩
