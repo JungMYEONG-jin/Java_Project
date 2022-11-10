@@ -1,7 +1,9 @@
 package com.shinhan.review.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.shinhan.review.crawler.OS;
 import com.shinhan.review.entity.dto.QReviewDto;
 import com.shinhan.review.entity.dto.QReviewExcelDto;
 import com.shinhan.review.entity.dto.ReviewDto;
@@ -63,9 +65,44 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         return builder;
     }
 
+    // 따로 분리
+    private BooleanExpression eqAppPkg(String appPkg){
+        if (StringUtils.hasText(appPkg))
+            return review.appPkg.eq(appPkg);
+        return null;
+    }
+
+    private BooleanExpression eqOS(OS os){
+        if (os!=null)
+            return review.osType.eq(os.getNumber());
+        return null;
+    }
+
+    private BooleanExpression lessThanDate(String createdDate){
+        if (createdDate!=null)
+            return review.createdDate.lt(createdDate);
+        return null;
+    }
+
+    private BooleanExpression greatOrEqualThanDate(String createdDate){
+        if (createdDate!=null)
+            return review.createdDate.goe(createdDate);
+        return null;
+    }
+
+
     @Override
     public List<ReviewExcelDto> getExcelBySearchForm(SearchForm searchForm) {
-        BooleanBuilder builder = getBooleanBuilder(searchForm);
-        return jpaQueryFactory.select(new QReviewExcelDto(review)).from(review).where(builder).fetch();
+        String endDate = searchForm.getStrEnd();
+        String startDate = searchForm.getStrStart();
+        String appPkg = searchForm.getAppPkg();
+        OS os = searchForm.getOs();
+        return jpaQueryFactory.select(new QReviewExcelDto(review)).
+                from(review).
+                where(eqAppPkg(appPkg),
+                greatOrEqualThanDate(startDate),
+                lessThanDate(endDate),
+                eqOS(os)).
+                fetch();
     }
 }
