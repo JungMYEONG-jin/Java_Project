@@ -1,6 +1,7 @@
 package com.market.api.google;
 
 
+import com.market.api.apple.AppleAppId;
 import com.market.crawling.ICrawling;
 import com.market.crawling.data.CrawlingResultData;
 import com.market.daemon.dto.SendInfo;
@@ -31,9 +32,8 @@ import org.springframework.stereotype.Component;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
@@ -153,82 +153,6 @@ public class GoogleApi implements ICrawling {
         if (next !=null && next.containsKey("nextPageToken"))
             nextToken = next.get("nextPageToken").toString();
         return nextToken;
-    }
-
-    private String getAccessTokenX509Post(URL url, String token, String clientId, String clientSecret, String redirectURI) throws NoSuchAlgorithmException {
-
-        String result = "";
-        DefaultHttpClient httpClient = new DefaultHttpClient();
-        SSLContext sslContext = SSLContext.getInstance("SSL");
-        try {
-            X509TrustManager trustManager = new X509TrustManager() {
-                @Override
-                public void checkClientTrusted(
-                        java.security.cert.X509Certificate[] arg0, String arg1)
-                        throws CertificateException {
-                }
-                @Override
-                public void checkServerTrusted(
-                        java.security.cert.X509Certificate[] arg0, String arg1)
-                        throws CertificateException {
-                }
-                @Override
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-
-                    return null;
-                }
-            };
-
-            sslContext.init(null, new TrustManager[] { trustManager },
-                    new SecureRandom());
-            SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext,
-                    SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-            Scheme sch = new Scheme("https", 443, socketFactory);
-            httpClient.getConnectionManager().getSchemeRegistry().register(sch);
-
-            HttpParams httpParam = httpClient.getParams();
-            org.apache.http.params.HttpConnectionParams.setConnectionTimeout(httpParam, CONN_TIME_OUT);
-            org.apache.http.params.HttpConnectionParams.setSoTimeout(httpParam, CONN_TIME_OUT);
-            HttpRequestBase http = null;
-            try {
-                HttpPost httpPost = new HttpPost(url.toURI());
-                MultipartEntity multipartEntity = new MultipartEntity();
-                StringBody grantBody = new StringBody("refresh_token");
-                StringBody tokenBdoy = new StringBody(refresh_token);
-                StringBody idBody = new StringBody(clientId);
-                StringBody secretBody = new StringBody(clientSecret);
-                StringBody redirectBody = new StringBody(redirectURI);
-                multipartEntity.addPart("refresh_token", tokenBdoy);
-                multipartEntity.addPart("client_id", idBody);
-                multipartEntity.addPart("client_secret", secretBody);
-                multipartEntity.addPart("redirect_uri", redirectBody);
-                multipartEntity.addPart("grant_type", grantBody);
-                httpPost.setEntity(multipartEntity);
-                http = httpPost;
-            } catch (Exception e) {
-                System.out.println(" error " );
-                http = new HttpPost(url.toURI());
-            }
-
-            HttpResponse response = null;
-            HttpEntity entity = null;
-            HttpRequest request = null;
-            String responseBody = null;
-            /**
-             * ??? ?? OUTPUT
-             */
-            // Time Out
-            response = httpClient.execute(http);
-            entity = response.getEntity();
-            responseBody = EntityUtils.toString(entity, "UTF-8");
-            result = responseBody; // json 형식
-
-        } catch (Exception e) {
-            throw new GooleAPIException(e);
-        } finally {
-            httpClient.getConnectionManager().shutdown();
-        }
-        return result;
     }
 
     private String postEditID(String packageName, String token) throws NoSuchAlgorithmException, MalformedURLException {

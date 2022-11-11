@@ -4,6 +4,7 @@ import com.market.crawling.ICrawling;
 import com.market.crawling.data.CrawlingResultData;
 import com.market.daemon.dto.SendInfo;
 import com.market.exception.AppleAPIException;
+import com.market.exception.GooleAPIException;
 import com.market.exception.JWTException;
 import com.market.exception.KeyReadException;
 import com.market.util.DateUtil;
@@ -36,10 +37,7 @@ import sun.security.ec.ECPrivateKeyImpl;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -75,6 +73,13 @@ public class AppleApi implements ICrawling {
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/appStoreReviewDetails/"+id);
         return getConnectResultByX509(jwt, id, url);
     }
+
+    public String getProfileInfo(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException{
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles?profileType=IOS_APP_DEVELOPMENT");
+        return getConnectResultByX509(jwt, id, url);
+    }
+
+
 
     private String getConnectResultByX509(String jwt, String id, URL url) throws NoSuchAlgorithmException {
 
@@ -145,7 +150,6 @@ public class AppleApi implements ICrawling {
             httpClient.getConnectionManager().shutdown();
         }
         return result;
-
 
     }
 
@@ -269,4 +273,97 @@ public class AppleApi implements ICrawling {
         }
         return null;
     }
+
+    /**
+     * token is jwt
+     * @param bundleID
+     * @param token
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws MalformedURLException
+     */
+    public String createProfile(String bundleId, String token, String udid, String certificateId) {
+        HttpURLConnection con = null;
+        String responseData = "";
+        BufferedReader br = null;
+        StringBuffer sb = null;
+
+        String returnData = "";
+
+        try{
+            URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles");
+            con = (HttpURLConnection) url.openConnection();
+            // post
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Authorization", "Bearer "+token);
+            // post by json
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true); // outputstream 사용해서 post body 데이터 전송
+
+            JSONObject param = new JSONObject();
+
+            JSONObject attr = new JSONObject();
+            attr.put("name", bundleId+" development_"+"20231110");
+            attr.put("profileType", "IOS_APP_DEVELOPMENT");
+
+            JSONObject relationships = new JSONObject();
+            JSONObject bundle = new JSONObject();
+            JSONObject data = new JSONObject();
+            JSONObject certificates = new JSONObject();
+            JSONArray certificateData = new JSONArray();
+
+            JSONObject device = new JSONObject();
+            JSONArray deviceData = new JSONArray();
+            // bundle set
+            data.put("type", "bundleIds");
+            data.put("id", bundleId);
+            bundle.put("data", data);
+            relationships.put("bundleId", bundle); //json
+            // certificate set
+            JSONObject certiData = new JSONObject();
+            certiData.put("type", "certificates");
+            certiData.put("id", certificateId);
+            certificateData.add(certiData); // json arr
+            //certificate set
+            certificates.put("data", certificateData);//json array
+            relationships.put("certificates", certificates);
+            // device set
+            JSONObject deviceMeta = new JSONObject();
+            deviceMeta.put("type", "devices");
+            deviceMeta.put("id", 11);
+            deviceData.add(deviceMeta);
+            device.put("data", deviceData);
+
+
+            param.put("type", "profiles");
+            param.put("attributes", attr);
+            param.put("relationships", relationships);
+            param.put("devices", device);
+
+            String paramData = param.toJSONString();
+            try{
+                OutputStream os = con.getOutputStream();
+                byte[] req = paramData.getBytes("utf-8"); //post write
+                os.write(req);
+                os.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            System.out.println("paramData = " + paramData);
+
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return returnData;
+    }
+
+
+
+
 }

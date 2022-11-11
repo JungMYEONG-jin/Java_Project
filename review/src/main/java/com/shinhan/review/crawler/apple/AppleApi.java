@@ -1,7 +1,7 @@
 package com.shinhan.review.crawler.apple;//package com.shinhan.review.crawler.apple;
 
-import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.shinhan.review.crawler.Crawler;
@@ -14,7 +14,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ConnectionReleaseTrigger;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -40,6 +39,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.interfaces.ECPrivateKey;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -64,6 +64,41 @@ public class AppleApi implements Crawler {
     public String getReviewDetails(String jwt, String id) throws NoSuchAlgorithmException, MalformedURLException{
         URL url = new URL("https://api.appstoreconnect.apple.com/v1/apps/"+id+"/customerReviews"+"?include=response&sort=-createdDate&limit=200");
         return getConnectResultByX509(jwt, id, url);
+    }
+
+
+    public int updateProfile(String jwt, String profileName) throws IOException, NoSuchAlgorithmException {
+        JSONArray profileInfo = getProfileInfo(jwt);
+        JSONObject obj = null;
+
+        for (Object o : profileInfo) {
+            JSONObject temp = (JSONObject) o;
+            if (temp.get("prevName").equals(profileName))
+            {
+                obj = temp;
+                break;
+            }
+        }
+        if (obj==null)
+            return -1;
+
+        String id = obj.get("id").toString(); // 올드 id
+        JSONObject bundleIdFromProfile = getBundleIdFromProfile(jwt, id);
+        JSONObject certificateFromProfile = getCertificateFromProfile(jwt, id);
+        JSONArray devices = getDeviceInfoFromProfile(jwt, id);
+        String profile = createProfile(jwt, obj.get("name").toString(), obj.get("type").toString(),
+                bundleIdFromProfile.get("id").toString(), certificateFromProfile.get("id").toString(), devices);
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject parse = (JSONObject)parser.parse(profile);
+            JSONObject data = (JSONObject)parse.get("data");
+            String newId = data.get("id").toString();
+            int code = deleteProfile(jwt, id);// 기존 삭제
+            return code;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return -1; // error
     }
 
     /**
@@ -444,4 +479,244 @@ public class AppleApi implements Crawler {
         }
         return null;
     }
+
+
+    public JSONArray getProfileInfo(String jwt) throws NoSuchAlgorithmException, MalformedURLException{
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles?limit=200");
+        String response = getConnectResultByX509(jwt, "", url);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Calendar c1 = Calendar.getInstance();
+        c1.add(Calendar.YEAR,1);
+        String strToday = sdf.format(c1.getTime());
+        // profile info로 부터 profile id, profileName, profileType 얻기
+        JSONParser parser = new JSONParser();
+        JSONObject parse = null;
+        try {
+            parse = (JSONObject)parser.parse(response);
+            JSONArray data = (JSONArray)parse.get("data");
+            System.out.println("data.size() = " + data.size());
+            JSONArray arr = new JSONArray();
+            for (Object datum : data) {
+                JSONObject dd = (JSONObject) datum;
+                JSONObject attributes = (JSONObject)dd.get("attributes");
+                JSONObject obj = new JSONObject();
+                String profileName = attributes.get("name").toString();
+                String profileType = attributes.get("profileType").toString();
+                String profileContent = attributes.get("profileContent").toString(); // base64 인코딩된거를 디코드하고 .mobileprovision 형식으로 저장하면 됨.
+                String profileId = dd.get("id").toString();
+                int i = profileName.lastIndexOf("_");
+                String newName = profileName.substring(0, i+1)+strToday;
+
+                obj.put("id", profileId);
+                obj.put("name", newName);
+                obj.put("type", profileType);
+                obj.put("prevName", profileName);
+                obj.put("content", profileContent);
+                arr.add(obj);
+            }
+            return arr;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public JSONArray getDeviceInfoFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/devices?limit=100");
+        String response =  getConnectResultByX509(jwt, id, url);
+        JSONParser parser = new JSONParser();
+        JSONObject parse = null;
+        JSONArray res = new JSONArray();
+        try {
+            parse = (JSONObject)parser.parse(response);
+            JSONArray data = (JSONArray)parse.get("data");
+            if (data!=null) {
+                for (Object datum : data) {
+                    JSONObject dd = (JSONObject) datum;
+                    JSONObject temp = new JSONObject();
+                    String deviceId = dd.get("id").toString();
+                    String type = dd.get("type").toString();
+                    temp.put("id", deviceId);
+                    temp.put("type", type);
+                    res.add(temp);
+                }
+            }
+            return res;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return res; // 빈값
+    }
+
+    public JSONObject getBundleIdFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/bundleId");
+        String response = getConnectResultByX509(jwt, id, url);
+        JSONParser parser = new JSONParser();
+        JSONObject parse = null;
+        try {
+            parse = (JSONObject)parser.parse(response);
+            JSONObject data = (JSONObject)parse.get("data");
+            String bundleID = data.get("id").toString();
+            String type = data.get("type").toString();
+            data.clear();
+            data.put("type", type);
+            data.put("id", bundleID);
+            return data;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public JSONObject getCertificateFromProfile(String jwt, String id) throws MalformedURLException, NoSuchAlgorithmException {
+        URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id+"/certificates");
+        String response = getConnectResultByX509(jwt, id, url);
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject parse = (JSONObject)parser.parse(response);
+            JSONArray data = (JSONArray)parse.get("data");
+            // get latest
+            JSONObject o =(JSONObject)data.get(0);
+            String type = o.get("type").toString();
+            String certificateId = o.get("id").toString();
+            o.clear();
+            o.put("type", type);
+            o.put("id", certificateId);
+            return o;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * token is jwt
+     * @param token
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws MalformedURLException
+     */
+    public String createProfile(String token, String name, String profileType, String bundleId, String certificateId, JSONArray devicesArr) throws IOException {
+        HttpURLConnection con = null;
+        BufferedReader br = null;
+        StringBuffer sb = null;
+        String result = "";
+
+        try{
+            URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles");
+            con = (HttpURLConnection) url.openConnection();
+            // post
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Authorization", "Bearer "+ token);
+            // post by json
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true); // outputstream 사용해서 post body 데이터 전송
+
+            JSONObject param = new JSONObject();
+
+            JSONObject attr = new JSONObject();
+            attr.put("name", name);
+            attr.put("profileType", profileType);
+
+            JSONObject relationships = new JSONObject();
+            JSONObject bundle = new JSONObject();
+            JSONObject data = new JSONObject();
+            JSONObject certificates = new JSONObject();
+            JSONArray certificateData = new JSONArray();
+
+            JSONObject devices = new JSONObject();
+            // bundle set
+            data.put("type", "bundleIds");
+            data.put("id", bundleId);
+            bundle.put("data", data);
+            relationships.put("bundleId", bundle); //json
+            // certificate set
+            JSONObject certiData = new JSONObject();
+            certiData.put("type", "certificates");
+            certiData.put("id", certificateId);
+            certificateData.add(certiData); // json arr
+            //certificate set
+            certificates.put("data", certificateData);//json array
+            relationships.put("certificates", certificates);
+            // device set
+            devices.put("data", devicesArr);
+            relationships.put("devices", devices);
+
+
+            param.put("type", "profiles");
+            param.put("attributes", attr);
+            param.put("relationships", relationships);
+
+            JSONObject toPostData =new JSONObject();
+            toPostData.put("data", param);
+
+            String paramData = toPostData.toJSONString();
+            System.out.println("paramData = " + paramData);
+            try{
+                OutputStream os = con.getOutputStream();
+                byte[] req = paramData.getBytes("utf-8"); //post write
+                os.write(req, 0, req.length);
+                os.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+
+            br = new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
+            StringBuilder response = new StringBuilder();
+            while((result=br.readLine())!=null){
+                response.append(result.trim());
+            }
+            result = response.toString();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @param token
+     * @param id
+     * @return
+     * @throws IOException
+     * Response Codes
+     * 204 No Content
+     * 400 Bad Request
+     * 403 Forbidden Request not authorized.
+     * 404 Not Found Resource not found.
+     * 409 Conflict The provided resource data is not valid.
+     */
+    public int deleteProfile(String token, String id) throws IOException {
+        HttpURLConnection con = null;
+        BufferedReader br = null;
+        StringBuffer sb = null;
+        String result = "";
+
+        try{
+            URL url = new URL("https://api.appstoreconnect.apple.com/v1/profiles/"+id);
+            con = (HttpURLConnection) url.openConnection();
+            // post
+            con.setRequestMethod("DELETE");
+            con.setRequestProperty("Authorization", "Bearer "+ token);
+            // post by json
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true); // outputstream 사용해서 post body 데이터 전송
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return con.getResponseCode();
+    }
+
+    // file svn에 올리는거 까지
+
+
 }
